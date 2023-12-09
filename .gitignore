@@ -1,0 +1,8 @@
+BadCards.Frontend/node_modules/
+BadCards.Api/*.db-wal
+BadCards.Api/*.db-shm
+BadCards.Api/*.db
+BadCards.Api/[Bb]in/
+BadCards.Api/[Oo]bj/
+BadCards.Api/[Rr]elease/
+BadCards.Api/[Dd]ebug/
