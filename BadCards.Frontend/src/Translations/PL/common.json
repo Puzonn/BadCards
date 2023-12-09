@@ -1,0 +1,21 @@
+{
+  "login": {
+    "age-verification": "Mam 16 lat lub więcej i zgadzam się przestrzegać wytycznych dotyczących treści na stronie internetowej.",
+    "signin-with-discord": "Zaloguj się za pomocą Discord"
+  },
+  "dashboard": {
+    "loggedIn-as": "Zalogowany jako",
+    "lobby-code": "Kod Lobby",
+    "join-lobby": "Dołącz do Lobby",
+    "create-lobby": "Stwórz Lobby",
+    "start-lobby": "Rozpocznij Lobby"
+  },
+  "game": {
+    "judge": "Sędzia",
+    "judge-waiting": "Poczekaj na {{judge.name}} aż wybierze zwycięską karte",
+    "you-are-judge": "Jesteś sędzią. Proszę czekać, aż wszyscy użytkownicy wybiorą karty.",
+    "select-winning-card": "Wybierz zwycięską kartę",
+    "next-round": "Następna Runda",
+    "you": "Ty"
+  }
+}

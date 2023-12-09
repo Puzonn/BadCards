@@ -1,0 +1,21 @@
+{
+  "login": {
+    "age-verification": "I am 16 years of age or older and I agree to comply with the content guidelines on the website.",
+    "signin-with-discord": "Sign in using Discord"
+  },
+  "dashboard": {
+    "loggedIn-as": "Logged in as",
+    "lobby-code": "Lobby Code",
+    "join-lobby": "Join Lobby",
+    "create-lobby": "Create Lobby",
+    "start-lobby": "Start Lobby"
+  },
+  "game": {
+    "judge": "Judge",
+    "judge-waiting": "Waiting for {{judge.name}} to select a winning card",
+    "you-are-judge": "You are the judge. Please wait for all users to choose their cards.",
+    "select-winning-card": "Select the winning card",
+    "next-round": "Next Round",
+    "you": "You"
+  }
+}
