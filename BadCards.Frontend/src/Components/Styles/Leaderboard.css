@@ -1,0 +1,45 @@
+.leaderboard-container { 
+    width: 200px; 
+    height: 300px;
+    background-color: black;
+    border-radius: 10px;
+    margin-left: auto;
+    margin-right: 50px;
+    text-align: center;
+    border: 1px solid white;
+}
+
+.leaderboard-name {
+    font-size: large;
+    font-weight: bold;
+    color: white;
+}
+
+
+.leaderboard-container ul {
+    padding: 0;
+    margin-left: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    text-align: left;
+    list-style: none;
+}
+
+.leaderboard-container li {
+    text-align: left;
+    margin-bottom: 15px;
+    display: flex;
+    font-weight: 600;
+    margin-right: auto;
+    color: white;
+}
+
+.leaderboard-container span { 
+    margin-left: 10px;
+}
+
+.leaderboard-container img {
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+}
