@@ -22,7 +22,12 @@ export const WhiteCardUI = ({
       }}
       className="container"
     >
-      <div style={{opacity: IsJudge || HasSelectedRequired ? '0.6' : ''}} className={`white-card white-card-full-rounded ${IsSelected && !IsJudge ? "selected" : ""}`}>
+      <div
+        style={{ opacity: IsJudge || HasSelectedRequired ? "0.6" : "" }}
+        className={`white-card white-card-full-rounded ${
+          IsSelected && !IsJudge ? "selected" : ""
+        }`}
+      >
         <div className="white-card-question">
           <p>{Content}</p>
         </div>

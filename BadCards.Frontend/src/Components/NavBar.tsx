@@ -35,8 +35,8 @@ export const NavBar = () => {
   };
 
   const Revoke = async () => {
-    await axios.post(`${process.env.REACT_APP_API_URL}/auth/revoke`).then(x=> {
-      console.log(x)
+    await axios.post(`${process.env.REACT_APP_API_URL}/auth/revoke`).then(x => {
+      window.location.href = "/"
     })
   }
 

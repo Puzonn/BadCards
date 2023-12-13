@@ -144,12 +144,13 @@ export const Lobby = () => {
   };
 
   const OnStartGame = (e: string) => {
+    console.log(e)
     setRound(JSON.parse(e));
   };
-
+  
   if (typeof round !== "undefined") {
     return (
-      <div>
+      <>
         <Game
           AnswerCount={round.AnswerCount}
           HasSelectedRequired={round.HasSelectedRequired}
@@ -168,7 +169,7 @@ export const Lobby = () => {
           StateSelectCard={StateSelectCard}
           StateStartGame={StateStartGame}
         />
-      </div>
+      </>
     );
   }
 

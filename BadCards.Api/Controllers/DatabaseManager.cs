@@ -2,8 +2,8 @@
 using BadCards.Api.Models.Database;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Text;
 
 namespace BadCards.Api.Controllers;
@@ -11,6 +11,7 @@ namespace BadCards.Api.Controllers;
 [ApiController]
 public class DatabaseManager : Controller
 {
+    private string[] LangCodes = { "en", "pl" };
     private readonly BadCardsContext dbContext;
 
     public DatabaseManager(BadCardsContext _dbContext)
@@ -22,63 +23,92 @@ public class DatabaseManager : Controller
     [HttpPost("/admin/cards/reload")]
     public async Task<ActionResult> ReloadCards()
     {
-        int clearCode = await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM Cards");
-        //int trClearCode = await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM CardTranslations");
+        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM Cards");
+        await dbContext.Database.ExecuteSqlRawAsync("DELETE FROM CardTranslations");
+        await dbContext.Database.ExecuteSqlRawAsync("delete from sqlite_sequence where name='Cards'");
+        await dbContext.Database.ExecuteSqlRawAsync("delete from sqlite_sequence where name='CardTranslations'");
 
-        string langCode = "en";
+        int sumcount = 0;
+        bool appendCards = true;
 
-        bool appendQuestion = false;
         const Int32 BufferSize = 1024;
 
-        if (!System.IO.File.Exists("./Cards/en-cards.txt"))
+        foreach (var code in LangCodes)
         {
-            throw new Exception("Cannot reload cards. 'cards.txt' file dose not exist");
-        }
-
-        uint cardId = 1;
-        using (var fileStream = System.IO.File.OpenRead($"./Cards/{langCode}-cards.txt"))
-        using (var streamReader = new StreamReader(fileStream, Encoding.UTF8, true, BufferSize))
-        {
-            String line;
-            while ((line = await streamReader.ReadLineAsync()) != null)
+            if (!System.IO.File.Exists($"./Cards/{code}-cards.txt"))
             {
-                if(line == "----------")
-                {
-                    appendQuestion = true;
-                    continue;
-                }
-
-                if (!appendQuestion)
-                {
-                    dbContext.Cards.Add(new CardDb(appendQuestion)
-                    {
-                        AnswerCount = 0,
-                        IsEmpty = false,
-                    });
-                }
-                else
-                {
-                    int count = line.Count(f => f == '_');
-                    if(count == 0)
-                    {
-                        count = 1;
-                    }
-                    dbContext.Cards.Add(new CardDb(appendQuestion)
-                    {
-                      
-                        AnswerCount = count,
-                        IsEmpty = false,
-                    });
-
-                }
-
-
-                cardId++;
+                throw new Exception("Cannot reload cards. 'cards.txt' file dose not exist");
             }
+
+            bool appendQuestion = false;
+            uint cardId = 1;
+
+            using (var fileStream = System.IO.File.OpenRead($"./Cards/{code}-cards.txt"))
+            using (var streamReader = new StreamReader(fileStream, Encoding.UTF8, true, BufferSize))
+            {
+                string line;
+                while ((line = await streamReader.ReadLineAsync()) != null)
+                {
+                    if (IsQuestion(line))
+                    {
+                        appendQuestion = true;
+                    }
+
+                    sumcount++;
+
+                    if (appendCards)
+                    {
+                        if (appendQuestion)
+                        {
+                            dbContext.Cards.Add(new CardDb(appendQuestion)
+                            {
+                                AnswerCount = GetAsnwerCount(line),
+                                IsEmpty = false,
+                            });
+                        }
+                        else
+                        {
+                            dbContext.Cards.Add(new CardDb(appendQuestion)
+                            {
+                                AnswerCount = 0,
+                                IsEmpty = false,
+                            });
+                        }
+                    }
+
+                    dbContext.CardTranslations.Add(new CardTranslationDb()
+                    {
+                        CardId = cardId,
+                        Translation = line,
+                        Locale = code
+                    });
+
+                    cardId++;
+                }
+            }
+
+            appendCards = false;
         }
 
         await dbContext.SaveChangesAsync();
 
-        return Ok();
+        return Ok($"Added {sumcount}");
+    }
+
+    private int GetAsnwerCount(string line)
+    {
+        int count = line.Count(f => f == '_');
+
+        if (count == 0)
+        {
+            count = 1;
+        }
+
+        return count;
+    }
+
+    private bool IsQuestion(string line)
+    {
+        return line == "----------";
     }
 }

@@ -10,15 +10,13 @@ using BadCards.Api.Database;
 using BadCards.Api.Models.Hub;
 using BadCards.Api.Models.Database;
 using BadCards.Api.Models.Hub.Events;
-using System.Numerics;
-using System.Diagnostics;
 
 namespace BadCards.Api.Hubs;
 
 [Authorize]
 public class RoomHub : Hub
 {
-    private static readonly List<Room> rooms = new List<Room> ();
+    private static readonly List<Room> rooms = new List<Room>();
     private readonly BadCardsContext dbContext;
     private readonly ITokenService tokenService;
 
@@ -110,7 +108,7 @@ public class RoomHub : Hub
 
                 Player player = new Player(userId, Context.ConnectionId, username, languagePreference, discordUserId, discordAvatarId);
 
-                room = new Room(lobbyCode, player);
+                room = new Room(apiRoom.LobbyCode, apiRoom.RoomId, player);
 
                 rooms.Add(room);
             }
@@ -419,14 +417,20 @@ public class RoomHub : Hub
 
     public string GetTranslation(uint cardId, string locale)
     {
-#if DEBUG
-        Debug.Write(dbContext.CardTranslations.Where(x => x.CardId == cardId && x.Locale == locale).ToList());
-#endif
         return dbContext.CardTranslations.Where(x => x.CardId == cardId && x.Locale == locale).Single().Translation;
     }
 
     public CardDb GetRandomBlackCard()
     {
         return dbContext.Cards.Where(x => x.IsBlack).OrderBy(x => EF.Functions.Random()).Where(x => x.AnswerCount == 2).First();
+    }
+
+    public static bool HasLobby(long userId, out Room? room)
+    {
+        Room exroom = rooms.Find(x => x.Players.Find(x => x.UserId == userId) != null);
+
+        room = exroom;
+
+        return exroom is not null;
     }
 }

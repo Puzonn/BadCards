@@ -14,7 +14,7 @@ export const LobbyManager = () => {
 
   useEffect(() => {
     if (user.IsFetched && !user.IsLoggedIn) {
-      window.location.href = "/login";
+      window.location.href = "/start";
     }
   }, [user]);
 
@@ -30,7 +30,7 @@ export const LobbyManager = () => {
           window.location.href = `/lobby?code=${room.LobbyCode}`;
         })
         .catch((err) => {
-          setBadLobbyCodeRequest(true)
+          setBadLobbyCodeRequest(true);
         });
     })();
   };
@@ -59,9 +59,11 @@ export const LobbyManager = () => {
             onChange={(e) => setLobbyCodeInput(e.target.value)}
             placeholder={t("dashboard.lobby-code")}
           ></input>
-          {badLobbyCodeRequest &&
-              <span style={{color: '#c51244'}}>{t('dashboard.error-bad-code')}</span>
-          }
+          {badLobbyCodeRequest && (
+            <span style={{ color: "#c51244" }}>
+              {t("dashboard.error-bad-code")}
+            </span>
+          )}
           <button
             className="lobby-manager-join"
             type="submit"

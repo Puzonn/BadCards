@@ -26,8 +26,7 @@ public class AuthController : Controller
 
     [AllowAnonymous]
     [HttpPost("/auth/discord")]
-    [HttpGet("/auth/discord")]
-    public async Task<IActionResult> SignIn([FromBody] OAuth2CallbackModel auth)
+    public async Task<ActionResult> SignIn([FromBody] OAuth2CallbackModel auth)
     {
         DiscordUser? discordUser = await FetchDiscordUser(auth.Access_token);
 
@@ -72,7 +71,7 @@ public class AuthController : Controller
         Response.Cookies.Append("Refresh", refreshToken, StaticCookiesOptions.RefreshTokenOption);
         Response.Cookies.Append("LanguagePreference", user.LanguagePreference, StaticCookiesOptions.MiscCookieOption);
 
-        return Ok();
+        return Ok("git");
     }
 
     private async Task<DiscordUser?> FetchDiscordUser(string auth)
@@ -157,8 +156,8 @@ public class AuthController : Controller
 
         await dbContext.SaveChangesAsync();
 
-        HttpContext.Response.Cookies.Delete("Bearer");
-        HttpContext.Response.Cookies.Delete("Refresh");
+        HttpContext.Response.Cookies.Delete("Bearer", StaticCookiesOptions.MiscCookieOption);
+        HttpContext.Response.Cookies.Delete("Refresh", StaticCookiesOptions.MiscCookieOption);
 
         return Ok();
     }

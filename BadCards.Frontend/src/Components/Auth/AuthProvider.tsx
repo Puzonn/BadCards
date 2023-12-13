@@ -12,6 +12,9 @@ export const AuthProvider = ({ children }: IProps) => {
   });
 
   useEffect(() => {
+    if (window.location.pathname === "/auth/discord/") {
+      return;
+    }
     axios.defaults.withCredentials = true;
 
     (async function () {
@@ -24,8 +27,8 @@ export const AuthProvider = ({ children }: IProps) => {
         })
         .catch((er) => {
           SetAuth(undefined);
-          if (window.location.pathname !== "/login") {
-            //window.location.href = "/login";
+          if (window.location.pathname !== "/start") {
+            window.location.href = "/start";
           }
         });
     })();

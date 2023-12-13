@@ -3,14 +3,14 @@ import "./index.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Auth } from "./Components/Auth/Auth";
 import { AuthProvider } from "./Components/Auth/AuthProvider";
-import { LobbyManager } from "./Components/LobbyManager";
-import { Login } from "./Components/Auth/Login";
+import { Start } from "./Components/Start";
 import { Lobby } from "./Components/Lobby";
 import { NavBar } from "./Components/NavBar";
 import { Trans } from "react-i18next";
 import i18next from "i18next";
-import "./i18n"
+import "./i18n";
 import { Legal } from "./Components/Legal";
+import { Options } from "./Components/Options";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -22,13 +22,12 @@ root.render(
       <NavBar></NavBar>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<LobbyManager />}></Route>
+          <Route path="/" element={<Start />}></Route>
           <Route path="/legal" element={<Legal />}></Route>
-          <Route path="/login" element={<Login />}></Route>
+          <Route path="/start" element={<Start />}></Route>
           <Route path="/auth/discord" element={<Auth />}></Route>
-          <Route path="/dashboard" element={<LobbyManager />}></Route>
           <Route path="/lobby" element={<Lobby />}></Route>
-          <Route path="*" element={<LobbyManager/>}></Route>
+          <Route path="*" element={<Start />}></Route>
         </Routes>
       </BrowserRouter>
     </Trans>

@@ -8,7 +8,7 @@ public class StaticCookiesOptions
         IsEssential = true,
         Secure = true,
         Path = "/",
-        SameSite = SameSiteMode.Lax,
+        SameSite = SameSiteMode.None,
         Domain = "localhost",
         Expires = DateTime.Now.AddDays(7)
     };
@@ -19,7 +19,7 @@ public class StaticCookiesOptions
         IsEssential = true,
         Secure = true,
         Path = "/",
-        SameSite = SameSiteMode.Strict,
+        SameSite = SameSiteMode.None,
         Domain = "localhost",
         Expires = DateTime.UtcNow.AddDays(7)
     };
@@ -30,7 +30,7 @@ public class StaticCookiesOptions
         IsEssential = false,
         Secure = true,
         Path = "/",
-        SameSite = SameSiteMode.Unspecified,
+        SameSite = SameSiteMode.None,
         Domain = "localhost",
         Expires = DateTime.UtcNow.AddDays(90)
     };

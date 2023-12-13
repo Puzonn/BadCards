@@ -1,21 +1,21 @@
 .white-card {
-  width: 178px;
+  width: 179px;
   height: 300px;
   background-color: white;
-
   color: black;
   position: relative;
   margin-bottom: 20px;
   margin-right: 10px;
+  font-family: "Silkscreen", sans-serif;
   overflow: auto;
   scrollbar-width: none;
 }
 
-.white-card-full-rounded { 
-  border-radius: 10px;
+.white-card-full-rounded {
+  
 }
 
-.white-card-bottom-rounded { 
+.white-card-bottom-rounded {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
@@ -40,6 +40,7 @@
 }
 
 .white-card-question {
+  word-break:break-all;
   width: 95%;
 }
 
@@ -47,7 +48,7 @@
   display: flex;
   text-align: center;
   color: black;
-  justify-content:space-around;
+  justify-content: space-around;
 }
 
 .white-card-answer-selection:not(.white-card-answer-selected):hover {
@@ -59,16 +60,14 @@
   width: 100%;
 }
 
-.white-card-answer-selected { 
+.white-card-answer-selected {
   padding-left: 15px;
   color: white;
   background-color: black;
 }
 
 .white-card p {
-  font-family: "Roboto", sans-serif;
   font-size: 100%;
-  font-family: "Wix Madefor Text", sans-serif;
   font-weight: bold;
   padding-left: 10px;
   padding-top: 1px;

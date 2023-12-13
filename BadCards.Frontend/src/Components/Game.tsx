@@ -2,10 +2,11 @@ import { Round } from "../Types/Card";
 import { BlackCardUI } from "./BlackCardUI";
 import { WhiteCardUI } from "./WhiteCardUI";
 import "./Styles/Game.css";
-import { SelectedWhiteCardUI } from "./SelectedWhiteCard";
+import "./Styles/LobbyManager.css";
 import { useTranslation } from "react-i18next";
 import { Leaderboard } from "./Leaderboard";
 import { SelectedCardsContainer } from "./SelectedCardsContiner";
+import { useState } from "react";
 
 export const Game = ({
   BlackCard,
@@ -26,12 +27,32 @@ export const Game = ({
   StateNextRound,
 }: Round) => {
   const { t } = useTranslation();
+  const [codeCopied, setCodeCopied] = useState(false);
+
+  const CopyCode = async () => {
+    await navigator.clipboard.writeText(RoomCode);
+    setCodeCopied(!codeCopied);
+    setTimeout(() => {
+      setCodeCopied(false)
+    }, 2500)
+  };
+
+  const StartGame = () => {
+    StateStartGame();
+  };
 
   if (!GameStarted) {
     return (
-      <div className="room-lobby">
-        <div className="room-lobby-code">Lobby Code: {RoomCode}</div>
-        <span>Share this code to </span>
+      <div className="room-lobby-container">
+        <div className="room-lobby">
+          <h2 onClick={CopyCode} className="room-lobby-code">
+            Lobby Code: {RoomCode}
+          </h2>
+          <span className={`${codeCopied ? "room-lobby-copy-note" : "room-lobby-copy-note_hidden"}`}>
+            Lobby Code copied to clipboard
+          </span>
+        </div>
+        <span className="room-lobby-left">Players: </span>
         <ul className="room-players-cell">
           {Players.map((player, index) => {
             return (
@@ -45,14 +66,9 @@ export const Game = ({
             );
           })}
         </ul>
-        {IsCreator && (
-          <button className="room-lobby-start" onClick={StateStartGame}>
-            {t("dashboard.start-lobby")}
-          </button>
-        )}
-        {!IsCreator && (
-          <span className="room-lobby-waiting">Waiting for Creator</span>
-        )}
+        <button onClick={StartGame} className="room-lobby-start">
+          Start
+        </button>
       </div>
     );
   }
@@ -99,15 +115,12 @@ export const Game = ({
               {IsJudge && IsWaitingForJudge && (
                 <span> {t("game.select-winning-card")} </span>
               )}
-              {!IsJudge && !IsWaitingForJudge && (
+              {!IsJudge && !IsWaitingForJudge && SelectedCards && (
                 <>
                   <span>
                     {t("game.judge")}: {JudgeUsername}
                   </span>
-                  <p>
-                    {" "}
-                    Select {AnswerCount - SelectedCards!.length} more cards
-                  </p>
+                  <p>Select {AnswerCount - SelectedCards?.length} more cards</p>
                 </>
               )}
 

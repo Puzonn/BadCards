@@ -6,3 +6,8 @@ BadCards.Api/[Bb]in/
 BadCards.Api/[Oo]bj/
 BadCards.Api/[Rr]elease/
 BadCards.Api/[Dd]ebug/
+*.bin
+.vs/BadCards.Api/DesignTimeBuild/.dtbcache.v2
+*.vsidx
+*.v2
+.vs/BadCards.Api/v17/.suo

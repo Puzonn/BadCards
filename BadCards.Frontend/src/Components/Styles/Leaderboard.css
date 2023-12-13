@@ -1,45 +1,53 @@
-.leaderboard-container { 
-    width: 200px; 
-    height: 300px;
-    background-color: black;
-    border-radius: 10px;
-    margin-left: auto;
-    margin-right: 50px;
-    text-align: center;
-    border: 1px solid white;
+.leaderboard-container {
+  min-width: 200px;
+  height: 300px;
+  background-color: black;
+  border-radius: 10px;
+  margin-right: 50px;
+  text-align: center;
+  border: 1px solid white;
 }
 
 .leaderboard-name {
-    font-size: large;
-    font-weight: bold;
-    color: white;
+  font-size: large;
+  font-weight: bold;
+  color: white;
 }
 
-
 .leaderboard-container ul {
-    padding: 0;
-    margin-left: 10px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    text-align: left;
-    list-style: none;
+  padding: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  text-align: left;
+  list-style: none;
 }
 
 .leaderboard-container li {
-    text-align: left;
-    margin-bottom: 15px;
-    display: flex;
-    font-weight: 600;
-    margin-right: auto;
-    color: white;
+  text-align: left;
+  position: relative;
+  margin-bottom: 15px;
+  padding: 3px;
+  display: flex;
+  background-color: #0a0b11;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-right: auto;
+  color: white;
 }
 
-.leaderboard-container span { 
-    margin-left: 10px;
+.leaderboard-points {
+  position: absolute;
+  right: 10px;
+  font-size: x-large;
+  bottom: 11px;
+}
+
+.leaderboard-container span {
+  margin-left: 10px;
 }
 
 .leaderboard-container img {
-    width: 40px;
-    height: 40px;
-    border-radius: 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
 }

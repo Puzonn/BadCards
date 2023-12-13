@@ -18,8 +18,9 @@ nav {
   padding-left: 20px;
 }
 
-nav h1 {
+nav h1, h2 {
   color: white;
+  margin: 0px;
 }
 
 nav a {

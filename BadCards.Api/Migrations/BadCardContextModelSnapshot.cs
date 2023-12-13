@@ -68,6 +68,12 @@ namespace BadCards.Api.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<long>("OwnerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("PlayersCount")
                         .HasColumnType("INTEGER");
 

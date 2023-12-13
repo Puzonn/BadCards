@@ -3,10 +3,8 @@ using BadCards.Api.Models;
 using BadCards.Api.Models.Database;
 using BadCards.Api.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Principal;
 
 namespace BadCards.Api.Middleware;
 
@@ -25,8 +23,14 @@ public class JWTMiddleware : IMiddleware
     {
         var endpoint = context.GetEndpoint();
 
+        if(endpoint is null)
+        {
+            return;
+        }
+
         if(endpoint!.Metadata.GetMetadata<IAllowAnonymous>() is not null)
         {
+            context.Response.StatusCode = 200;
             await next(context);
             return;
         }

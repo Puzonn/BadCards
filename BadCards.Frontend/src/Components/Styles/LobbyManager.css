@@ -9,12 +9,11 @@
 }
 
 .white-cards-container {
-  overflow-x: hidden;
+  overflow-x:auto;
   overflow-y: hidden;
-  padding-top: 25px;
-  padding-left: 20px;
+  padding-top: 10px;
+  padding-left: 15px;
   white-space: nowarp;
-  margin-top: 10px;
   display: flex;
 }
 

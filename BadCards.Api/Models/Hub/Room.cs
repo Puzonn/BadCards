@@ -11,6 +11,7 @@ public class Room
 
     public uint BlackCardId = 0;
     public uint SelectedCardByJudgeId = 0;
+    public uint RoomId;
 
     public Player Creator { get; }
     public Player? Judge { get; set; }
@@ -59,8 +60,9 @@ public class Room
             });
     */
 
-    public Room(string roomCode, Player creator)
+    public Room(string roomCode, uint roomId, Player creator)
     {
+        RoomId = roomId;
         Creator = creator;
         RoomCode = roomCode;
         Players.Add(creator);

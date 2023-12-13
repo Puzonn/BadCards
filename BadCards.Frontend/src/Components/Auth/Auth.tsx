@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect } from "react";
 
 export const Auth = () => {
@@ -21,16 +22,20 @@ export const Auth = () => {
       Expires_in: auth[2],
     };
 
-    fetch(`${process.env.REACT_APP_API_URL}/auth/discord`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(authJson),
-    }).then(() => {
-      window.location.href = "/dashboard";
-    });
+    axios.defaults.withCredentials = true;
+    axios
+      .post(
+        `${process.env.REACT_APP_API_URL}/auth/discord`,
+        JSON.stringify(authJson),
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(() => {
+        window.location.href = "/start";
+      });
   }, []);
   return <></>;
 };
