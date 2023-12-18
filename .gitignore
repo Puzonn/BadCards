@@ -1,4 +1,5 @@
 BadCards.Frontend/node_modules/
+BadCards.Frontend/build/
 BadCards.Api/*.db-wal
 BadCards.Api/*.db-shm
 BadCards.Api/*.db
@@ -11,3 +12,4 @@ BadCards.Api/[Dd]ebug/
 *.vsidx
 *.v2
 .vs/BadCards.Api/v17/.suo
+BadCards.Frontend/.env

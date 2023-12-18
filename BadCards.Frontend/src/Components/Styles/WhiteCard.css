@@ -40,7 +40,7 @@
 }
 
 .white-card-question {
-  word-break:break-all;
+  word-break:keep-all;
   width: 95%;
 }
 

@@ -1,7 +1,7 @@
 .leaderboard-container {
   min-width: 200px;
   height: 300px;
-  background-color: black;
+  background-color: var(--bg-default);
   border-radius: 10px;
   margin-right: 50px;
   text-align: center;
@@ -28,7 +28,7 @@
   margin-bottom: 15px;
   padding: 3px;
   display: flex;
-  background-color: #0a0b11;
+  background-color: var(--bg-default);
   border-radius: 10px;
   font-weight: 600;
   margin-right: auto;

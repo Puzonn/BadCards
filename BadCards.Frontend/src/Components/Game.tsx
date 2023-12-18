@@ -33,8 +33,8 @@ export const Game = ({
     await navigator.clipboard.writeText(RoomCode);
     setCodeCopied(!codeCopied);
     setTimeout(() => {
-      setCodeCopied(false)
-    }, 2500)
+      setCodeCopied(false);
+    }, 2500);
   };
 
   const StartGame = () => {
@@ -48,27 +48,41 @@ export const Game = ({
           <h2 onClick={CopyCode} className="room-lobby-code">
             Lobby Code: {RoomCode}
           </h2>
-          <span className={`${codeCopied ? "room-lobby-copy-note" : "room-lobby-copy-note_hidden"}`}>
+          <span
+            className={`${
+              codeCopied
+                ? "room-lobby-copy-note"
+                : "room-lobby-copy-note_hidden"
+            }`}
+          >
             Lobby Code copied to clipboard
           </span>
         </div>
-        <span className="room-lobby-left">Players: </span>
-        <ul className="room-players-cell">
-          {Players.map((player, index) => {
-            return (
-              <li key={`room-lobby-player-cell-${player.Username}`}>
-                <img
-                  alt="UserDiscordAvatar"
-                  src={`https://cdn.discordapp.com/avatars/${player.DiscordUserId}/${player.DiscordAvatarId}.webp?size=64`}
-                ></img>
-                <span>{player.Username}</span>
-              </li>
-            );
-          })}
-        </ul>
-        <button onClick={StartGame} className="room-lobby-start">
-          Start
-        </button>
+        <div className="room-lobby-opt">
+          <div>
+            <span className="room-lobby-left">Players: </span>
+            <ul className="room-players-cell">
+              {Players.map((player, index) => {
+                return (
+                  <li key={`room-lobby-player-cell-${player.Username}`}>
+                    <img
+                      alt="UserDiscordAvatar"
+                      src={`https://cdn.discordapp.com/avatars/${player.DiscordUserId}/${player.DiscordAvatarId}.webp?size=64`}
+                    ></img>
+                    <span>{player.Username}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+          <div className="room-lobby-game_options"></div>
+        </div>
+
+        {IsCreator && (
+          <button onClick={StartGame} className="room-lobby-start">
+            Start
+          </button>
+        )}
       </div>
     );
   }

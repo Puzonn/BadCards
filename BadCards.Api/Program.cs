@@ -20,7 +20,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins("http://localhost:3000", "https://localhost:3000", "https://puzonnsthings.pl")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
@@ -87,7 +87,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseHsts();
 app.UseMiddleware(typeof(JWTMiddleware));
 
 app.MapHub<RoomHub>("/services/roomHub");

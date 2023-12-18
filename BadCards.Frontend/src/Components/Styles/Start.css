@@ -3,10 +3,11 @@
   width: 50%;
   text-align: center;
   padding: 10px;
+  margin-top: 20px;
   color: white;
   padding-top: 40px;
   border-radius: 10px;
-  background-color: #0a0b11;
+  background-color: var(--sec-default);
 }
 
 .auth-discord-signup button {
@@ -40,6 +41,7 @@
   background-color: transparent;
   border: 0px;
   cursor: pointer;
+  border-color: var(--bg-default);
   color: white;
   font-size: larger;
 }

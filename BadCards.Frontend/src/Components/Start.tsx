@@ -4,10 +4,9 @@ import { useTranslation } from "react-i18next";
 import { AuthContext } from "../Context/AuthContext";
 import axios from "axios";
 import { Room } from "../Types/LobbyManagerTypes";
-import { loadavg } from "os";
 
 export const Start = () => {
-  const [guidelineAccepeted, setGuidelineAccpeted] = useState(false);
+  const [guidelineAccepeted, setGuidelineAccepted] = useState(false);
   const [tabBarIndex, setTabBarIndex] = useState(0);
   const [error, setError] = useState("");
   const auth = useContext(AuthContext);
@@ -83,7 +82,8 @@ export const Start = () => {
     HandleJoin(gameCode, password);
   };
 
-  const HandleCreateClick = () => {
+  const HandleCreateClick = (provider: FormEvent) => {
+    provider.preventDefault();
     const password = (document.getElementById("lobby_password") as any).value;
     HandleCreate(password);
   };
@@ -111,7 +111,7 @@ export const Start = () => {
         </button>
       </div>
       {tabBarIndex === 0 && auth.IsLoggedIn && (
-        <>
+        <form onSubmit={HandleCreateClick}>
           <input
             id="lobby_password"
             type="password"
@@ -128,7 +128,7 @@ export const Start = () => {
           >
             Create Game
           </button>
-        </>
+        </form>
       )}
       {tabBarIndex === 1 && auth.IsLoggedIn && (
         <form onSubmit={HandleJoinClick}>
@@ -167,7 +167,7 @@ export const Start = () => {
               <input
                 required
                 onChange={(e) => {
-                  setGuidelineAccpeted(e.target.checked);
+                  setGuidelineAccepted(e.target.checked);
                 }}
                 checked={guidelineAccepeted}
                 type="checkbox"

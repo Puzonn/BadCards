@@ -35,10 +35,12 @@ export const NavBar = () => {
   };
 
   const Revoke = async () => {
-    await axios.post(`${process.env.REACT_APP_API_URL}/auth/revoke`).then(x => {
-      window.location.href = "/"
-    })
-  }
+    await axios
+      .post(`${process.env.REACT_APP_API_URL}/auth/revoke`)
+      .then((x) => {
+        window.location.href = "/";
+      });
+  };
 
   useEffect(() => {
     const lang = Cookies.get("LanguagePreference");
@@ -50,27 +52,31 @@ export const NavBar = () => {
 
   return (
     <nav>
-      <h2>Cards Agains Humanity</h2>
-      {auth.IsFetched && auth.IsLoggedIn && (
-        <div>
-          <a href="/dashboard">Home</a>
-          <a href="/options">Options</a>
-        </div>
-      )}
-      {auth.IsFetched && !auth.IsLoggedIn && <a href="/login">Login</a>}
-      <a href="/legal">Legal</a>
-      {auth.IsFetched && auth.IsLoggedIn && (
-        <div className="nav-user">
-          <div>
-            <span>{auth.User?.Username}</span>
-            <p onClick={Revoke} className="nav-logout">Logout</p>
+      <div className="nav-container">
+        <h2>Cards Agains Humanity</h2>
+        {auth.IsFetched && auth.IsLoggedIn && (
+          <>
+            <a href="/dashboard">Home</a>
+            <a href="/options">Options</a>
+          </>
+        )}
+        {auth.IsFetched && !auth.IsLoggedIn && <a href="/login">Login</a>}
+        <a href="/legal">Legal</a>
+        {auth.IsFetched && auth.IsLoggedIn && (
+          <div className="nav-user">
+            <div>
+              <span>{auth.User?.Username}</span>
+              <p onClick={Revoke} className="nav-logout">
+                Logout
+              </p>
+            </div>
+            <img
+              alt="user_discord_avatar"
+              src={`https://cdn.discordapp.com/avatars/${auth.User?.DiscordId}/${auth.User?.AvatarId}.webp?size=64`}
+            ></img>
           </div>
-          <img
-            alt="user_discord_avatar"
-            src={`https://cdn.discordapp.com/avatars/${auth.User?.DiscordId}/${auth.User?.AvatarId}.webp?size=64`}
-          ></img>
-        </div>
-      )}
+        )}
+      </div>
     </nav>
   );
 };
