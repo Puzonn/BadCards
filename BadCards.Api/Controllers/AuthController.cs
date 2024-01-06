@@ -42,6 +42,7 @@ public class AuthController : Controller
         {
             user = new UserDb()
             {
+                AvatarColor = GetRandomAvatarColor(),
                 DiscordId = discordUser.DiscordId,
                 AvatarId = discordUser.AvatarId,
                 Username = discordUser.Username,
@@ -71,7 +72,7 @@ public class AuthController : Controller
         Response.Cookies.Append("Refresh", refreshToken, StaticCookiesOptions.RefreshTokenOption);
         Response.Cookies.Append("LanguagePreference", user.LanguagePreference, StaticCookiesOptions.MiscCookieOption);
 
-        return Ok("git");
+        return Ok();
     }
 
     private async Task<DiscordUser?> FetchDiscordUser(string auth)
@@ -115,6 +116,17 @@ public class AuthController : Controller
         }
     }
 
+    private string GetRandomAvatarColor()
+    {
+        Random random = Random.Shared;
+
+        int red = Math.Clamp(random.Next(256), 0, 255);
+        int green = Math.Clamp(random.Next(256), 0, 255);
+        int blue = Math.Clamp(random.Next(256), 0, 255);
+
+        return $"{red:X2}{green:X2}{blue:X2}";
+    }
+
     private string GetLang(string locale)
     {
         if (locale.StartsWith("pl"))
@@ -140,19 +152,24 @@ public class AuthController : Controller
     [HttpPost("/auth/revoke")]
     public async Task<ActionResult> Revoke()
     {
+        HttpContext.Response.Cookies.Delete("Bearer", StaticCookiesOptions.MiscCookieOption);
+        HttpContext.Response.Cookies.Delete("Refresh", StaticCookiesOptions.MiscCookieOption);
+        HttpContext.Response.Cookies.Delete("LanguagePreference", StaticCookiesOptions.MiscCookieOption);
+
         string token = (string)HttpContext.Items["Bearer"]!;
+
         TokenValidationResponse response = tokenService.Validate(token);
 
         if (!response.Success)
         {
-            return BadRequest("Invalid Bearer");
+            return Ok();
         }
 
         UserDb? user = await dbContext.Users.FindAsync(response.UserId);
 
         if(user is null)
         {
-            return BadRequest("User dose not exist");
+            return Ok();
         }
 
         user.RefreshToken = string.Empty;
@@ -160,9 +177,6 @@ public class AuthController : Controller
         dbContext.Users.Update(user);
 
         await dbContext.SaveChangesAsync();
-
-        HttpContext.Response.Cookies.Delete("Bearer", StaticCookiesOptions.MiscCookieOption);
-        HttpContext.Response.Cookies.Delete("Refresh", StaticCookiesOptions.MiscCookieOption);
 
         return Ok();
     }

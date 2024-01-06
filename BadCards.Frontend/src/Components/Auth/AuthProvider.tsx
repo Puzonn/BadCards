@@ -4,6 +4,7 @@ import { User } from "../../Types/User";
 import { AuthStatus } from "../../Types/Auth";
 import axios from "axios";
 import { Config } from "../../Config";
+import { Auth } from "./Auth";
 
 export const AuthProvider = ({ children }: IProps) => {
   const [status, setAuthStatus] = useState<AuthStatus>({
@@ -15,7 +16,7 @@ export const AuthProvider = ({ children }: IProps) => {
   useEffect(() => {
     const path = window.location.pathname;
 
-    if (path === "/auth/discord" || path === "/legal") {
+    if (path === "/auth/discord" || path === "/auth/discord/" || path === "/legal") {
       return;
     }
     axios.defaults.withCredentials = true;

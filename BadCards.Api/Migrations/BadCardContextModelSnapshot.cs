@@ -14,7 +14,7 @@ namespace BadCards.Api.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.11");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.14");
 
             modelBuilder.Entity("BadCards.Api.Models.Database.CardDb", b =>
                 {
@@ -87,6 +87,10 @@ namespace BadCards.Api.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("AvatarColor")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("AvatarId")
                         .HasColumnType("TEXT");

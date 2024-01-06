@@ -1,31 +1,31 @@
-﻿namespace BadCards.Api.Models.Hub;
+﻿using BadCards.Api.Models.Database;
+
+namespace BadCards.Api.Models.Hub;
 
 public class Player
 {
     public string ConnectionId { get; set; }
     public string Username { get; }
     public string Locale { get; set; } = "en";
- 
+    public string AvatarColor { get; set; }
     public string DiscordAvatarId { get; }
     public ulong DiscordUserId { get; }
-
     public int Points { get; set; } = 0;
     public uint UserId { get; }
-
     public bool IsActive { get; set; } = true;
     public bool HasSelectedRequired { get; set; }  
-
     public List<Card> WhiteCards { get; private set; } = new List<Card>(0);
     public List<Card> SelectedCards { get; set; } = new List<Card>(3);
 
-    public Player(uint userId, string connectionId, string username, string languagePreference, ulong discordUserId, string discordAvatarId)
+    public Player(string connectionId, UserDb user)
     {
-        DiscordAvatarId = discordAvatarId;
-        DiscordUserId = discordUserId;
-        UserId = userId;
+        DiscordAvatarId = user.AvatarId!;
+        AvatarColor = user.AvatarColor;
+        DiscordUserId = user.DiscordId;
+        UserId = (uint)user.Id;
         ConnectionId = connectionId;
-        Username = username;
-        Locale = languagePreference;
+        Username = user.Username;
+        Locale = user.LanguagePreference;
     }
 
     public void SetCards(IEnumerable<Card> cards)
@@ -35,7 +35,7 @@ public class Player
 
     public ApiPlayer ToApiPlayer()
     {
-        return new ApiPlayer(Username, Points, DiscordUserId, DiscordAvatarId);
+        return new ApiPlayer(Username, Points, DiscordUserId, DiscordAvatarId, AvatarColor);
     }
 
     private Card? GetCard(uint cardId) => WhiteCards.Find(x => x.CardId == cardId);

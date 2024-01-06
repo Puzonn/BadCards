@@ -12,11 +12,9 @@ export const NavBar = () => {
   const auth = useContext(AuthContext);
 
   const Revoke = async () => {
-    await axios
-      .post(`${Config.default.ApiUrl}/auth/revoke`)
-      .then((x) => {
-        window.location.href = "/";
-      });
+    await axios.post(`${Config.default.ApiUrl}/auth/revoke`).then((x) => {
+      window.location.href = "/";
+    });
   };
 
   useEffect(() => {
@@ -27,13 +25,23 @@ export const NavBar = () => {
     }
   }, []);
 
+  const FormatUsername = () => {
+    const username = auth.User?.Username;
+    if (!username) {
+      return "";
+    }
+
+    return username.substring(0, 12);
+  };
+
   return (
     <nav>
       <div className="nav-container">
-        <a href="/start" className="nav-header">Cards Agains Humanity</a>
+        <a href="/start" className="nav-header">
+          Cards Agains Humanity
+        </a>
         {auth.IsFetched && auth.IsLoggedIn && (
           <>
-            <a href="/dashboard">Home</a>
             <a href="/options">Options</a>
           </>
         )}
@@ -41,13 +49,19 @@ export const NavBar = () => {
         <a href="/legal">Legal</a>
         {auth.IsFetched && auth.IsLoggedIn && (
           <div className="nav-user">
-            <div>
-              <span>{auth.User?.Username}</span>
+            <div className="nav-user-info">
+              <span
+                className="nav-user-username"
+                style={{ color: `#${auth.User?.AvatarColor}` }}
+              >
+                {FormatUsername()}
+              </span>
               <p onClick={Revoke} className="nav-logout">
                 Logout
               </p>
             </div>
             <img
+              style={{ borderColor: `#${auth.User?.AvatarColor}` }}
               alt="user_discord_avatar"
               src={`https://cdn.discordapp.com/avatars/${auth.User?.DiscordId}/${auth.User?.AvatarId}.webp?size=64`}
             ></img>

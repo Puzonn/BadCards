@@ -59,6 +59,7 @@ public class TokenService : ITokenService
               new Claim(ClaimTypes.Name, user.Username!),
               new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
               new Claim("DiscordUserId", user.DiscordId.ToString()),
+              new Claim("AvatarColor", user.AvatarColor),
               new Claim("DiscordAvatarId", user.AvatarId == null ? string.Empty : user.AvatarId),
               new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
@@ -94,12 +95,14 @@ public class TokenService : ITokenService
                 var username = claimsPrincipal.FindFirst(ClaimTypes.Name)?.Value;
                 var avatarId = claimsPrincipal.FindFirst("DiscordAvatarId")?.Value;
                 var discordId = claimsPrincipal.FindFirst("DiscordUserId")?.Value;
+                var avatarColor = claimsPrincipal.FindFirst("AvatarColor")?.Value;
                 var date = DateTime.Now;
                 var userId = long.Parse(claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
                 TokenValidationResponse response = new()
                 {
                     Username = username,
+                    AvatarColor = avatarColor,  
                     AvatarId = avatarId,
                     DiscordId = discordId!.ToString(),
                     Success = true,

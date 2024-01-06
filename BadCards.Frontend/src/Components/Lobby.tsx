@@ -39,7 +39,6 @@ export const Lobby = () => {
   const code = searchParams.get("code");
 
   const StateStartGame = () => {
-    console.log(hubConnection)
     hubConnection.send("StartGame");
   };
 

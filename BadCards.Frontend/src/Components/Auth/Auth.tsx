@@ -35,7 +35,9 @@ export const Auth = () => {
         }
       )
       .then(() => {
-        window.location.href = "/start";
+        setTimeout(() => {
+          window.location.href = "/start";
+        }, 500)
       });
   }, []);
   return <></>;

@@ -80,15 +80,9 @@ public class RoomHub : Hub
         try
         {
             var identity = (ClaimsIdentity)Context.User!.Identity!;
-
-            var languagePreferenceCookie = Context.GetHttpContext()!.Request.Cookies["LanguagePreference"];
-            string languagePreference = languagePreferenceCookie is null ? "en" : languagePreferenceCookie;
-
             var userId = uint.Parse(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            var username = identity.FindFirst(ClaimTypes.Name)!.Value;
 
-            var discordUserId = ulong.Parse(identity.FindFirst("DiscordUserId")!.Value);
-            var discordAvatarId = identity.FindFirst("DiscordAvatarId")!.Value;
+            UserDb user = await dbContext.Users.Where(x=>x.Id == userId).FirstOrDefaultAsync();
 
             Room? room;
 
@@ -107,7 +101,7 @@ public class RoomHub : Hub
 
                 await dbContext.SaveChangesAsync();
 
-                Player player = new Player(userId, Context.ConnectionId, username, languagePreference, discordUserId, discordAvatarId);
+                Player player = new Player(Context.ConnectionId, user);
 
                 room = new Room(apiRoom.LobbyCode, apiRoom.RoomId, player);
 
@@ -117,7 +111,7 @@ public class RoomHub : Hub
             {
                 if (room.Players.Find(x => x.UserId == userId) == null)
                 {
-                    Player player = new Player(userId, Context.ConnectionId, username, languagePreference, discordUserId, discordAvatarId);
+                    Player player = new Player(Context.ConnectionId, user);
 
                     room.Players.Add(player);
                 }
@@ -296,7 +290,7 @@ public class RoomHub : Hub
     public async Task SelectCard(uint cardId)
     {
         Player player = GetPlayer()!;
-        Room room = GetRoom(player.UserId);
+        Room room = GetRoom((uint)player.UserId);
 
         if (room.Judge == player)
         {

@@ -14,4 +14,5 @@ public class UserDb
     public string RefreshToken { get; set; }
     public string? AvatarId { get; set; }
     public string LanguagePreference { get; set; }    
+    public string AvatarColor { get; set; }   
 }
