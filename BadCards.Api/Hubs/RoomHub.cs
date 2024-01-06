@@ -10,7 +10,6 @@ using BadCards.Api.Database;
 using BadCards.Api.Models.Hub;
 using BadCards.Api.Models.Database;
 using BadCards.Api.Models.Hub.Events;
-using System.Numerics;
 
 namespace BadCards.Api.Hubs;
 
@@ -18,13 +17,16 @@ namespace BadCards.Api.Hubs;
 public class RoomHub : Hub
 {
     private static readonly List<Room> rooms = new List<Room>();
+
     private readonly BadCardsContext dbContext;
     private readonly ITokenService tokenService;
+    private readonly ICardService cardService;
 
-    public RoomHub(BadCardsContext _dbContext, ITokenService _tokenService)
+    public RoomHub(BadCardsContext _dbContext, ITokenService _tokenService, ICardService _cardService)
     {
         tokenService = _tokenService;
         dbContext = _dbContext;
+        cardService = _cardService;
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
@@ -150,7 +152,7 @@ public class RoomHub : Hub
                 }
                 else
                 {
-                    Card translatedBlackCard = new Card(room.BlackCardId, true, GetTranslation(room.BlackCardId, player.Locale), 0);
+                    Card translatedBlackCard = new Card(room.BlackCardId, true, cardService.GetCardTranslation(room.BlackCardId, player.Locale), 0);
 
                     OnJoinEvent onJoinEvent = new OnJoinEvent()
                     {
@@ -217,13 +219,13 @@ public class RoomHub : Hub
             return;
         }
 
-        room.StartGame(GetRandomBlackCard());
+        room.StartGame(cardService.GetRandomBlackCard());
 
         IEnumerable<ApiPlayer> lobbyPlayers = room.Players.Select(x => x.ToApiPlayer());
 
         foreach (var player in room.Players)
         {
-            Card translatedBlackCard = new Card(room.BlackCardId, true, GetTranslation(room.BlackCardId, player.Locale), player.UserId);
+            Card translatedBlackCard = new Card(room.BlackCardId, true, cardService.GetCardTranslation(room.BlackCardId, player.Locale), player.UserId);
 
             OnStartGameEvent startEvent = new OnStartGameEvent()
             {
@@ -254,7 +256,7 @@ public class RoomHub : Hub
 
         uint selectedCardByJudge = room.SelectedCardByJudgeId;
 
-        room.NextRound(GetRandomBlackCard().CardId);
+        room.NextRound(cardService.GetRandomBlackCard().CardId);
 
         IEnumerable<ApiPlayer> lobbyPlayers = room.Players.Select(x => x.ToApiPlayer());
 
@@ -270,7 +272,7 @@ public class RoomHub : Hub
                 playerCards.AddRange(GetRandomWhiteCards(10 - playerCards.Count, lobbyPlayer.UserId, lobbyPlayer.Locale));
             }
 
-            Card newBlackCard = new Card(room.BlackCardId, true, GetTranslation(room.BlackCardId, lobbyPlayer.Locale), 0);
+            Card newBlackCard = new Card(room.BlackCardId, true, cardService.GetCardTranslation(room.BlackCardId, lobbyPlayer.Locale), 0);
 
             OnNextRoundEvent nextRoundEvent = new OnNextRoundEvent()
             {
@@ -339,7 +341,7 @@ public class RoomHub : Hub
             foreach (Player lobbyPlayer in room.Players)
             {
                 IEnumerable<SelectedCard> translatedSelectedCards = selectedCards
-                    .Select(x => new SelectedCard(GetTranslation(x.CardId, lobbyPlayer.Locale))
+                    .Select(x => new SelectedCard(cardService.GetCardTranslation(x.CardId, lobbyPlayer.Locale))
                     {
                         CardId = x.CardId,
                         IsSelectedByJudge = x.IsSelectedByJudge,
@@ -392,32 +394,10 @@ public class RoomHub : Hub
             return new List<Card>();
         }
 
-        var cards = dbContext.Cards
-            .Where(x => !x.IsBlack)
-            .OrderBy(x => EF.Functions.Random())
-            .Take(count)
-            .Select(cardDb => new 
-            { 
-                cardDb.CardId,
-                Translation = dbContext.CardTranslations
-                  .Where(x => x.Locale == locale && x.CardId == cardDb.CardId)
-                  .Select(x => x.Translation)
-                  .Single()
-            })
-            .Select(result => new Card(result.CardId, false, result.Translation, userId))
-            .ToList();
+        var cards = cardService.GetRandomWhiteCards(count).Select(card => new Card(card.CardId,
+            false, cardService.GetCardTranslation(card.CardId, locale), userId)).ToList();
 
         return cards;
-    }
-
-    public string GetTranslation(uint cardId, string locale)
-    {
-        return dbContext.CardTranslations.Where(x => x.CardId == cardId && x.Locale == locale).Single().Translation;
-    }
-
-    public CardDb GetRandomBlackCard()
-    {
-        return dbContext.Cards.Where(x => x.IsBlack).OrderBy(x => EF.Functions.Random()).Where(x => x.AnswerCount == 2).First();
     }
 
     public static bool HasLobby(long userId, out Room? room)

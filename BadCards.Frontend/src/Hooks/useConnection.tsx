@@ -5,6 +5,7 @@ const useConnection = (url:string, onstart?: () => void) => {
   const [connection, setConnection] = useState<HubConnection>(new HubConnectionBuilder()
   .withUrl(url, {
     withCredentials: true,
+    timeout: 60 * 3600 * 60 * 3600,
     skipNegotiation: true,
     transport: HttpTransportType.WebSockets,
   })

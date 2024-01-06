@@ -134,7 +134,7 @@ export const Lobby = () => {
   };
 
   const OnStartGame = (e: string) => {
-    console.log(e);
+    console.log(JSON.parse(e))
     setRound(JSON.parse(e));
   };
 

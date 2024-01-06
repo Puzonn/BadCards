@@ -64,6 +64,8 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ICardService, CardService>();
+
 builder.Services.AddScoped<JWTMiddleware>();
 
 var app = builder.Build();

@@ -37,6 +37,7 @@ public class GameController : ControllerBase
             }
 
             RoomDb dbRoom = dbContext.Rooms.Where(x => x.RoomId == room.RoomId).Single();
+
             return Ok(JsonSerializer.Serialize(dbRoom.ToApi()));
         }
 

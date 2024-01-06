@@ -44,7 +44,7 @@ public class Player
 
     public bool SelectCard(uint cardId)
     {
-        if(SelectedCards.Find(x=>x.CardId == cardId) is not null)
+        if(SelectedCards.Find(x => x.CardId == cardId) is not null)
         {
             return false;
         }
