@@ -26,6 +26,23 @@
       href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Silkscreen&display=swap"
       rel="stylesheet"
     />
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-E20C97DQ32"
+    ></script>
+    <script>
+      const host = window.location.hostname;
+      if (host !== "localhost") {
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          dataLayer.push(arguments);
+        }
+        gtag("js", new Date());
+
+        gtag("config", "G-E20C97DQ32");
+      }
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
