@@ -7,7 +7,6 @@ using BadCards.Api.Models.Hub;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -63,6 +62,7 @@ public class GameController : ControllerBase
         return Ok(JsonSerializer.Serialize(apiRoom));
     }
 
+    [Authorize]
     [HttpPost("/game/join")]
     public async Task<ActionResult<ApiRoom>> JoinGame([FromBody] RoomCreateModel model)
     {

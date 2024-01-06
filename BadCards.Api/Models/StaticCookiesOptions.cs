@@ -1,7 +1,11 @@
-﻿namespace BadCards.Api.Models;
+﻿using System.Net.NetworkInformation;
+
+namespace BadCards.Api.Models;
 
 public class StaticCookiesOptions
 {
+    private static readonly string _Domain;
+
     public readonly static CookieOptions AuthCookieOption = new CookieOptions()
     {
         HttpOnly = true,
@@ -9,7 +13,7 @@ public class StaticCookiesOptions
         Secure = true,
         Path = "/",
         SameSite = SameSiteMode.None,
-        Domain = "localhost",
+        Domain = _Domain,
         Expires = DateTime.Now.AddDays(7)
     };
 
@@ -20,7 +24,7 @@ public class StaticCookiesOptions
         Secure = true,
         Path = "/",
         SameSite = SameSiteMode.None,
-        Domain = "localhost",
+        Domain = _Domain,
         Expires = DateTime.UtcNow.AddDays(7)
     };
 
@@ -31,7 +35,16 @@ public class StaticCookiesOptions
         Secure = true,
         Path = "/",
         SameSite = SameSiteMode.None,
-        Domain = "localhost",
+        Domain = _Domain,
         Expires = DateTime.UtcNow.AddDays(90)
     };
+
+    static StaticCookiesOptions()
+    {
+#if DEBUG
+        _Domain = "localhost";
+#else
+         _Domain = "puzonnsthings.pl";
+#endif
+    }
 }

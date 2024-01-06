@@ -5,7 +5,7 @@ nav {
 .nav-container {
   display: flex;
   text-align: left;
-  height: 50px;
+  height: 55px;
   padding-left: 20px;
 }
 
@@ -38,7 +38,7 @@ nav select option {
 
 nav .nav-logout {
   margin: 0;
-  color: #6b1d1d;
+  color: rgb(229, 71, 71);
   cursor: pointer;
   font-weight: bold;
 }
@@ -59,4 +59,10 @@ nav .nav-user img {
 nav .nav-user span {
   color: white;
   font-weight: bold;
+}
+
+nav .nav-header {
+  padding: 0;
+  margin: 7px;
+  font-size: 24px;
 }

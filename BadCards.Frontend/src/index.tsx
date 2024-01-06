@@ -10,6 +10,9 @@ import { Trans } from "react-i18next";
 import i18next from "i18next";
 import "./i18n";
 import { Legal } from "./Components/Legal";
+import { Config } from "./Config"
+
+Config.default = new Config();
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

@@ -3,6 +3,7 @@ import { ReactNode, useState, useEffect, useContext } from "react";
 import { User } from "../../Types/User";
 import { AuthStatus } from "../../Types/Auth";
 import axios from "axios";
+import { Config } from "../../Config";
 
 export const AuthProvider = ({ children }: IProps) => {
   const [status, setAuthStatus] = useState<AuthStatus>({
@@ -12,14 +13,16 @@ export const AuthProvider = ({ children }: IProps) => {
   });
 
   useEffect(() => {
-    if (window.location.pathname === "/auth/discord/") {
+    const path = window.location.pathname;
+
+    if (path === "/auth/discord" || path === "/legal") {
       return;
     }
     axios.defaults.withCredentials = true;
 
     (async function () {
       await axios
-        .get(`${process.env.REACT_APP_API_URL}/auth/@me`, {
+        .get(`${Config.default.ApiUrl}/auth/@me`, {
           withCredentials: true,
         })
         .then((response) => {

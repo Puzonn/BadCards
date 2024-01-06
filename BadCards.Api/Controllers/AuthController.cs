@@ -98,6 +98,11 @@ public class AuthController : Controller
                         throw new Exception("Discord responsed with empty json");
                     }
 
+                    if (parsed["username"] is null)
+                    {
+                        return null;
+                    }
+
                     return new DiscordUser()
                     {
                         Username = (string)parsed["username"],

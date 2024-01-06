@@ -4,10 +4,7 @@ import "./Styles/BlackCard.css";
 import { useEffect } from "react";
 
 export const BlackCardUI = ({ Content }: Card) => {
- // const formattedString: FormattedBlackCardContent[] = FormatString(Content);
-
   function FormatString(content: string): FormattedBlackCardContent[] {
-    console.info("FormatString original", Content);
     const splitted = content.split("_");
     const formatElements: FormattedBlackCardContent[] = [];
 
@@ -20,20 +17,7 @@ export const BlackCardUI = ({ Content }: Card) => {
     console.log("FormatString ", formatElements);
     return formatElements;
   }
-
-useEffect(() => {
-  console.log(Content)
-})
-
-  /*
-   {formattedString.map((x, index) => {
-            return (
-              <span key={`black_card_format_${index}`} className={x.Class}>
-                {x.FormattedContent}
-              </span>
-            );
-          })}
- */
+  
   return (
     <div className="container">
       <div className="black-card">

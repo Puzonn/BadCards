@@ -12,11 +12,13 @@ public class JWTMiddleware : IMiddleware
 {
     private readonly ITokenService tokenService;
     private readonly BadCardsContext dbContext;
+    private readonly ILogger logger;
 
-    public JWTMiddleware(ITokenService _tokenService, BadCardsContext _dbContext)
+    public JWTMiddleware(ITokenService _tokenService, BadCardsContext _dbContext, ILogger<JWTMiddleware> _logger)
     {
         tokenService = _tokenService;
-        dbContext = _dbContext; 
+        dbContext = _dbContext;
+        logger= _logger;
     }
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -28,10 +30,12 @@ public class JWTMiddleware : IMiddleware
             return;
         }
 
-        if(endpoint!.Metadata.GetMetadata<IAllowAnonymous>() is not null)
+        if(endpoint.Metadata.GetMetadata<IAllowAnonymous>() is not null)
         {
-            context.Response.StatusCode = 200;
             await next(context);
+
+            logger.LogInformation("Awaiting next");
+
             return;
         }
 
@@ -86,8 +90,10 @@ public class JWTMiddleware : IMiddleware
                 return;
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            logger.LogError(ex.ToString());
+           
             return;
         }
     }

@@ -4,39 +4,16 @@ import { useTranslation } from "react-i18next";
 import Cookies from "js-cookie";
 import { AuthContext } from "../Context/AuthContext";
 import axios from "axios";
+import { Config } from "../Config";
 
 export const NavBar = () => {
   const { i18n } = useTranslation();
   const [lang, setLang] = useState("");
   const auth = useContext(AuthContext);
 
-  const ChangeLanguage = async (e: any) => {
-    const selectedLang = e.target.value;
-
-    await fetch("https://localhost:7083/user/set-language", {
-      method: "POST",
-      credentials: "include",
-      body: JSON.stringify(selectedLang),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          setLang(selectedLang);
-          i18n.changeLanguage(selectedLang);
-        } else {
-          console.log("Error while changing language:", response);
-        }
-      })
-      .catch((error) => {
-        console.error("Error while changing language:", error);
-      });
-  };
-
   const Revoke = async () => {
     await axios
-      .post(`${process.env.REACT_APP_API_URL}/auth/revoke`)
+      .post(`${Config.default.ApiUrl}/auth/revoke`)
       .then((x) => {
         window.location.href = "/";
       });
@@ -53,7 +30,7 @@ export const NavBar = () => {
   return (
     <nav>
       <div className="nav-container">
-        <h2>Cards Agains Humanity</h2>
+        <a href="/start" className="nav-header">Cards Agains Humanity</a>
         {auth.IsFetched && auth.IsLoggedIn && (
           <>
             <a href="/dashboard">Home</a>

@@ -68,8 +68,6 @@ builder.Services.AddScoped<JWTMiddleware>();
 
 var app = builder.Build();
 
-app.UsePathBase(new PathString("/api"));
-
 app.UseCors();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions

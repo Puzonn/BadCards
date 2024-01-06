@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect } from "react";
+import { Config } from "../../Config";
 
 export const Auth = () => {
   useEffect(() => {
@@ -25,7 +26,7 @@ export const Auth = () => {
     axios.defaults.withCredentials = true;
     axios
       .post(
-        `${process.env.REACT_APP_API_URL}/auth/discord`,
+        `${Config.default.ApiUrl}/auth/discord`,
         JSON.stringify(authJson),
         {
           headers: {

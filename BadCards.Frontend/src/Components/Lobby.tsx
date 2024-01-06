@@ -1,5 +1,6 @@
 import {
   HttpTransportType,
+  HubConnection,
   HubConnectionBuilder,
   LogLevel,
 } from "@microsoft/signalr";
@@ -7,45 +8,38 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Round } from "../Types/Card";
 import { Game } from "./Game";
-
-const hubConnection = new HubConnectionBuilder()
-  .withUrl("https://localhost:7083/services/roomHub", {
-    withCredentials: true,
-    timeout: 1000000 * 60,
-    skipNegotiation: true,
-    transport: HttpTransportType.WebSockets,
-  })
-  .configureLogging(LogLevel.Debug)
-  .build();
+import { Config } from "../Config";
+import useConnection from "../Hooks/useConnection";
 
 export const Lobby = () => {
-  const [round, setRound] = useState<Round>();
-
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const code = searchParams.get("code");
-
-  useEffect(() => {
-    hubConnection.start().then(() => {
+  const hubConnection = useConnection(
+    `${Config.default.ApiUrl}/services/roomHub`,
+    () => {
       hubConnection.onclose(() => {
-        window.location.href = "/dashboard"
-      })
+        window.location.href = "/dashboard";
+      });
       hubConnection.on("OnJoinEvent", (e) => {
         const round = JSON.parse(e) as Round;
         round.WhiteCards.forEach((x) => (x.StateCardClicked = StateSelectCard));
-        console.warn("OnJoinEvent ", round.SelectedCards);
         setRound(round);
       });
       hubConnection.on("OnStartGame", OnStartGame);
       hubConnection.on("OnStateSelectCard", OnStateSelectCard);
       hubConnection.on("OnJudgeSelectCard", OnJudgeSelectCard);
       hubConnection.on("OnNextRoundVote", (e) => console.log(e));
+      hubConnection.on("DebugLog", (e) => console.log(e));
       hubConnection.on("OnNextRound", OnNextRound);
       hubConnection.send("Join", `${code}`);
-    });
-  }, []);
+    }
+  );
+
+  const [round, setRound] = useState<Round>();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const code = searchParams.get("code");
 
   const StateStartGame = () => {
+    console.log(hubConnection)
     hubConnection.send("StartGame");
   };
 
@@ -73,20 +67,17 @@ export const Lobby = () => {
     });
   };
 
-  useEffect(() => {
-    if(!round){
-      console.warn("Round refreshed but was undefined", round)
-    }
-    else{
-      console.log("Round refreshed (by UseEffect)", round);
-    }
-  }, [round]);
-
   const StateSelectCard = async (cardId: number) => {
+    if (typeof hubConnection === "undefined") {
+      return;
+    }
     await hubConnection.send("SelectCard", cardId);
   };
 
   const StateNextRound = async () => {
+    if (typeof hubConnection === "undefined") {
+      return;
+    }
     await hubConnection.send("VoteNextRound");
   };
 
@@ -144,10 +135,10 @@ export const Lobby = () => {
   };
 
   const OnStartGame = (e: string) => {
-    console.log(e)
+    console.log(e);
     setRound(JSON.parse(e));
   };
-  
+
   if (typeof round !== "undefined") {
     return (
       <>

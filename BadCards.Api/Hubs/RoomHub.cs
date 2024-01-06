@@ -10,6 +10,7 @@ using BadCards.Api.Database;
 using BadCards.Api.Models.Hub;
 using BadCards.Api.Models.Database;
 using BadCards.Api.Models.Hub.Events;
+using System.Numerics;
 
 namespace BadCards.Api.Hubs;
 

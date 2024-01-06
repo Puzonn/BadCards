@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { AuthContext } from "../Context/AuthContext";
 import axios from "axios";
 import { Room } from "../Types/LobbyManagerTypes";
+import { Config } from "../Config";
 
 export const Start = () => {
   const [guidelineAccepeted, setGuidelineAccepted] = useState(false);
@@ -23,7 +24,7 @@ export const Start = () => {
       return;
     }
 
-    window.location.href = process.env.REACT_APP_DEFAULT_OAuth2 as string;
+    window.location.href = Config.default.OAuth2;
   };
 
   const HandleJoin = (lobbyCode: string, password: string | undefined) => {
@@ -35,7 +36,7 @@ export const Start = () => {
     (async function () {
       axios
         .post(
-          `${process.env.REACT_APP_API_URL}/game/join`,
+          `${Config.default.ApiUrl}/game/join`,
           JSON.stringify(data),
           {
             headers: {
@@ -60,7 +61,7 @@ export const Start = () => {
     (async function () {
       await axios
         .post(
-          `${process.env.REACT_APP_API_URL}/game/create`,
+          `${Config.default.ApiUrl}/game/create`,
           JSON.stringify(password),
           {
             headers: {

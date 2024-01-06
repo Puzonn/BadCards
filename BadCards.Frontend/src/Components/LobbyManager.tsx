@@ -4,6 +4,7 @@ import { Room } from "../Types/LobbyManagerTypes";
 import { AuthContext } from "../Context/AuthContext";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
+import { Config } from "../Config";
 
 export const LobbyManager = () => {
   const [lobbyCodeInput, setLobbyCodeInput] = useState<string>("");
@@ -21,7 +22,7 @@ export const LobbyManager = () => {
   const TryJoin = (lobbyCode: string) => {
     (async function () {
       axios
-        .post(`https://localhost:7083/game/join?lobbyCode=${lobbyCode}`)
+        .post(`${Config.default.ApiUrl}/game/join?lobbyCode=${lobbyCode}`)
         .then((response) => {
           if (response.status !== 200) {
             return;
@@ -37,7 +38,7 @@ export const LobbyManager = () => {
 
   const Create = () => {
     (async function () {
-      await fetch(`https://localhost:7083/game/create`, {
+      await fetch(`${Config.default.ApiUrl}/game/create`, {
         method: "POST",
         credentials: "include",
       }).then((response) => {
@@ -55,6 +56,7 @@ export const LobbyManager = () => {
         <div className="lobby-manager-opt">
           <input
             maxLength={8}
+            autoComplete="off"
             className="lobby-manager-code-input"
             onChange={(e) => setLobbyCodeInput(e.target.value)}
             placeholder={t("dashboard.lobby-code")}
