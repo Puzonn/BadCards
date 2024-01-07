@@ -3,6 +3,11 @@
   --bg-default: #131417;
 }
 
+@font-face {
+  font-family: "Silkscreen";
+  src: url("Assets/Fonts/Silkscreen-Regular.ttf");
+}
+
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;

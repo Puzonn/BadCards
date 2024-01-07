@@ -8,7 +8,9 @@ import { Config } from "../Config";
 
 export const Start = () => {
   const [guidelineAccepeted, setGuidelineAccepted] = useState(false);
-  const [tabBarIndex, setTabBarIndex] = useState(0);
+  const [tabBarIndex, setTabBarIndex] = useState<"CREATE" | "JOIN" | "ABOUT">(
+    "CREATE"
+  );
   const [error, setError] = useState("");
   const auth = useContext(AuthContext);
   const { t } = useTranslation();
@@ -35,15 +37,11 @@ export const Start = () => {
 
     (async function () {
       axios
-        .post(
-          `${Config.default.ApiUrl}/game/join`,
-          JSON.stringify(data),
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
+        .post(`${Config.default.ApiUrl}/game/join`, JSON.stringify(data), {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
         .then((response) => {
           if (response.status !== 200) {
             return;
@@ -93,25 +91,25 @@ export const Start = () => {
     <div className="auth-container">
       <div className="tab-bar">
         <button
-          onClick={() => setTabBarIndex(0)}
-          className={tabBarIndex === 0 ? `tab-bar_active` : ""}
+          onClick={() => setTabBarIndex("CREATE")}
+          className={tabBarIndex === "CREATE" ? `tab-bar_active` : ""}
         >
           Create Game
         </button>
         <button
-          onClick={() => setTabBarIndex(1)}
-          className={tabBarIndex === 1 ? `tab-bar_active` : ""}
+          onClick={() => setTabBarIndex("JOIN")}
+          className={tabBarIndex === "JOIN" ? `tab-bar_active` : ""}
         >
           Join Game
         </button>
         <button
-          onClick={() => setTabBarIndex(2)}
-          className={tabBarIndex === 2 ? `tab-bar_active` : ""}
+          onClick={() => setTabBarIndex("ABOUT")}
+          className={tabBarIndex === "ABOUT" ? `tab-bar_active` : ""}
         >
           About
         </button>
       </div>
-      {tabBarIndex === 0 && auth.IsLoggedIn && (
+      {tabBarIndex === "CREATE" && auth.IsLoggedIn && (
         <form onSubmit={HandleCreateClick}>
           <input
             id="lobby_password"
@@ -131,13 +129,14 @@ export const Start = () => {
           </button>
         </form>
       )}
-      {tabBarIndex === 1 && auth.IsLoggedIn && (
-        <form onSubmit={HandleJoinClick}>
+      {tabBarIndex === "JOIN" && auth.IsLoggedIn && (
+        <form autoComplete="off" onSubmit={HandleJoinClick}>
           <input
             type="text"
             id="lobby_game_code"
             className="tab-bar-password"
             placeholder="Game Code"
+            autoComplete="off"
           ></input>
           <br></br>
           <input
@@ -145,6 +144,7 @@ export const Start = () => {
             type="password"
             className="tab-bar-password"
             placeholder="Password"
+            autoComplete="off"
           ></input>
           <p className="tab-bar-note">Password is optional</p>
           <p style={{ color: "orangered" }}>{error}</p>
@@ -158,7 +158,17 @@ export const Start = () => {
           </button>
         </form>
       )}
-      {!auth.IsLoggedIn && (
+      {tabBarIndex === "ABOUT" && (
+        <div>
+          <p style={{ fontSize: "20px" }}>{t("about.how-to-play")}</p>
+          <span>{t("about.how-to-play-note")}</span>
+          <p style={{ fontSize: "20px" }}>{t("about.disclaimer")} </p>
+          <span>
+            {t('about.disclaimer-note')}
+          </span>
+        </div>
+      )}
+      {!auth.IsLoggedIn && tabBarIndex !== "ABOUT" && (
         <form onSubmit={HandleLogin}>
           <div className="auth-discord-signup">
             <button type="submit">{t("login.signin-with-discord")}</button>

@@ -45,7 +45,6 @@ export const NavBar = () => {
             <a href="/options">Options</a>
           </>
         )}
-        {auth.IsFetched && !auth.IsLoggedIn && <a href="/login">Login</a>}
         <a href="/legal">Legal</a>
         {auth.IsFetched && auth.IsLoggedIn && (
           <div className="nav-user">

@@ -3,6 +3,12 @@
     "age-verification": "I am 16 years of age or older and I agree to comply with the content guidelines on the website.",
     "signin-with-discord": "Sign in using Discord"
   },
+  "about": {
+    "how-to-play": "How to play",
+    "how-to-play-note": "BadCards is simple to play but endlessly entertaining. Each round, a designated Card Czar draws a black card containing afill-in-the-blank sentence or phrase. The other players then choose from their hand of white cards, each containing a word or phrase, to complete the black card's prompt. The Card Czar anonymously reads all the submissions, and the funniest or most outrageous combinationwins the round!",
+    "disclaimer": "Disclaimer",
+    "disclaimer-note": "BadCards is intended for mature audiences with a twisted sense of humor. It's not for the faint of heart or those easily offended. If you can handle the absurd, the inappropriate, and the downright hilarious, then grab your friends, unleash your inner comedian, and let the laughter begin!"
+  },
   "dashboard": {
     "loggedIn-as": "Logged in as",
     "lobby-code": "Lobby Code",
