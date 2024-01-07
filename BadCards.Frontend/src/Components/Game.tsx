@@ -37,12 +37,6 @@ export const Game = ({
     }, 2500);
   };
 
-  useEffect(() => {
-    Players.forEach((e) => {
-      console.log(e.AvatarColor)
-    })
-  })
-
   const StartGame = () => {
     StateStartGame();
   };
@@ -69,15 +63,14 @@ export const Game = ({
             <span className="room-lobby-left">Players: </span>
             <ul className="room-players-cell">
               {Players.map((player, index) => {
-                console.log(player.AvatarColor)
                 return (
                   <li key={`room-lobby-player-cell-${player.Username}`}>
                     <img
-                      style={{borderColor: `#${player.AvatarColor}`}}
+                      style={{borderColor: `#${player.ProfileColor}`}}
                       alt="UserDiscordAvatar"
                       src={`https://cdn.discordapp.com/avatars/${player.DiscordUserId}/${player.DiscordAvatarId}.webp?size=64`}
                     ></img>
-                    <span style={{color: `#${player.AvatarColor}`}}>{player.Username}</span>
+                    <span style={{color: `#${player.ProfileColor}`}}>{player.Username}</span>
                   </li>
                 );
               })}

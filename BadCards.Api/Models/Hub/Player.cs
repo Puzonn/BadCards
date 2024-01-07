@@ -7,7 +7,7 @@ public class Player
     public string ConnectionId { get; set; }
     public string Username { get; }
     public string Locale { get; set; } = "en";
-    public string AvatarColor { get; set; }
+    public string ProfileColor { get; set; }
     public string DiscordAvatarId { get; }
     public ulong DiscordUserId { get; }
     public int Points { get; set; } = 0;
@@ -20,7 +20,7 @@ public class Player
     public Player(string connectionId, UserDb user)
     {
         DiscordAvatarId = user.AvatarId!;
-        AvatarColor = user.AvatarColor;
+        ProfileColor = user.ProfileColor;
         DiscordUserId = user.DiscordId;
         UserId = (uint)user.Id;
         ConnectionId = connectionId;
@@ -35,7 +35,7 @@ public class Player
 
     public ApiPlayer ToApiPlayer()
     {
-        return new ApiPlayer(Username, Points, DiscordUserId, DiscordAvatarId, AvatarColor);
+        return new ApiPlayer(Username, Points, DiscordUserId, DiscordAvatarId, ProfileColor);
     }
 
     private Card? GetCard(uint cardId) => WhiteCards.Find(x => x.CardId == cardId);

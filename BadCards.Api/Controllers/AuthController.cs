@@ -42,12 +42,13 @@ public class AuthController : Controller
         {
             user = new UserDb()
             {
-                AvatarColor = GetRandomAvatarColor(),
+                ProfileColor = GetRandomProfileColor(),
                 DiscordId = discordUser.DiscordId,
                 AvatarId = discordUser.AvatarId,
                 Username = discordUser.Username,
                 RefreshToken = refreshToken,
-                LanguagePreference = "en"
+                LanguagePreference = "en",
+                LastProfileColorChange = DateTime.UtcNow
             };
 
             dbContext.Users.Add(user);
@@ -116,7 +117,7 @@ public class AuthController : Controller
         }
     }
 
-    private string GetRandomAvatarColor()
+    private string GetRandomProfileColor()
     {
         Random random = Random.Shared;
 

@@ -1,0 +1,37 @@
+.options-container {
+  color: white;
+  margin: 25px 0 0 0;
+  display: flex;
+  justify-content: center;
+}
+
+@media only screen and (max-width: 768px) {
+    .options-profile {
+        width: 100vw;
+    }
+}
+
+.options-profile h1 {
+  margin: 25px 0 0 0;
+}
+
+.options-profile {
+  text-align: center;
+  background-color: var(--sec-default);
+  width: 40vw;
+}
+
+.options-profile h3 {
+  margin: 5px;
+}
+
+.options-profile span {
+  font-size: small;
+}
+.options-profile button {
+  margin-top: 10px;
+  width: 30%;
+  height: 30px;
+  font-size: medium;
+  border: none;
+}

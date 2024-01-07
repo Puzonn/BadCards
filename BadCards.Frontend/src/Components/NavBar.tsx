@@ -30,7 +30,7 @@ export const NavBar = () => {
     if (!username) {
       return "";
     }
-
+    
     return username.substring(0, 12);
   };
 
@@ -51,7 +51,7 @@ export const NavBar = () => {
             <div className="nav-user-info">
               <span
                 className="nav-user-username"
-                style={{ color: `#${auth.User?.AvatarColor}` }}
+                style={{ color: `#${auth.User?.ProfileColor}` }}
               >
                 {FormatUsername()}
               </span>
@@ -60,7 +60,7 @@ export const NavBar = () => {
               </p>
             </div>
             <img
-              style={{ borderColor: `#${auth.User?.AvatarColor}` }}
+              style={{ borderColor: `#${auth.User?.ProfileColor}` }}
               alt="user_discord_avatar"
               src={`https://cdn.discordapp.com/avatars/${auth.User?.DiscordId}/${auth.User?.AvatarId}.webp?size=64`}
             ></img>

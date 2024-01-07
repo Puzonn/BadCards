@@ -163,9 +163,7 @@ export const Start = () => {
           <p style={{ fontSize: "20px" }}>{t("about.how-to-play")}</p>
           <span>{t("about.how-to-play-note")}</span>
           <p style={{ fontSize: "20px" }}>{t("about.disclaimer")} </p>
-          <span>
-            {t('about.disclaimer-note')}
-          </span>
+          <span>{t("about.disclaimer-note")}</span>
         </div>
       )}
       {!auth.IsLoggedIn && tabBarIndex !== "ABOUT" && (

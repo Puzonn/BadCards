@@ -16,27 +16,36 @@ export const AuthProvider = ({ children }: IProps) => {
   useEffect(() => {
     const path = window.location.pathname;
 
-    if (path === "/auth/discord" || path === "/auth/discord/" || path === "/legal") {
+    if (
+      path === "/auth/discord" ||
+      path === "/auth/discord/" ||
+      path === "/legal"
+    ) {
       return;
     }
+
     axios.defaults.withCredentials = true;
 
     (async function () {
-      await axios
-        .get(`${Config.default.ApiUrl}/auth/@me`, {
-          withCredentials: true,
-        })
-        .then((response) => {
-          SetAuth(response.data as User);
-        })
-        .catch((er) => {
-          SetAuth(undefined);
-          if (window.location.pathname !== "/start") {
-            window.location.href = "/start";
-          }
-        });
+      FetchUser();
     })();
   }, []);
+
+  const FetchUser = async () => {
+    await axios
+      .get(`${Config.default.ApiUrl}/auth/@me`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        SetAuth(response.data as User);
+      })
+      .catch((er) => {
+        SetAuth(undefined);
+        if (window.location.pathname !== "/start") {
+          window.location.href = "/start";
+        }
+      });
+  };
 
   const SetAuth = (userContext: User | undefined) => {
     if (typeof userContext === "undefined") {
@@ -50,7 +59,8 @@ export const AuthProvider = ({ children }: IProps) => {
     <AuthContext.Provider
       value={{
         User: status?.User,
-        setAuth: () => SetAuth,
+        SetAuth: () => SetAuth,
+        UpdateUser: FetchUser,
         IsFetched: status.IsFetched,
         IsLoggedIn: status.IsLoggedIn,
       }}

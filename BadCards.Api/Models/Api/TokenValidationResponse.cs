@@ -6,7 +6,7 @@ public sealed class TokenValidationResponse
     public string? Username { get; set; }
     public string? AvatarId { get; set; }
     public string? DiscordId { get; set; }
-    public string? AvatarColor { get; set; }
+    public string? ProfileColor { get; set; }
     public long? UserId { get; set; }   
     public bool Success { get; set; }
 
@@ -15,6 +15,7 @@ public sealed class TokenValidationResponse
         Success = false,
         Username = string.Empty,
         AvatarId = string.Empty,
-        DiscordId = string.Empty
+        DiscordId = string.Empty,
+        ProfileColor = string.Empty,
     };
 }

@@ -1,7 +1,7 @@
 export interface User {
   Username: string;
   AvatarId: string;
-  AvatarColor: string;
+  ProfileColor: string;
   DiscordId: string;
   Lang: string;
 }

@@ -24,3 +24,7 @@ button {
   border-radius: 8px;
   box-sizing: border-box;
 }
+
+button {
+  cursor: pointer;
+}

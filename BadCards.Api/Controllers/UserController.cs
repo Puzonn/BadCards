@@ -66,4 +66,54 @@ public class UserController : Controller
 
         return Ok();
     }
+
+    [HttpPatch("/user/randomize-avatar-color")]
+    public async Task<ActionResult<string>> RandomizeProfileCOlor()
+    {
+        string token = (string)HttpContext.Items["Bearer"]!;
+
+        TokenValidationResponse response = tokenService.Validate(token);
+
+        if(!response.Success)
+        {
+            return BadRequest("Token Validation Error");
+        }
+
+        UserDb? user = await dbContext.Users.FindAsync(response.UserId);
+
+        if (user is null)
+        {
+            return BadRequest("User was null");
+        }
+
+        TimeSpan difference = user.LastProfileColorChange - DateTime.UtcNow;
+ 
+        if (difference.TotalDays >= 1)
+        {
+            user.ProfileColor = GetRandomProfileColor();
+
+            dbContext.Update(user);
+
+            await dbContext.SaveChangesAsync();
+
+            string newToken = tokenService.GenerateAccessToken(user);
+
+            HttpContext.Response.Cookies.Append("Bearer", newToken, StaticCookiesOptions.AuthCookieOption);
+
+            return Ok(user.ProfileColor);
+        }
+
+        return BadRequest($"You have to wait {(TimeSpan.FromDays(1) - difference).Hours} hours to chanage color");
+    }
+
+    private string GetRandomProfileColor()
+    {
+        Random random = Random.Shared;
+
+        int red = Math.Clamp(random.Next(256), 0, 255);
+        int green = Math.Clamp(random.Next(256), 0, 255);
+        int blue = Math.Clamp(random.Next(256), 0, 255);
+
+        return $"{red:X2}{green:X2}{blue:X2}";
+    }
 }

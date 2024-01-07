@@ -16,7 +16,7 @@ export type Player = {
   Points: number;
   DiscordAvatarId: string;
   DiscordUserId: string;
-  AvatarColor: string;
+  ProfileColor: string;
 };
 
 export interface ISelectedWhiteCard extends IWhiteCardUI {

@@ -15,7 +15,7 @@ public class BadCardsContext : DbContext
     public BadCardsContext(IConfiguration configuration)
     {
         Configuration = configuration;
-        Database.EnsureCreatedAsync();
+        this.Database.EnsureCreated();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

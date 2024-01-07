@@ -5,12 +5,12 @@ public class ApiPlayer
     public string Username { get; set; }
     public string DiscordAvatarId { get; set; }
     public string DiscordUserId { get; set; }  
-    public string AvatarColor { get; set; }
+    public string ProfileColor { get; set; }
     public int Points { get; set; } 
     
-    public ApiPlayer(string username, int points, ulong discordUserId, string discordAvatarId, string avatarColor)
+    public ApiPlayer(string username, int points, ulong discordUserId, string discordAvatarId, string profileColor)
     {
-        AvatarColor = avatarColor;
+        ProfileColor = profileColor;
         DiscordAvatarId = discordAvatarId;
         DiscordUserId = discordUserId.ToString();
         Username = username;
