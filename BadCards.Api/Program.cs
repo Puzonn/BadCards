@@ -9,8 +9,6 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<BadCardsContext>();
-
 builder.Services.AddSignalR();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -63,9 +61,10 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<ICardService, CardService>();
+builder.Services.AddDbContext<BadCardsContext>();
 
+builder.Services.AddScoped<ICardService, CardService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<JWTMiddleware>();
 
 var app = builder.Build();

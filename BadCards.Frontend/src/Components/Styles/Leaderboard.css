@@ -6,10 +6,13 @@
   margin-right: 50px;
   text-align: center;
   border: 1px solid white;
+  overflow: auto;
 }
 
 .leaderboard-name {
-  font-size: large;
+  min-width: 50px;
+  max-width: 100px;
+  overflow: hidden;
   font-weight: bold;
   color: white;
 }
@@ -38,11 +41,11 @@
 .leaderboard-points {
   position: absolute;
   right: 10px;
-  font-size: x-large;
   bottom: 11px;
 }
 
 .leaderboard-container span {
+  font-size: x-large;
   margin-left: 10px;
 }
 

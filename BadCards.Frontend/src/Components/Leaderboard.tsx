@@ -16,7 +16,7 @@ export const Leaderboard = ({ Players }: ILeaderboard) => {
                 alt="UserDiscordAvatar"
                 src={`https://cdn.discordapp.com/avatars/${player.DiscordUserId}/${player.DiscordAvatarId}.webp?size=64`}
               ></img>
-              <span style={{ color: `#${player.ProfileColor}` }}>
+              <span className="leaderboard-name" style={{ color: `#${player.ProfileColor}` }}>
                 {player.Username.substring(0, 12)}
               </span>
               <span className="leaderboard-points">{player.Points}</span>

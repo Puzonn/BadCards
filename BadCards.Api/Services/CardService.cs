@@ -15,7 +15,7 @@ public class CardService : ICardService
         dbContext = _dbContext;
     }
 
-    public async Task<CardServiceResponse> FillDatabseCards()
+    public async Task<CardServiceResponse> FillDatabaseCards()
     {
         try
         {

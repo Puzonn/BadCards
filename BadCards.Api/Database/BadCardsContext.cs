@@ -1,4 +1,5 @@
 ﻿using BadCards.Api.Models.Database;
+using BadCards.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace BadCards.Api.Database;
@@ -10,16 +11,17 @@ public class BadCardsContext : DbContext
     public DbSet<UserDb> Users { get; set; }
     public DbSet<CardTranslationDb> CardTranslations { get; set; }
 
-    protected readonly IConfiguration Configuration;
+    private readonly IConfiguration configuration;
 
-    public BadCardsContext(IConfiguration configuration)
+    public BadCardsContext(IConfiguration _configuration)
     {
-        Configuration = configuration;
-        this.Database.EnsureCreated();
+        configuration = _configuration;
+
+        Database.EnsureCreated();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite(Configuration.GetConnectionString("Default"));
+        optionsBuilder.UseSqlite(configuration.GetConnectionString("Default"));
     }
 }

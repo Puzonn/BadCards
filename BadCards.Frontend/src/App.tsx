@@ -9,7 +9,7 @@ function App() {
     if (!user.IsLoggedIn && user.IsFetched) {
       window.location.href = "/";
     } else if (user.IsLoggedIn && user.IsFetched) {
-      window.location.href = "/dashboard";
+      window.location.href = "/start";
     }
   }, []);
 

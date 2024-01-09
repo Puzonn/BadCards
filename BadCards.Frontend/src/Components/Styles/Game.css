@@ -89,12 +89,12 @@
 .judge-username-container {
   text-align: center;
   width: 100%;
+  font-size: x-large;
 }
 
 .judge-username {
   color: white;
   font-weight: bold;
-  font-size: large;
   text-align: center;
   left: 0;
 }

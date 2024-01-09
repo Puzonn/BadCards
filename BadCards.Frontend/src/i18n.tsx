@@ -1,4 +1,4 @@
-import i18n, { changeLanguage } from "i18next";
+import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import pl from "./Translations/PL/common.json";
 import en from "./Translations/EN/common.json";
@@ -13,8 +13,7 @@ const resources = {
   },
 };
 
-const cachedLang = Cookies.get("LanguagePreference")
-console.log(resources)
+const cachedLang = Cookies.get("LanguagePreference");
 
 i18n.use(initReactI18next).init({
   resources,

@@ -26,7 +26,7 @@ export const Lobby = () => {
       hubConnection.on("OnStartGame", OnStartGame);
       hubConnection.on("OnStateSelectCard", OnStateSelectCard);
       hubConnection.on("OnJudgeSelectCard", OnJudgeSelectCard);
-      hubConnection.on("OnNextRoundVote", (e) => console.log(e));
+      hubConnection.on("OnUserDisconnect", OnUserDisconnect);
       hubConnection.on("DebugLog", (e) => console.log(e));
       hubConnection.on("OnNextRound", OnNextRound);
       hubConnection.send("Join", `${code}`);
@@ -42,27 +42,42 @@ export const Lobby = () => {
     hubConnection.send("StartGame");
   };
 
+  const OnUserDisconnect = (discordUserId: any) => {
+    console.log(discordUserId)
+    setRound((prev) => {
+      if (!prev) {
+        return prev;
+      }
+
+      const players = [...prev.Players].filter(
+        (x) => x.DiscordUserId != discordUserId as string
+      );
+      return { ...prev, Players: players };
+    });
+  };
+
   const OnStateSelectCard = (event: any) => {
     const response = JSON.parse(event);
     setRound((prev) => {
-      if (prev) {
-        const updatedRound: Round = {
-          ...prev,
-          HasSelectedRequired: response.HasSelectedRequired,
-          SelectedCards: response.SelectedCards,
-          IsWaitingForJudge: response.IsWaitingForJudge,
-        };
-        console.log("WaitingForJudgeState: ", response);
-        if (response.ShouldDeleteCard) {
-          const index = prev.WhiteCards.findIndex(
-            (x) => x.CardId === response.SelectDeletedCard
-          );
-          prev.WhiteCards = prev.WhiteCards.splice(index, 1);
-        }
-
-        return updatedRound;
+      if (!prev) {
+        return prev;
       }
-      return prev;
+
+      const updatedRound: Round = {
+        ...prev,
+        HasSelectedRequired: response.HasSelectedRequired,
+        SelectedCards: response.SelectedCards,
+        IsWaitingForJudge: response.IsWaitingForJudge,
+      };
+
+      if (response.ShouldDeleteCard) {
+        const index = prev.WhiteCards.findIndex(
+          (x) => x.CardId === response.SelectDeletedCard
+        );
+        prev.WhiteCards = prev.WhiteCards.splice(index, 1);
+      }
+
+      return updatedRound;
     });
   };
 
@@ -134,7 +149,7 @@ export const Lobby = () => {
   };
 
   const OnStartGame = (e: string) => {
-    console.log(JSON.parse(e))
+    console.log(JSON.parse(e));
     setRound(JSON.parse(e));
   };
 

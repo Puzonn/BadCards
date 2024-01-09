@@ -54,6 +54,11 @@ public class RoomHub : Hub
                 await dbContext.SaveChangesAsync();
             }
         }
+
+        foreach(var lobbyPlayer in room.Players)
+        {
+            await Clients.Client(lobbyPlayer.ConnectionId).SendAsync("OnUserDisconnect", player.DiscordUserId);
+        }
     }
 
     public override Task OnConnectedAsync()
@@ -88,10 +93,13 @@ public class RoomHub : Hub
 
             Room? room;
 
+            // Check if room is not created in memory
             if ((room = rooms.Find(x => x.RoomCode == lobbyCode)) == null)
             {
+                //Check if room is in database
                 RoomDb? apiRoom = await dbContext.Rooms.Where(x => x.LobbyCode == lobbyCode).SingleOrDefaultAsync();
-
+                
+                //If not disconnect user
                 if (apiRoom == null)
                 {
                     Context.Abort();

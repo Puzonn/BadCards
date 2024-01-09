@@ -19,7 +19,7 @@ public class DatabaseManager : Controller
     [HttpPost("/admin/cards/reload")]
     public async Task<ActionResult> ReloadCards()
     {
-        CardServiceResponse response = await cardService.FillDatabseCards();
+        CardServiceResponse response = await cardService.FillDatabaseCards();
 
         return Ok(response);    
     }
