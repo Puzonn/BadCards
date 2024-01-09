@@ -9,7 +9,7 @@ To get started with BadCards, follow these steps:
 1. Clone the repository to your local machine:
 
     ```bash
-    git clone https://github.com/your-username/BadCards.git
+    git clone https://github.com/Puzonn/BadCards.git
     ```
 
 2. Navigate to the project directory:
@@ -58,7 +58,7 @@ To get started with BadCards, follow these steps:
 
 ## Features
 
-- **Cards Against Humanity Gameplay:** Enjoy the classic Cards Against Humanity gameplay with friends or random opponents.
+- **Cards Against Humanity Gameplay:** Enjoy the classic Cards Against Humanity gameplay with friends.
 - **Real-Time Updates:** Thanks to SignalR, experience real-time updates as players make moves or submit their answers.
 
 ## License
