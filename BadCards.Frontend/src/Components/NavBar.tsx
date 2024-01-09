@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import { AuthContext } from "../Context/AuthContext";
 import axios from "axios";
 import { Config } from "../Config";
+import GithubLogo from "../Assets/Icons/github-mark-white.png";
 
 export const NavBar = () => {
   const { i18n } = useTranslation();
@@ -30,7 +31,7 @@ export const NavBar = () => {
     if (!username) {
       return "";
     }
-    
+
     return username.substring(0, 12);
   };
 
@@ -46,6 +47,7 @@ export const NavBar = () => {
           </>
         )}
         <a href="/legal">Legal</a>
+        <a href="https://github.com/Puzonn/BadCards">Github</a>
         {auth.IsFetched && auth.IsLoggedIn && (
           <div className="nav-user">
             <div className="nav-user-info">

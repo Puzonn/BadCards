@@ -66,11 +66,13 @@ export const Game = ({
                 return (
                   <li key={`room-lobby-player-cell-${player.Username}`}>
                     <img
-                      style={{borderColor: `#${player.ProfileColor}`}}
+                      style={{ borderColor: `#${player.ProfileColor}` }}
                       alt="UserDiscordAvatar"
                       src={`https://cdn.discordapp.com/avatars/${player.DiscordUserId}/${player.DiscordAvatarId}.webp?size=64`}
                     ></img>
-                    <span style={{color: `#${player.ProfileColor}`}}>{player.Username}</span>
+                    <span style={{ color: `#${player.ProfileColor}` }}>
+                      {player.Username}
+                    </span>
                   </li>
                 );
               })}
