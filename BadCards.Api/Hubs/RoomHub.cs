@@ -218,13 +218,18 @@ public class RoomHub : Hub
         }
     }
 
-    public async Task StartGame()
+    public async Task<bool> StartGame()
     {
         Room room = GetRoom(GetUserId());
 
         if(room.Creator.UserId != GetUserId())
         {
-            return;
+            return false;
+        }
+
+        if(room.Players.Count <= 1)
+        {
+            return false;
         }
 
         room.StartGame(cardService.GetRandomBlackCard());
@@ -251,6 +256,8 @@ public class RoomHub : Hub
 
             await Clients.Client(player.ConnectionId).SendAsync("OnStartGame", JsonSerializer.Serialize(startEvent));
         }
+
+        return true;
     }
 
     /// <summary>

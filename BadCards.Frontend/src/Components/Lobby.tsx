@@ -39,11 +39,13 @@ export const Lobby = () => {
   const code = searchParams.get("code");
 
   const StateStartGame = () => {
-    hubConnection.send("StartGame");
+    const response = hubConnection.invoke("StartGame");
+    if(!response){
+      console.error("<StartGameResponse> Need more players");
+    }
   };
 
   const OnUserDisconnect = (discordUserId: any) => {
-    console.log(discordUserId)
     setRound((prev) => {
       if (!prev) {
         return prev;
@@ -149,8 +151,11 @@ export const Lobby = () => {
   };
 
   const OnStartGame = (e: string) => {
-    console.log(JSON.parse(e));
-    setRound(JSON.parse(e));
+    const round = JSON.parse(e) as Round;
+    round.IsWaitingForJudge = false;
+    round.IsWaitingForNextRound = false;
+    round.SelectedCards = []
+    setRound(round);
   };
 
   if (typeof round !== "undefined") {
