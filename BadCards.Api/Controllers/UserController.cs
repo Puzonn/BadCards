@@ -27,15 +27,10 @@ public class UserController : Controller
         tokenService = _tokenService;   
     }
 
-    [HttpPost("/user/set-language")]
+    [HttpPatch("/user/set-language")]
     public async Task<ActionResult> SetLanguagePreference([FromBody] string language)
     {
-        if (string.IsNullOrEmpty(language))
-        {
-            return BadRequest("Language dose not exist");
-        }
-
-        if(!AvailableLanguages.Contains(language))
+        if(!AvailableLanguages.Contains(language) || string.IsNullOrEmpty(language))
         {
             return BadRequest("Language dose not exist");
         }
@@ -91,6 +86,7 @@ public class UserController : Controller
         if (difference.TotalDays >= 1)
         {
             user.ProfileColor = GetRandomProfileColor();
+            user.LastProfileColorChange = DateTime.UtcNow;
 
             dbContext.Update(user);
 
@@ -103,7 +99,7 @@ public class UserController : Controller
             return Ok(user.ProfileColor);
         }
 
-        return BadRequest($"You have to wait {(TimeSpan.FromDays(1) - difference).Hours} hours to chanage color");
+        return BadRequest($"You have to wait {24-(TimeSpan.FromDays(1) - difference).Hours} hours to chanage color");
     }
 
     private string GetRandomProfileColor()

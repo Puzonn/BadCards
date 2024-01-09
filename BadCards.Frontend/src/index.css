@@ -19,9 +19,9 @@ body {
 input[type="text"],
 input[type="password"],
 input[type="submit"],
-button {
-  font-family: "Silkscreen", sans-serif;
+button, select {
   border-radius: 8px;
+  font-family: "Silkscreen", sans-serif;
   box-sizing: border-box;
 }
 

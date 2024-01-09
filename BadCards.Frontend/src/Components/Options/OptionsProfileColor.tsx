@@ -34,7 +34,7 @@ export const OptionsProfileColor = () => {
         </>
       )}
       {state === "NONE" && (
-        <button onClick={ChangeChangeProfileColor}>Change Color</button>
+        <button className="options-gradient" onClick={ChangeChangeProfileColor}>Randomize Color</button>
       )}
       {state === "ROLLING" && (
         <>

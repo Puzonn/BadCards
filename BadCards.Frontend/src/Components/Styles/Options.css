@@ -1,14 +1,13 @@
 .options-container {
   color: white;
-  margin: 25px 0 0 0;
-  display: flex;
-  justify-content: center;
+  margin: auto;
+  width: 800px;
 }
 
 @media only screen and (max-width: 768px) {
-    .options-profile {
-        width: 100vw;
-    }
+  .options-profile {
+    width: 100vw;
+  }
 }
 
 .options-profile h1 {
@@ -18,7 +17,6 @@
 .options-profile {
   text-align: center;
   background-color: var(--sec-default);
-  width: 40vw;
 }
 
 .options-profile h3 {
@@ -34,4 +32,40 @@
   height: 30px;
   font-size: medium;
   border: none;
+}
+
+.options-profile select {
+  outline: none;
+  border: 1px solid var(--sec-default);
+  border-radius: 0;
+  height: 30px;
+  width: 100px;
+}
+
+.options-gradient {
+  width: 80vw;
+  height: 200px;
+  border-radius: 5px;
+  background: linear-gradient(in hsl longer hue 45deg, red 0 0);
+}
+
+.options-container ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.options-container li {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.options-container li span {
+  font-size: medium;
+  cursor: pointer;
+}
+
+.options-container li span:hover {
+  cursor: pointer;
+  border-bottom: 1px solid white;
 }

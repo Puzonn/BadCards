@@ -3,6 +3,10 @@
     "age-verification": "Mam 16 lat lub więcej i zgadzam się przestrzegać wytycznych dotyczących treści na stronie internetowej.",
     "signin-with-discord": "Zaloguj się za pomocą Discord"
   },
+  "options": {
+    "profile": "Profil",
+    "change-language": "Zmień Język"
+  },
   "about": {
     "how-to-play": "Jak grać",
     "how-to-play-note": "BadCards jest łatwa do grania, ale niekończąco rozrywkowa. W każdej rundzie wyznaczony Czar Kart losuje kartę czarną zawierającą zdanie lub frazę do uzupełnienia pustego miejsca. Pozostali gracze wybierają z swojej ręki karty białe, z których każda zawiera słowo lub frazę, aby uzupełnić puste miejsce na karcie czarnej. Czar Kart anonimowo czyta wszystkie propozycje, a najśmieszniejsza lub najbardziej szokująca kombinacja wygrywa rundę!",
