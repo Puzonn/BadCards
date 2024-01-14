@@ -6,6 +6,7 @@ public sealed class TokenValidationResponse
     public string? Username { get; set; }
     public string? AvatarId { get; set; }
     public string? DiscordId { get; set; }
+    public string? Role { get; set; }
     public string? ProfileColor { get; set; }
     public long? UserId { get; set; }   
     public bool Success { get; set; }

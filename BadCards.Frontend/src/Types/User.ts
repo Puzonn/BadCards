@@ -4,4 +4,5 @@ export interface User {
   ProfileColor: string;
   DiscordId: string;
   Lang: string;
+  Role: "User" | "Guest" | "Admin";
 }

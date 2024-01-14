@@ -27,6 +27,13 @@ public class GameController : ControllerBase
     public async Task<ActionResult<ApiRoom>> CreateGame([FromBody] string? password)
     {
         var identity = (ClaimsIdentity)HttpContext.User!.Identity!;
+        var role = identity.FindFirst(ClaimTypes.Role).Value;
+
+        if(string.IsNullOrEmpty(role) || role == UserRoles.Guest) 
+        {
+            return BadRequest("User have to be atleast DiscordUser");
+        }
+
         UserDb user = await dbContext.Users.Where(x => x.Id == uint.Parse(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value.ToString())).SingleAsync();
 
         if (RoomHub.HasLobby(user.Id, out Room? room))

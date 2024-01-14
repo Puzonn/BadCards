@@ -8,6 +8,7 @@ using System.Text;
 using BadCards.Api.Models.Database;
 using BadCards.Api.Models.Api;
 using System.Security.Principal;
+using BadCards.Api.Models;
 
 namespace BadCards.Api.Services;
 
@@ -57,10 +58,37 @@ public class TokenService : ITokenService
         var claims = new[]
         {
               new Claim(ClaimTypes.Name, user.Username!),
+              new Claim(ClaimTypes.Role, UserRoles.User),
               new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
               new Claim("DiscordUserId", user.DiscordId.ToString()),
               new Claim("ProfileColor", user.ProfileColor),
               new Claim("DiscordAvatarId", user.AvatarId == null ? string.Empty : user.AvatarId),
+              new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
+
+        var token = new JwtSecurityToken(JwtIssuer,
+            JwtAudience,
+            claims,
+            expires: DateTime.Now.AddMinutes(5),
+            signingCredentials: credentials);
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+
+    public string GenerateAccessTokenGuest()
+    {
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtKey));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
+        {
+              new Claim(ClaimTypes.Name, $"Guest {Random.Shared.Next(0, 10000)}"),
+              new Claim(ClaimTypes.Role, UserRoles.Guest),
+              new Claim(ClaimTypes.NameIdentifier, Random.Shared.Next(0, int.MaxValue).ToString()),
+              new Claim("DiscordUserId", string.Empty),
+              new Claim("ProfileColor", "FFFFFF"),
+              new Claim("DiscordAvatarId", string.Empty),
               new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
@@ -96,14 +124,19 @@ public class TokenService : ITokenService
                 var avatarId = claimsPrincipal.FindFirst("DiscordAvatarId")?.Value;
                 var discordId = claimsPrincipal.FindFirst("DiscordUserId")?.Value;
                 var profileColor = claimsPrincipal.FindFirst("ProfileColor")?.Value;
+                var role = claimsPrincipal.FindFirst(ClaimTypes.Role)?.Value;
                 var date = DateTime.Now;
-                var userId = long.Parse(claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+                var claimUserId = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                long userId;
+
+                long.TryParse(claimUserId, out userId);
 
                 TokenValidationResponse response = new()
                 {
                     Username = username,
                     ProfileColor = profileColor,  
                     AvatarId = avatarId,
+                    Role = role,
                     DiscordId = discordId!.ToString(),
                     Success = true,
                     UserId = userId

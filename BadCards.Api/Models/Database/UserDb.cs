@@ -12,6 +12,7 @@ public class UserDb
     public ulong DiscordId { get; set; }
     public string Username { get; set; }
     public string RefreshToken { get; set; }
+    public string Role { get; set; }
     public string? AvatarId { get; set; }
     public string LanguagePreference { get; set; }    
     public string ProfileColor { get; set; }   

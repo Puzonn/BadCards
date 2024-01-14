@@ -1,7 +1,8 @@
 {
   "login": {
     "age-verification": "Mam 16 lat lub więcej i zgadzam się przestrzegać wytycznych dotyczących treści na stronie internetowej.",
-    "signin-with-discord": "Zaloguj się za pomocą Discord"
+    "signin-with-discord": "Zaloguj się za pomocą Discord",
+    "signin-guest": "Kontynuuj jako Gość"
   },
   "options": {
     "profile": "Profil",

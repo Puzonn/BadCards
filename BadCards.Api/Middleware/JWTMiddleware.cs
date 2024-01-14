@@ -34,8 +34,6 @@ public class JWTMiddleware : IMiddleware
         {
             await next(context);
 
-            logger.LogInformation("Awaiting next");
-
             return;
         }
 
@@ -60,6 +58,22 @@ public class JWTMiddleware : IMiddleware
                 {
                     ClaimsPrincipal expiredClaims = tokenService.GetPrincipalFromExpiredToken(token);
 
+                    string role = expiredClaims.FindFirstValue(ClaimTypes.Role)!;
+
+                    if(role == UserRoles.Guest)
+                    {
+                        var newAccessToken = tokenService.GenerateAccessTokenGuest();
+                        var newRefreshToken = tokenService.GenerateRefreshToken();
+
+                        context.Response.Cookies.Append("Bearer", newAccessToken, StaticCookiesOptions.AuthCookieOption);
+                        context.Response.Cookies.Append("Refresh", newRefreshToken, StaticCookiesOptions.RefreshTokenOption);
+                        context.Response.Cookies.Append("LanguagePreference", "en", StaticCookiesOptions.MiscCookieOption);
+
+                        context.Items["Bearer"] = newAccessToken;
+
+                        await next(context);
+                    }
+
                     long userId = long.Parse(expiredClaims.FindFirst(ClaimTypes.NameIdentifier)!.Value);
                     UserDb? user = await dbContext.Users.FindAsync(userId);
 
@@ -76,6 +90,8 @@ public class JWTMiddleware : IMiddleware
                         context.Response.Cookies.Append("Bearer", newAccessToken, StaticCookiesOptions.AuthCookieOption);
                         context.Response.Cookies.Append("Refresh", newRefreshToken, StaticCookiesOptions.RefreshTokenOption);
                         context.Response.Cookies.Append("LanguagePreference", user.LanguagePreference, StaticCookiesOptions.MiscCookieOption);
+
+                        context.Items["Bearer"] = newAccessToken;
 
                         await next(context);
                     }

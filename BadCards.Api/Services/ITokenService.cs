@@ -8,6 +8,7 @@ public interface ITokenService
 {
     public string GenerateRefreshToken();
     public string GenerateAccessToken(UserDb user);
+    public string GenerateAccessTokenGuest();
     public TokenValidationResponse Validate(string? token);
     public ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
 }

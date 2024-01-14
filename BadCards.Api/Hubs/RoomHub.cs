@@ -10,6 +10,7 @@ using BadCards.Api.Database;
 using BadCards.Api.Models.Hub;
 using BadCards.Api.Models.Database;
 using BadCards.Api.Models.Hub.Events;
+using BadCards.Api.Migrations;
 
 namespace BadCards.Api.Hubs;
 
@@ -82,14 +83,102 @@ public class RoomHub : Hub
         return base.OnConnectedAsync();
     }
 
+    public async Task JoinAsGuest(string lobbyCode, long userId, ClaimsIdentity identity)
+    {
+        string username = identity.FindFirst(ClaimTypes.Name)!.Value;
+
+        Room? room;
+
+        if ((room = rooms.Find(x => x.RoomCode == lobbyCode)) == null)
+        {
+            /* Guests cannot create new games */
+            Context.Abort();
+
+            return;
+        }
+
+        /* Create new player on join */
+        if (room.Players.Find(x => x.UserId == userId) == null)
+        {
+            Player player = new Player(Context.ConnectionId, username, (uint)userId);
+
+            room.Players.Add(player);
+        }
+        else
+        {
+            /* Update connectionId on reconnect to game */
+            Player reconnectedPlayer = room.Players.Find(x => x.UserId == userId)!;
+            reconnectedPlayer.ConnectionId = Context.ConnectionId;
+            reconnectedPlayer.IsActive = true;
+        }
+
+        IEnumerable<ApiPlayer> lobbyPlayers = room.Players.Select(x => x.ToApiPlayer());
+
+        foreach (var player in room.Players)
+        {
+            if (!room.GameStarted)
+            {
+                OnJoinEvent onJoinEvent = new OnJoinEvent()
+                {
+                    HasSelected = false,
+                    AnswerCount = room.RequiredAnswerCount,
+                    IsWaitingForNextRound = false,
+                    IsWaitingForJudge = false,
+                    IsJudge = false,
+                    SelectedCards = new SelectedCard[0],
+                    Players = lobbyPlayers,
+                    WhiteCards = new Card[0],
+                    BlackCard = Card.Empty,
+                    JudgeUsername = string.Empty,
+                    GameStarted = room.GameStarted,
+                    RoomCode = room.RoomCode,
+                    IsCreator = player.UserId == room.Creator.UserId
+                };
+
+                await Clients.Client(player.ConnectionId).SendAsync("OnJoinEvent", JsonSerializer.Serialize(onJoinEvent));
+            }
+            else
+            {
+                Card translatedBlackCard = new Card(room.BlackCardId, true, cardService.GetCardTranslation(room.BlackCardId, player.Locale), 0);
+
+                OnJoinEvent onJoinEvent = new OnJoinEvent()
+                {
+                    AnswerCount = room.RequiredAnswerCount,
+                    HasSelected = player.HasSelectedRequired,
+                    IsWaitingForNextRound = room.IsWaitingForNextRound,
+                    IsWaitingForJudge = room.IsWaitingForJudge,
+                    IsJudge = room.Judge == player,
+                    SelectedCards = room.GetSelectedCards(),
+                    Players = lobbyPlayers,
+                    WhiteCards = player.WhiteCards,
+                    BlackCard = translatedBlackCard,
+                    JudgeUsername = room.Judge?.Username,
+                    GameStarted = room.GameStarted,
+                    RoomCode = room.RoomCode,
+                    IsCreator = player.UserId == room.Creator.UserId
+                };
+
+                await Clients.Client(player.ConnectionId).SendAsync("OnJoinEvent", JsonSerializer.Serialize(onJoinEvent));
+            }
+        }
+    }
+
     public async Task Join(string lobbyCode)
     {
         try
         {
             var identity = (ClaimsIdentity)Context.User!.Identity!;
-            var userId = uint.Parse(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            uint userId = uint.Parse(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            string role = identity.FindFirst(ClaimTypes.Role).Value!;
+            
+            if(role == UserRoles.Guest)
+            {
+                await JoinAsGuest(lobbyCode, userId, identity);
 
-            UserDb user = await dbContext.Users.Where(x=>x.Id == userId).FirstOrDefaultAsync();
+                return;
+            }
+
+            UserDb user = await dbContext.Users.Where(x => x.Id == userId).FirstOrDefaultAsync();
 
             Room? room;
 
@@ -119,6 +208,7 @@ public class RoomHub : Hub
             }
             else
             {
+                /* Create new player on join */
                 if (room.Players.Find(x => x.UserId == userId) == null)
                 {
                     Player player = new Player(Context.ConnectionId, user);
@@ -127,13 +217,14 @@ public class RoomHub : Hub
                 }
                 else
                 {
+                    /* Update connectionId on reconnect to game */
                     Player reconnectedPlayer = room.Players.Find(x => x.UserId == userId)!;
                     reconnectedPlayer.ConnectionId = Context.ConnectionId;
                     reconnectedPlayer.IsActive = true;
                 }
             }
 
-            IEnumerable<ApiPlayer> lobbyPlayers = room.Players.Select(x=> x.ToApiPlayer());
+            IEnumerable<ApiPlayer> lobbyPlayers = room.Players.Select(x => x.ToApiPlayer());
 
             foreach (var player in room.Players)
             {

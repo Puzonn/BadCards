@@ -61,11 +61,16 @@ export const NavBar = () => {
                 Logout
               </p>
             </div>
-            <img
-              style={{ borderColor: `#${auth.User?.ProfileColor}` }}
-              alt="user_discord_avatar"
-              src={`https://cdn.discordapp.com/avatars/${auth.User?.DiscordId}/${auth.User?.AvatarId}.webp?size=64`}
-            ></img>
+            {auth.User?.Role === "User" && (
+              <img
+                style={{ borderColor: `#${auth.User?.ProfileColor}` }}
+                alt="user_discord_avatar"
+                src={`https://cdn.discordapp.com/avatars/${auth.User?.DiscordId}/${auth.User?.AvatarId}.webp?size=64`}
+              ></img>
+            )}
+            {auth.User?.Role === "Guest" && (
+              <div className="nav-guest-avatar"> </div>
+            )}
           </div>
         )}
       </div>

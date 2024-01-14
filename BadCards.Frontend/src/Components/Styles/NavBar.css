@@ -12,6 +12,12 @@ nav {
   vertical-align: middle;
 }
 
+.nav-guest-avatar { 
+  width: 40px;
+  height: 40px;
+  background-color: white;
+}
+
 nav a {
   margin: 0 0 0 30px;
   text-decoration: none;

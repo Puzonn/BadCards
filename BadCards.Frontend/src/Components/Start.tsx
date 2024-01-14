@@ -19,9 +19,22 @@ export const Start = () => {
     axios.defaults.withCredentials = true;
   }, []);
 
-  const HandleLogin = (e: any) => {
-    e.preventDefault();
+  const HandleGuest = async () => {
+    if (!guidelineAccepeted) {
+      return;
+    }
 
+    await axios
+      .post(`${Config.default.ApiUrl}/auth/guest`)
+      .then((response) => {
+        if (response.status === 200) {
+          window.location.reload();
+        }
+      })
+      .catch(() => {});
+  };
+
+  const HandleLogin = () => {
     if (!guidelineAccepeted) {
       return;
     }
@@ -56,7 +69,7 @@ export const Start = () => {
   };
 
   const HandleCreate = async (password: string) => {
-    (async function () {
+    try {
       await axios
         .post(
           `${Config.default.ApiUrl}/game/create`,
@@ -71,7 +84,7 @@ export const Start = () => {
           const response = res.data as Room;
           HandleJoin(response.LobbyCode, undefined);
         });
-    })();
+    } catch (x) {}
   };
 
   const HandleJoinClick = (provider: FormEvent) => {
@@ -167,9 +180,20 @@ export const Start = () => {
         </div>
       )}
       {!auth.IsLoggedIn && tabBarIndex !== "ABOUT" && (
-        <form onSubmit={HandleLogin}>
-          <div className="auth-discord-signup">
-            <button type="submit">{t("login.signin-with-discord")}</button>
+        <>
+          <div>
+            <button
+              onClick={HandleLogin}
+              className="auth-discord-signup"
+              type="submit"
+            >
+              {t("login.signin-with-discord")}
+            </button>
+            <h3>Or</h3>
+            <button onClick={HandleGuest} className="auth-guest" type="submit">
+              {t("login.signin-guest")}
+            </button>
+            <p>Guests cannot create games</p>
           </div>
           <div className="auth-signup-warning">
             <label>
@@ -185,7 +209,7 @@ export const Start = () => {
               {t("login.age-verification")}
             </label>
           </div>
-        </form>
+        </>
       )}
       <hr style={{ color: "#191A21", width: "60%" }}></hr>
     </div>

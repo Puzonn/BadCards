@@ -13,6 +13,7 @@ public class Player
     public int Points { get; set; } = 0;
     public uint UserId { get; }
     public bool IsActive { get; set; } = true;
+    public bool IsGuest = false;
     public bool HasSelectedRequired { get; set; }  
     public List<Card> WhiteCards { get; private set; } = new List<Card>(0);
     public List<Card> SelectedCards { get; set; } = new List<Card>(3);
@@ -26,6 +27,18 @@ public class Player
         ConnectionId = connectionId;
         Username = user.Username;
         Locale = user.LanguagePreference;
+    }
+
+    /* Reserved for guests */
+    public Player(string connectionId, string username, uint userId)
+    {
+        UserId = userId;
+        ConnectionId = connectionId;
+        Username = username;
+        Locale = "en";
+        IsGuest = true;
+        ProfileColor = string.Empty;
+        DiscordAvatarId = string.Empty;
     }
 
     public void SetCards(IEnumerable<Card> cards)

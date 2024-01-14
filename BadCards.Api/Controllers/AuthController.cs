@@ -1,4 +1,5 @@
 ﻿using BadCards.Api.Database;
+using BadCards.Api.Migrations;
 using BadCards.Api.Models;
 using BadCards.Api.Models.Api;
 using BadCards.Api.Models.Api.Auth;
@@ -26,7 +27,7 @@ public class AuthController : Controller
 
     [AllowAnonymous]
     [HttpPost("/auth/discord")]
-    public async Task<ActionResult> SignIn([FromBody] OAuth2CallbackModel auth)
+    public async Task<ActionResult> SignInDiscord([FromBody] OAuth2CallbackModel auth)
     {
         DiscordUser? discordUser = await FetchDiscordUser(auth.Access_token);
 
@@ -45,6 +46,7 @@ public class AuthController : Controller
                 ProfileColor = GetRandomProfileColor(),
                 DiscordId = discordUser.DiscordId,
                 AvatarId = discordUser.AvatarId,
+                Role = UserRoles.User,
                 Username = discordUser.Username,
                 RefreshToken = refreshToken,
                 LanguagePreference = "en",
@@ -72,6 +74,21 @@ public class AuthController : Controller
         Response.Cookies.Append("Bearer", token, StaticCookiesOptions.AuthCookieOption);
         Response.Cookies.Append("Refresh", refreshToken, StaticCookiesOptions.RefreshTokenOption);
         Response.Cookies.Append("LanguagePreference", user.LanguagePreference, StaticCookiesOptions.MiscCookieOption);
+
+        return Ok();
+    }
+
+    [AllowAnonymous]
+    [HttpPost("/auth/guest")]
+    public ActionResult SignInGuest()
+    {
+        var refreshToken = tokenService.GenerateRefreshToken();
+
+        var token = tokenService.GenerateAccessTokenGuest();
+
+        Response.Cookies.Append("Bearer", token, StaticCookiesOptions.AuthCookieOption);
+        Response.Cookies.Append("Refresh", refreshToken, StaticCookiesOptions.RefreshTokenOption);
+        Response.Cookies.Append("LanguagePreference", "en", StaticCookiesOptions.MiscCookieOption);
 
         return Ok();
     }

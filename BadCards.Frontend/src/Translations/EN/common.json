@@ -1,7 +1,8 @@
 {
   "login": {
     "age-verification": "I am 16 years of age or older and I agree to comply with the content guidelines on the website.",
-    "signin-with-discord": "Sign in using Discord"
+    "signin-with-discord": "Sign in using Discord",
+    "signin-guest": "Continue as Guest"
   },
   "options": {
     "profile": "Profile",
