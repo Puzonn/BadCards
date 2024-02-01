@@ -78,7 +78,7 @@ public class GameController : ControllerBase
 
         if (room is null)
         {
-            return BadRequest();
+            return BadRequest("Lobby dose not exist");
         }
 
         if (!string.IsNullOrEmpty(room.Password))

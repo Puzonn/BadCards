@@ -31,13 +31,12 @@ export interface ISelectedWhiteCard extends IWhiteCardUI {
   ShowUsername: boolean;
   IsSelected: boolean;
   IsWaitingForNextRound: boolean;
-  
   HandleAnswerIndexClick: (index: number) => void;
 }
 
 export type Round = {
   HasSelectedRequired: boolean;
-  RoomCode: string;
+  LobbyCode: string;
   AnswerCount: number;
   Players: Player[];
   GameStarted: boolean;
@@ -49,7 +48,6 @@ export type Round = {
   WhiteCards: IWhiteCardUI[];
   BlackCard: Card;
   SelectedCards: ISelectedWhiteCard[] | undefined;
-
   StateNextRound: () => void;
   StateSelectCard: (cardId: number) => void;
   StateStartGame: () => void;
@@ -59,7 +57,7 @@ export type OnJudgeSelectCardEvent = {
   SelectedCardId: number;
   TotalVotes: number;
   SufficientVotes: number;
-}
+};
 
 export type FormattedBlackCardContent = {
   FormattedContent: string;

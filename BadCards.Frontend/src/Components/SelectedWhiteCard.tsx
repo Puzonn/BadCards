@@ -31,23 +31,24 @@ export const SelectedWhiteCardUI = (card: ISelectedWhiteCard) => {
       }}
     >
       <div className="white-card-answer-selections">
-        {Array(card.AnswerCount)
-          .fill(undefined)
-          .map((c, index) => {
-            return (
-              <div
-                key={`selected_card_${index}`}
-                onClick={(e) => HandleAnswerIndexClick(e, index)}
-                className={`white-card-answer-selection ${
-                  index == card.AnswerSelectedIndex
-                    ? "white-card-answer-selected"
-                    : ""
-                }`}
-              >
-                <span>{index}</span>
-              </div>
-            );
-          })}
+        {card.AnswerCount >= 2 &&
+          Array(card.AnswerCount)
+            .fill(undefined)
+            .map((c, index) => {
+              return (
+                <div
+                  key={`selected_card_${index}`}
+                  onClick={(e) => HandleAnswerIndexClick(e, index)}
+                  className={`white-card-answer-selection ${
+                    index == card.AnswerSelectedIndex
+                      ? "white-card-answer-selected"
+                      : ""
+                  }`}
+                >
+                  <span>{index}</span>
+                </div>
+              );
+            })}
       </div>
       <div className="white-card-question">
         <div>{card.ShowContent && <p>{card.Content}</p>}</div>

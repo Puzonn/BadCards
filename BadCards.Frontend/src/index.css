@@ -14,22 +14,32 @@
 }
 
 body {
+  --bs-primary: var(--bg-default);
+  --bs-secondary: var(--sec-default);
+  --bs-primary-hover: rgba(13, 14, 17, 0.3);
+
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: "PixelifySans", sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--bg-default);
 }
 
-input[type="text"],
-input[type="password"],
-input[type="submit"],
-button, select {
-  border-radius: 8px;
-  font-family: "PixelifySans", sans-serif;
-  box-sizing: border-box;
+button {
+  color: white !important;
+  display: unset;
 }
 
-button {
-  cursor: pointer;
+.start-tabs button {
+  background-color: var(--bs-primary-hover) !important;
+  border: 0px !important;
+  border-bottom: 1px solid white !important; 
+}
+
+.start-tabs button.disabled {
+  color: grey !important;
+}
+
+.start-tabs button.active {
+  background-color: var(--bs-secondary) !important;
 }

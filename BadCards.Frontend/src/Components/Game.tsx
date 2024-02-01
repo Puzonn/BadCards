@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { Leaderboard } from "./Leaderboard";
 import { SelectedCardsContainer } from "./SelectedCardsContiner";
 import { useEffect, useState } from "react";
+import { Lobby } from "./Lobby";
 
 export const Game = ({
   BlackCard,
@@ -21,7 +22,7 @@ export const Game = ({
   IsJudge,
   IsCreator,
   AnswerCount,
-  RoomCode,
+  LobbyCode,
   StateStartGame,
   StateSelectCard,
   StateNextRound,
@@ -29,64 +30,35 @@ export const Game = ({
   const { t } = useTranslation();
   const [codeCopied, setCodeCopied] = useState(false);
 
+  useEffect(() => {
+    const cpy = Players[0];
+    const arr = [];
+
+    for (let i = 0; i < 5; i++) {
+      arr.push(cpy);
+    }
+    Players = arr;
+
+    setCodeCopied(true);
+  });
+
   const CopyCode = async () => {
-    await navigator.clipboard.writeText(RoomCode);
+    await navigator.clipboard.writeText(LobbyCode);
     setCodeCopied(!codeCopied);
     setTimeout(() => {
       setCodeCopied(false);
     }, 2500);
   };
 
-  const StartGame = () => {
-    StateStartGame();
-  };
 
   if (!GameStarted) {
     return (
-      <div className="room-lobby-container">
-        <div className="room-lobby">
-          <h2 onClick={CopyCode} className="room-lobby-code">
-            Lobby Code: {RoomCode}
-          </h2>
-          <span
-            className={`${
-              codeCopied
-                ? "room-lobby-copy-note"
-                : "room-lobby-copy-note_hidden"
-            }`}
-          >
-            Lobby Code copied to clipboard
-          </span>
-        </div>
-        <div className="room-lobby-opt">
-          <div>
-            <span className="room-lobby-left">Players: </span>
-            <ul className="room-players-cell">
-              {Players.map((player, index) => {
-                return (
-                  <li key={`room-lobby-player-cell-${player.Username}`}>
-                    <img
-                      style={{ borderColor: `#${player.ProfileColor}` }}
-                      alt="UserDiscordAvatar"
-                      src={`https://cdn.discordapp.com/avatars/${player.DiscordUserId}/${player.DiscordAvatarId}.webp?size=64`}
-                    ></img>
-                    <span style={{ color: `#${player.ProfileColor}` }}>
-                      {player.Username}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-          <div className="room-lobby-game_options"></div>
-        </div>
-
-        {IsCreator && (
-          <button onClick={StartGame} className="room-lobby-start">
-            Start
-          </button>
-        )}
-      </div>
+      <Lobby
+        isCreator={IsCreator}
+        startGameHandler={StateStartGame}
+        lobbyCode={LobbyCode}
+        players={Players}
+      ></Lobby>
     );
   }
 
@@ -101,7 +73,7 @@ export const Game = ({
         <div className="cards-selected-container">
           {SelectedCards && (
             <SelectedCardsContainer
-              RoomCode={RoomCode}
+              LobbyCode={LobbyCode}
               AnswerCount={AnswerCount}
               Players={Players}
               GameStarted={true}

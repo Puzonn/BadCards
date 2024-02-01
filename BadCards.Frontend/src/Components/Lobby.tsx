@@ -1,187 +1,95 @@
-import {
-  HttpTransportType,
-  HubConnection,
-  HubConnectionBuilder,
-  LogLevel,
-} from "@microsoft/signalr";
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { Round } from "../Types/Card";
-import { Game } from "./Game";
-import { Config } from "../Config";
-import useConnection from "../Hooks/useConnection";
+import { Button, Tab, Tabs } from "react-bootstrap";
+import { Player } from "../Types/Card";
 
-export const Lobby = () => {
-  const hubConnection = useConnection(
-    `${Config.default.ApiUrl}/services/roomHub`,
-    () => {
-      hubConnection.onclose(() => {
-        window.location.href = "/dashboard";
-      });
-      hubConnection.on("OnJoinEvent", (e) => {
-        const round = JSON.parse(e) as Round;
-        round.WhiteCards.forEach((x) => (x.StateCardClicked = StateSelectCard));
-        setRound(round);
-      });
-      hubConnection.on("OnStartGame", OnStartGame);
-      hubConnection.on("OnStateSelectCard", OnStateSelectCard);
-      hubConnection.on("OnJudgeSelectCard", OnJudgeSelectCard);
-      hubConnection.on("OnUserDisconnect", OnUserDisconnect);
-      hubConnection.on("DebugLog", (e) => console.log(e));
-      hubConnection.on("OnNextRound", OnNextRound);
-      hubConnection.send("Join", `${code}`);
-    }
+export const Lobby = ({
+  players,
+  lobbyCode,
+  isCreator,
+  startGameHandler,
+}: {
+  players: Player[];
+  lobbyCode: string;
+  isCreator: boolean;
+  startGameHandler: () => void;
+}) => {
+  return (
+    <div
+      style={{ backgroundColor: "var(--bs-primary)" }}
+      className="d-flex align-items-center justify-content-center"
+    >
+      <div
+        className="text-center text-white"
+        style={{
+          marginTop: "40px",
+          paddingBottom: "8px",
+          backgroundColor: "var(--bs-secondary)",
+          borderRadius: "10px",
+          width: "70vw",
+        }}
+      >
+        <Tabs defaultActiveKey="players" className="mb-2 w-100 start-tabs" fill>
+          <Tab eventKey="players" title="Players">
+            <div>
+              <span
+                style={{
+                  fontWeight: "bold",
+                  borderRadius: "6px",
+                  padding: "5px 10px 5px 10px",
+                  marginBottom: "10px",
+                  backgroundColor: "var(--bs-primary-hover)",
+                }}
+              >
+                {lobbyCode}
+              </span>
+              {players.map((player, index) => {
+                return (
+                  <div
+                    key={`lobby_player_${index}`}
+                    style={{
+                      fontWeight: "600",
+                      marginTop: "5px",
+                      display: "flex",
+                      padding: "10px 10px 10px 10px",
+                      marginLeft: "1%",
+                      marginRight: "1%",
+                      borderRadius: "10px",
+                      backgroundColor: "var(--bs-primary-hover)",
+                    }}
+                  >
+                    <div className="text-start">
+                      <img
+                        className="rounded-circle"
+                        style={{ width: "45px" }}
+                        src={`https://cdn.discordapp.com/avatars/${player.DiscordUserId}/${player.DiscordAvatarId}.webp?size=64`}
+                      ></img>
+                      <span
+                        style={{ color: `#${player.ProfileColor}` }}
+                        className="fs-4 m-2"
+                      >
+                        {player.Username}
+                      </span>
+                    </div>
+                    {isCreator && (
+                      <Button
+                        variant="danger"
+                        style={{ margin: "auto 0 auto auto" }}
+                      >
+                        Kick
+                      </Button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <Button onClick={startGameHandler} className="m-2">
+              Start Game
+            </Button>
+          </Tab>
+          <Tab eventKey="rules" title="Rules"></Tab>
+          <Tab eventKey="decks" title="Decks"></Tab>
+        </Tabs>
+      </div>
+    </div>
   );
-
-  const [round, setRound] = useState<Round>();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const code = searchParams.get("code");
-
-  const StateStartGame = () => {
-    const response = hubConnection.invoke("StartGame");
-    if(!response){
-      console.error("<StartGameResponse> Need more players");
-    }
-  };
-
-  const OnUserDisconnect = (discordUserId: any) => {
-    setRound((prev) => {
-      if (!prev) {
-        return prev;
-      }
-
-      const players = [...prev.Players].filter(
-        (x) => x.DiscordUserId != discordUserId as string
-      );
-      return { ...prev, Players: players };
-    });
-  };
-
-  const OnStateSelectCard = (event: any) => {
-    const response = JSON.parse(event);
-    setRound((prev) => {
-      if (!prev) {
-        return prev;
-      }
-
-      const updatedRound: Round = {
-        ...prev,
-        HasSelectedRequired: response.HasSelectedRequired,
-        SelectedCards: response.SelectedCards,
-        IsWaitingForJudge: response.IsWaitingForJudge,
-      };
-
-      if (response.ShouldDeleteCard) {
-        const index = prev.WhiteCards.findIndex(
-          (x) => x.CardId === response.SelectDeletedCard
-        );
-        prev.WhiteCards = prev.WhiteCards.splice(index, 1);
-      }
-
-      return updatedRound;
-    });
-  };
-
-  const StateSelectCard = async (cardId: number) => {
-    if (typeof hubConnection === "undefined") {
-      return;
-    }
-    await hubConnection.send("SelectCard", cardId);
-  };
-
-  const StateNextRound = async () => {
-    if (typeof hubConnection === "undefined") {
-      return;
-    }
-    await hubConnection.send("VoteNextRound");
-  };
-
-  const OnNextRound = (event: any) => {
-    setRound((prev) => {
-      const parsedEvent = JSON.parse(event);
-
-      if (!prev) {
-        return prev;
-      }
-
-      const updatedRound: Round = {
-        ...prev,
-        Players: parsedEvent.Players,
-        HasSelectedRequired: false,
-        BlackCard: parsedEvent.BlackCard,
-        IsJudge: parsedEvent.IsJudge,
-        JudgeUsername: parsedEvent.JudgeUsername,
-        WhiteCards: parsedEvent.WhiteCards,
-        IsWaitingForJudge: false,
-        IsWaitingForNextRound: false,
-        SelectedCards: [],
-      };
-
-      return updatedRound;
-    });
-  };
-
-  const OnJudgeSelectCard = (e: any) => {
-    console.log("Judge selected card, changing <Round>", e);
-    setRound((prev) => {
-      if (prev) {
-        const updated: Round = {
-          ...prev,
-          IsWaitingForNextRound: true,
-        };
-
-        const index = prev.SelectedCards?.findIndex(
-          (x) => x.CardId === JSON.parse(e).SelectedCardId
-        );
-
-        if (
-          index !== -1 &&
-          typeof index !== "undefined" &&
-          typeof prev.SelectedCards !== "undefined"
-        ) {
-          updated.SelectedCards!.at(index)!.IsSelectedByJudge = true;
-        }
-
-        console.log("Updated at JudgeSelectCard ", updated);
-        return updated;
-      }
-      return prev;
-    });
-  };
-
-  const OnStartGame = (e: string) => {
-    const round = JSON.parse(e) as Round;
-    round.IsWaitingForJudge = false;
-    round.IsWaitingForNextRound = false;
-    round.SelectedCards = []
-    setRound(round);
-  };
-
-  if (typeof round !== "undefined") {
-    return (
-      <>
-        <Game
-          AnswerCount={round.AnswerCount}
-          HasSelectedRequired={round.HasSelectedRequired}
-          IsWaitingForNextRound={round.IsWaitingForNextRound}
-          IsWaitingForJudge={round.IsWaitingForJudge}
-          JudgeUsername={round.JudgeUsername}
-          IsJudge={round.IsJudge}
-          SelectedCards={round.SelectedCards}
-          RoomCode={round.RoomCode}
-          IsCreator={round.IsCreator}
-          GameStarted={round.GameStarted}
-          Players={round.Players}
-          WhiteCards={round.WhiteCards}
-          BlackCard={round.BlackCard}
-          StateNextRound={StateNextRound}
-          StateSelectCard={StateSelectCard}
-          StateStartGame={StateStartGame}
-        />
-      </>
-    );
-  }
-
-  return <></>;
 };
