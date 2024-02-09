@@ -174,6 +174,10 @@ export const Start = () => {
                           >
                             <Form.Label>* Lobby Code</Form.Label>
                             <Form.Control
+                              style={{
+                                backgroundColor: "#212529",
+                                color: "white",
+                              }}
                               maxLength={10}
                               className="w-75"
                               onChange={(e) => {

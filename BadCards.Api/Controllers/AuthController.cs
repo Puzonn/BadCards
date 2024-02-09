@@ -1,5 +1,4 @@
 ﻿using BadCards.Api.Database;
-using BadCards.Api.Migrations;
 using BadCards.Api.Models;
 using BadCards.Api.Models.Api;
 using BadCards.Api.Models.Api.Auth;

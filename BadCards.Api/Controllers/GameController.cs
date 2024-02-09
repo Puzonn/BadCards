@@ -27,7 +27,8 @@ public class GameController : ControllerBase
     public async Task<ActionResult<ApiRoom>> CreateGame([FromBody] string? password)
     {
         var identity = (ClaimsIdentity)HttpContext.User!.Identity!;
-        var role = identity.FindFirst(ClaimTypes.Role).Value;
+        var role = identity.FindFirst(ClaimTypes.Role)!.Value;
+        var userId = uint.Parse(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
         if(string.IsNullOrEmpty(role) || role == UserRoles.Guest) 
         {
@@ -40,7 +41,7 @@ public class GameController : ControllerBase
         {            
             if(room is null)
             {
-                throw new InvalidOperationException("exroom");
+                throw new InvalidOperationException("Room was null");
             }
 
             RoomDb dbRoom = dbContext.Rooms.Where(x => x.RoomId == room.RoomId).Single();
@@ -48,21 +49,20 @@ public class GameController : ControllerBase
             return Ok(JsonSerializer.Serialize(dbRoom.ToApi()));
         }
 
-        ApiRoom apiRoom = new ApiRoom()
+        RoomDb roomDb = new RoomDb()
         {
+            ListedPlayers = new List<ListedPlayer>
+            {
+                new ListedPlayer(userId, isOwner: true, isGuest: false, isBlacklisted: false)
+            },
+            OwnerId = user.Id,
             GameStarted = false,
             LobbyCode = GenerateRandomString(8),
             PlayersCount = 0,
-        };
-
-        RoomDb roomDb = new RoomDb()
-        {
-            OwnerId = user.Id,
-            GameStarted = false,
-            LobbyCode = apiRoom.LobbyCode,
-            PlayersCount = apiRoom.PlayersCount,
             Password = password,
         };
+
+        ApiRoom apiRoom = roomDb.ToApi();
 
         await dbContext.Rooms.AddAsync(roomDb);
         await dbContext.SaveChangesAsync();
@@ -78,7 +78,7 @@ public class GameController : ControllerBase
 
         if (room is null)
         {
-            return BadRequest("Lobby dose not exist");
+            return BadRequest("Lobby does not exist");
         }
 
         if (!string.IsNullOrEmpty(room.Password))

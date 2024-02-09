@@ -56,6 +56,37 @@ namespace BadCards.Api.Migrations
                     b.ToTable("CardTranslations");
                 });
 
+            modelBuilder.Entity("BadCards.Api.Models.Database.ListedPlayer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Blacklisted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsGuest")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsOwner")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("LobbyId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint?>("RoomDbRoomId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<uint>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomDbRoomId");
+
+                    b.ToTable("ListedPlayer");
+                });
+
             modelBuilder.Entity("BadCards.Api.Models.Database.RoomDb", b =>
                 {
                     b.Property<uint>("RoomId")
@@ -121,6 +152,18 @@ namespace BadCards.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("BadCards.Api.Models.Database.ListedPlayer", b =>
+                {
+                    b.HasOne("BadCards.Api.Models.Database.RoomDb", null)
+                        .WithMany("ListedPlayers")
+                        .HasForeignKey("RoomDbRoomId");
+                });
+
+            modelBuilder.Entity("BadCards.Api.Models.Database.RoomDb", b =>
+                {
+                    b.Navigation("ListedPlayers");
                 });
 #pragma warning restore 612, 618
         }

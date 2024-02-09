@@ -17,11 +17,12 @@ body {
   --bs-primary: var(--bg-default);
   --bs-secondary: var(--sec-default);
   --bs-primary-hover: rgba(13, 14, 17, 0.3);
+  --bs-body-bg: var(var(--bs-primary));
 
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--bg-default);
 }
 
@@ -33,7 +34,7 @@ button {
 .start-tabs button {
   background-color: var(--bs-primary-hover) !important;
   border: 0px !important;
-  border-bottom: 1px solid white !important; 
+  border-bottom: 1px solid white !important;
 }
 
 .start-tabs button.disabled {

@@ -508,10 +508,8 @@ public class RoomHub : Hub
 
     public static bool HasLobby(long userId, out Room? room)
     {
-        Room exroom = rooms.Find(x => x.Players.Find(x => x.UserId == userId) != null);
+        room = rooms.Find(x => x.Players.Find(x => x.UserId == userId) != null);
 
-        room = exroom;
-
-        return exroom is not null;
+        return room is not null;
     }
 }
