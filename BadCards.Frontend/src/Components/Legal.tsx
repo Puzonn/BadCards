@@ -3,7 +3,7 @@ import "./Styles/Legal.css";
 
 export const Legal = () => {
   return (
-    <div className="legal-container">
+    <div className="legal-container m-4">
       <p>
         This work is based on content from Cards Against Humanity
         <a href="https://www.cardsagainsthumanity.com/">

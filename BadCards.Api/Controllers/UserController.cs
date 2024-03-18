@@ -62,6 +62,29 @@ public class UserController : Controller
         return Ok();
     }
 
+    [HttpGet("/user/game-pending-status")]
+    public async Task<ActionResult<bool>> HasUserActiveGameSession()
+    {
+
+        string token = (string)HttpContext.Items["Bearer"]!;
+
+        TokenValidationResponse response = tokenService.Validate(token);
+
+        if (!response.Success)
+        {
+            return BadRequest("Token Validation Error");
+        }
+
+        UserDb? user = await dbContext.Users.FindAsync(response.UserId);
+
+        if(user is null)
+        {
+            return BadRequest("Users not found");
+        }
+
+        return user.HasActivePendingSession;
+    }
+
     [HttpPatch("/user/randomize-avatar-color")]
     public async Task<ActionResult<string>> RandomizeProfileCOlor()
     {

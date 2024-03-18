@@ -9,6 +9,7 @@ public class UserDb
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id { get; set; }
+    public bool HasActivePendingSession { get; set; }
     public ulong DiscordId { get; set; }
     public string Username { get; set; }
     public string RefreshToken { get; set; }
@@ -17,4 +18,5 @@ public class UserDb
     public string LanguagePreference { get; set; }    
     public string ProfileColor { get; set; }   
     public DateTime LastProfileColorChange { get; set; }    
+    public DateTime JoinDate { get; set; }
 }

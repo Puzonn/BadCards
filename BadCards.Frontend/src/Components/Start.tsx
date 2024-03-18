@@ -8,15 +8,24 @@ import { Room } from "../Types/LobbyManagerTypes";
 import { Config } from "../Config";
 import { Button, Col, Container, Row, Tab, Tabs } from "react-bootstrap";
 import { LoginForm } from "./LoginForm";
+import { CreateTab } from "../StartTabs/CreateTab";
+import { JoinTab } from "../StartTabs/JoinTab";
 
 export const Start = () => {
   const [error, setError] = useState("");
-  const auth = useContext(AuthContext);
-  const { t } = useTranslation();
   const [inputFields, setInputFields] = useState({
     lobbyCode: "",
     password: "",
   });
+
+  useEffect(() => {
+    axios.defaults.withCredentials = true;
+    (async function () {
+      await axios.get(`${Config.default.ApiUrl}/user/game-pending-status`, {headers: {
+        'Content-Type': 'application/json'
+      }}  ).catch(() => {})
+    })();
+  }, [])
 
   const HandleJoin = async (
     lobbyCode: string | undefined,
@@ -42,24 +51,17 @@ export const Start = () => {
           window.location.href = `/lobby?code=${room.LobbyCode}`;
         })
         .catch((err) => {
-          setError("Lobby dose not exist, or password is incorrect");
+          setError("Lobby dose not exist, or password is incorrect.");
         });
     })();
   };
 
-  const HandleJoinClick = async (event: FormEvent) => {
-    event.preventDefault();
-
-    HandleJoin(inputFields.lobbyCode, inputFields.password);
-  };
-
-  const HandleCreateClick = async (event: FormEvent) => {
-    event.preventDefault();
+  const HandleCreate = async (password: string) => {
     try {
       await axios
         .post(
           `${Config.default.ApiUrl}/game/create`,
-          JSON.stringify(inputFields.password),
+          JSON.stringify(password),
           {
             headers: {
               "Content-Type": "application/json",
@@ -74,25 +76,21 @@ export const Start = () => {
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-center">
+    <div className="d-flex align-items-center text-white justify-content-center">
       <div id="start-tabs">
         <div
-          className="text-center text-white"
           style={{
             fontWeight: "600",
             marginTop: "40px",
             paddingBottom: "8px",
-            backgroundColor: "var(--bs-secondary)",
-            borderRadius: "10px",
-            width: "70vw",
+            width: "65vw",
           }}
         >
           <Tabs defaultActiveKey="join" className="mb-2 w-100 start-tabs" fill>
             <Tab
-              disabled={auth.User?.Role === "Guest"}
               eventKey="create"
               title={
-                <div className="d-flex justify-content-center ">
+                <div className="d-flex justify-content-center">
                   <svg
                     style={{ width: "15px", marginRight: "6px" }}
                     role="img"
@@ -106,39 +104,11 @@ export const Start = () => {
                       fill="currentColor"
                     ></path>
                   </svg>
-                  Create Game
+                  <span>Create Game</span>
                 </div>
               }
             >
-              <LoginForm></LoginForm>
-              {auth.IsFetched && auth.IsLoggedIn && (
-                <div className="text-start m-3">
-                  <Form onSubmit={HandleCreateClick}>
-                    <Form.Group controlId="create-lobby_password">
-                      <Form.Label>Lobby Password</Form.Label>
-                      <Form.Control
-                        className="w-75"
-                        maxLength={15}
-                        onChange={(e) => {
-                          setInputFields({
-                            ...inputFields,
-                            password: e.target.value,
-                          });
-                        }}
-                        type="password"
-                        placeholder="Lobby Password"
-                      />
-                    </Form.Group>
-                    <Button
-                      className="text-center border-0"
-                      style={{ marginTop: "15px" }}
-                      type="submit"
-                    >
-                      Create Game
-                    </Button>
-                  </Form>
-                </div>
-              )}
+              <CreateTab onSubmit={HandleCreate}></CreateTab>
             </Tab>
             <Tab
               eventKey="join"
@@ -157,76 +127,23 @@ export const Start = () => {
                       fill="currentColor"
                     ></path>
                   </svg>
-                  Join Game
+                  <span>Join Game</span>
                 </div>
               }
             >
-              <LoginForm></LoginForm>
-              <Container>
-                <Row>
-                  <Col md="9" xs="12" lg="8">
-                    {auth.IsFetched && auth.IsLoggedIn && (
-                      <div className=" text-start m-2">
-                        <Form onSubmit={HandleJoinClick}>
-                          <Form.Group
-                            className="mb-3"
-                            controlId="join-lobby_code"
-                          >
-                            <Form.Label>* Lobby Code</Form.Label>
-                            <Form.Control
-                              style={{
-                                backgroundColor: "#212529",
-                                color: "white",
-                              }}
-                              maxLength={10}
-                              className="w-75"
-                              onChange={(e) => {
-                                setInputFields({
-                                  ...inputFields,
-                                  lobbyCode: e.target.value,
-                                });
-                              }}
-                              required
-                              type="text"
-                              placeholder="Enter Lobby Code"
-                            />
-                          </Form.Group>
-                          <Form.Group controlId="join-lobby_password">
-                            <Form.Label>Lobby Password</Form.Label>
-                            <Form.Control
-                              maxLength={15}
-                              className="w-75"
-                              onChange={(e) => {
-                                setInputFields({
-                                  ...inputFields,
-                                  password: e.target.value,
-                                });
-                              }}
-                              type="password"
-                              placeholder="Lobby Password"
-                            />
-                          </Form.Group>
-                          <Button
-                            className="text-center border-0"
-                            style={{ marginTop: "15px" }}
-                            type="submit"
-                          >
-                            Join Game
-                          </Button>
-                        </Form>
-                      </div>
-                    )}
-                  </Col>
-                  {auth.IsFetched && auth.IsLoggedIn && (
-                    <Col className="d-flex align-items-center justify-content-center">
-                      <Button className="border-0">Join Random Game</Button>
-                    </Col>
-                  )}
-                </Row>
-              </Container>
+              <JoinTab error={error} onSubmit={HandleJoin}></JoinTab>
             </Tab>
-            <Tab eventKey="about" title="About">
-              todo
+            <Tab
+              eventKey="about"
+              title={
+                <div>
+                  <span>About</span>
+                </div>
+              }
+            >
+              <div className="custom-box text-white">
+                <span>todo</span>
+              </div>
             </Tab>
           </Tabs>
         </div>

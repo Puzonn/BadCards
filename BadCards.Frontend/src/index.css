@@ -1,6 +1,6 @@
 :root {
   --sec-default: hsl(223.64deg 12.94% 16.67%);
-  --bg-default: #131417;
+  --bg-default: #09090b;
 }
 
 @font-face {
@@ -14,10 +14,12 @@
 }
 
 body {
+  --bs-grey-light: #93939c;
+  --bs-grey-dark: #27272a;
   --bs-primary: var(--bg-default);
   --bs-secondary: var(--sec-default);
   --bs-primary-hover: rgba(13, 14, 17, 0.3);
-  --bs-body-bg: var(var(--bs-primary));
+  --bs-body-bg: var(--bs-primary);
 
   margin: 0;
   -webkit-font-smoothing: antialiased;
@@ -31,16 +33,54 @@ button {
   display: unset;
 }
 
-.start-tabs button {
-  background-color: var(--bs-primary-hover) !important;
+.nav-tabs {
+  border: 0 !important;
+}
+
+.nav-tabs button {
+  background-color: transparent !important;
   border: 0px !important;
-  border-bottom: 1px solid white !important;
 }
 
-.start-tabs button.disabled {
-  color: grey !important;
+.nav-tabs button.nav-link:not(.active) {
+  color: var(--bs-grey-light) !important;
 }
 
-.start-tabs button.active {
-  background-color: var(--bs-secondary) !important;
+.nav-tabs button.active > * > span {
+  padding: 4px 9px 4px 9px;
+  border-radius: 10px;
+  background-color: var(--bs-grey-dark) !important;
+}
+
+body {
+  background-color: var(--bg-default);
+  background-image: radial-gradient(
+      circle at center,
+      rgba(255, 255, 255, 0.005) 0,
+      rgba(255, 255, 255, 0.005) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to right, rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-attachment: fixed;
+}
+
+.tab-box {
+  border: 1px solid #5e5d5d;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: var(--bg-default);
+  -webkit-box-shadow: -7px 1px 13px -1px rgba(29, 29, 31, 1);
+  -moz-box-shadow: -7px 1px 13px -1px rgba(29, 29, 31, 1);
+  box-shadow: -7px 1px 13px -1px rgba(29, 29, 31, 1);
+}
+
+input::placeholder {
+  color: var(--bs-grey-light) !important;
+}
+
+input {
+  color: white !important;
+  border: 1px solid grey !important;
 }

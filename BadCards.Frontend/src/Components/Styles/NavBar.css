@@ -18,7 +18,7 @@
 }
 
 .nav-link:hover {
-  background-color: var(--bs-primary-hover);
+  background-color: var(--bs-grey-dark);
 }
 
 nav .nav-link {

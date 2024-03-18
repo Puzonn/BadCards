@@ -1,13 +1,3 @@
 .login-form_animation:hover {
   transform: scale(1.05) !important;
 }
-
-input::placeholder {
-  color: #8a8c8f !important;
-}
-
-input {
-  background-color: #212529 !important;
-  color: white !important;
-  border: 1px solid grey !important;
-}

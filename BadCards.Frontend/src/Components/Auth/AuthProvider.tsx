@@ -1,5 +1,5 @@
 import { AuthContext } from "../../Context/AuthContext";
-import { ReactNode, useState, useEffect, useContext } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { User } from "../../Types/User";
 import { AuthStatus } from "../../Types/Auth";
 import axios from "axios";
@@ -24,9 +24,12 @@ export const AuthProvider = ({ children }: IProps) => {
     await axios
       .get(`${Config.default.ApiUrl}/auth/@me`, {
         withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
       })
       .then((response) => {
-        SetAuth(response.data as User);
+        SetAuth(response.data);
       })
       .catch((er) => {
         SetAuth(undefined);

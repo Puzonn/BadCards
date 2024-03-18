@@ -126,6 +126,12 @@ namespace BadCards.Api.Migrations
                     b.Property<ulong>("DiscordId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("HasActivePendingSession")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("JoinDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("LanguagePreference")
                         .IsRequired()
                         .HasColumnType("TEXT");

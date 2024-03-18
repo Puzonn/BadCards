@@ -6,8 +6,12 @@
   font-size: large;
   position: relative;
   margin-bottom: 20px;
-  margin-right: 10px; 
+  margin-right: 10px;
   overflow: auto;
+  border-radius: 10px;
+  -webkit-box-shadow: -1px 8px 24px 0px rgba(66, 68, 90, 1);
+  -moz-box-shadow: -1px 8px 24px 0px rgba(66, 68, 90, 1);
+  box-shadow: -1px 8px 24px 0px rgba(66, 68, 90, 1);
   scrollbar-width: none;
 }
 
@@ -36,7 +40,7 @@
 }
 
 .white-card-question {
-  word-break:keep-all;
+  word-break: keep-all;
   width: 95%;
 }
 

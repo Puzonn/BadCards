@@ -1,14 +1,35 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Config } from "../../Config";
 import axios from "axios";
 import "../Styles/Options.css";
-import { AuthContext } from "../../Context/AuthContext";
 import { t } from "i18next";
 import i18n from "../../i18n";
 import Cookies from "js-cookie";
 
+interface ILanguage {
+  LanguageName: string;
+  LanguageIcon: string;
+}
+
 export const OptionsLanguageChange = () => {
   const [locale, setLocale] = useState("");
+  const [languageFlags, setLanguageFlag] = useState<{ [key: string]: any }>({});
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      languages.map((lang) => {
+        const img = require(`../../Assets/Flags/${lang.LanguageIcon}.png`);
+        console.log('loading: ',lang.LanguageName);
+        setLanguageFlag({ ...languages, [lang.LanguageIcon]: img });
+      });
+    };
+    fetchImage();
+  }, []);
+
+  const languages: ILanguage[] = [
+    { LanguageName: "Poland", LanguageIcon: "flag_poland" },
+    { LanguageName: "America", LanguageIcon: "flag_america" },
+  ];
 
   useEffect(() => {
     const locale = Cookies.get("LanguagePreference");
@@ -37,20 +58,14 @@ export const OptionsLanguageChange = () => {
     <>
       <h2>{t("options.change-language")}</h2>
       <ul className="options.change-language_list">
-        <li
-          onClick={(e) => {
-            ChangeLanguage("en");
-          }}
-        >
-          <span>English {locale === "en" ? "- Current" : ""}</span>
-        </li>
-        <li
-          onClick={(e) => {
-            ChangeLanguage("pl");
-          }}
-        >
-          <span>Polish {locale === "pl" ? "- Current" : ""}</span>
-        </li>
+        {languages.map((lang) => {
+          console.log('rendering: ', languageFlags[lang.LanguageIcon])
+          return (
+            <li key={`option_lang_${lang.LanguageName}`}>
+              <img style={{width: '30px'}} src={languageFlags[lang.LanguageIcon]}></img>
+            </li>
+          );
+        })}
       </ul>
     </>
   );

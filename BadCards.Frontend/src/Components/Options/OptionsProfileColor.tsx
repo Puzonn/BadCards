@@ -39,8 +39,8 @@ export const OptionsProfileColor = () => {
       {state === "ROLLING" && (
         <>
           <h2 className="">Congratulations !</h2>
-          <h2 style={{ color: `#${auth.User?.ProfileColor}` }}>
-            You rolled #{auth.User?.ProfileColor}
+          <h2 style={{ color: `#${auth.User?.profileColor}` }}>
+            You rolled #{auth.User?.profileColor}
           </h2>
         </>
       )}

@@ -17,7 +17,6 @@
 .options-profile {
   border-radius: 10px;
   text-align: center;
-  background-color: var(--sec-default);
 }
 
 .options-profile h3 {

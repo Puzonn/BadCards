@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Puzonne\\Desktop\\BadCards\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\badcards\\badcards.api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\badcards\\badcards.api\\models\\database\\userdb.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\models\\database\\userdb.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\Users\\Puzonne\\Desktop\\BadCards\\BadCards.Api\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "BadCards.Api\\Controllers\\AuthController.cs",
+              "ToolTip": "C:\\Users\\Puzonne\\Desktop\\BadCards\\BadCards.Api\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "BadCards.Api\\Controllers\\AuthController.cs",
+              "ViewState": "AQIAAB4AAAAAAAAAAAAAAC0AAAAyAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-18T10:27:26.012Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UserDb.cs",
+              "DocumentMoniker": "C:\\Users\\Puzonne\\Desktop\\BadCards\\BadCards.Api\\Models\\Database\\UserDb.cs",
+              "RelativeDocumentMoniker": "BadCards.Api\\Models\\Database\\UserDb.cs",
+              "ToolTip": "C:\\Users\\Puzonne\\Desktop\\BadCards\\BadCards.Api\\Models\\Database\\UserDb.cs",
+              "RelativeToolTip": "BadCards.Api\\Models\\Database\\UserDb.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAkAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-18T10:26:42.893Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

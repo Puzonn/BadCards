@@ -49,7 +49,8 @@ public class AuthController : Controller
                 Username = discordUser.Username,
                 RefreshToken = refreshToken,
                 LanguagePreference = "en",
-                LastProfileColorChange = DateTime.UtcNow
+                LastProfileColorChange = DateTime.UtcNow,
+                JoinDate = DateTime.UtcNow,
             };
 
             dbContext.Users.Add(user);
@@ -162,7 +163,7 @@ public class AuthController : Controller
 
         TokenValidationResponse response = tokenService.Validate(token);
 
-        return Ok(JsonSerializer.Serialize(response));
+        return Ok(response);
     }
 
     [Authorize]
