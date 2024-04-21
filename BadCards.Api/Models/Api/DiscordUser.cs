@@ -7,4 +7,5 @@ public class DiscordUser
     public string AvatarId { get; set; }
     public string Lang { get; set; }    
     public ulong DiscordId { get; set; }
+    public DateTime JoinDate { get; set; }
 }

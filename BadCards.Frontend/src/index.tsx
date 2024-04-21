@@ -11,7 +11,6 @@ import i18next from "i18next";
 import "./i18n";
 import { Legal } from "./Components/Legal";
 import { Config } from "./Config";
-import { Options } from "./Components/Options/Options";
 import { GameController } from "./Components/GameController";
 
 Config.default = new Config();
@@ -28,7 +27,6 @@ root.render(
         <Routes>
           <Route path="/" element={<Start />}></Route>
           <Route path="/legal" element={<Legal />}></Route>
-          <Route path="/options" element={<Options />}></Route>
           <Route path="/start" element={<Start />}></Route>
           <Route path="/auth/discord" element={<Auth />}></Route>
           <Route path="/lobby" element={<GameController />}></Route>

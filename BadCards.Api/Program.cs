@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
+const string CorsName = "_allowCors";
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSignalR();
@@ -16,9 +18,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy(CorsName, policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "https://localhost:3000", "https://puzonnsthings.pl")
+        policy.WithOrigins("http://localhost:3000", "https://localhost:3000", "https://puzonnsthings.pl", "https://api.puzonnsthings.pl")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
@@ -64,12 +66,11 @@ builder.Services.AddAuthorization();
 builder.Services.AddDbContext<BadCardsContext>();
 
 builder.Services.AddScoped<ICardService, CardService>();
+builder.Services.AddSingleton<CookieService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<JWTMiddleware>();
 
 var app = builder.Build();
-
-app.UseCors();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
@@ -78,6 +79,8 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseCors(CorsName);
 
 if (app.Environment.IsDevelopment())
 {

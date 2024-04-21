@@ -1,17 +1,17 @@
 import "./Styles/Start.css";
-import { FormEvent, useContext, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import Form from "react-bootstrap/Form";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../Context/AuthContext";
 import axios from "axios";
 import { Room } from "../Types/LobbyManagerTypes";
 import { Config } from "../Config";
-import { Button, Col, Container, Row, Tab, Tabs } from "react-bootstrap";
+import { Tab, Tabs } from "react-bootstrap";
 import { LoginForm } from "./LoginForm";
 import { CreateTab } from "../StartTabs/CreateTab";
 import { JoinTab } from "../StartTabs/JoinTab";
 
 export const Start = () => {
+  const auth = useContext(AuthContext)
+
   const [error, setError] = useState("");
   const [inputFields, setInputFields] = useState({
     lobbyCode: "",
@@ -19,6 +19,7 @@ export const Start = () => {
   });
 
   useEffect(() => {
+    return;
     axios.defaults.withCredentials = true;
     (async function () {
       await axios.get(`${Config.default.ApiUrl}/user/game-pending-status`, {headers: {
@@ -74,6 +75,10 @@ export const Start = () => {
         });
     } catch (x) {}
   };
+
+  if(auth.IsFetched && !auth.IsLoggedIn) { 
+    return <LoginForm></LoginForm>
+  }
 
   return (
     <div className="d-flex align-items-center text-white justify-content-center">

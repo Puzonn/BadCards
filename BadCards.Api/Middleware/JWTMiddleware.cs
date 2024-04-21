@@ -13,9 +13,11 @@ public class JWTMiddleware : IMiddleware
     private readonly ITokenService tokenService;
     private readonly BadCardsContext dbContext;
     private readonly ILogger logger;
+    private readonly CookieService cookieService;
 
-    public JWTMiddleware(ITokenService _tokenService, BadCardsContext _dbContext, ILogger<JWTMiddleware> _logger)
+    public JWTMiddleware(CookieService _cookieService, ITokenService _tokenService, BadCardsContext _dbContext, ILogger<JWTMiddleware> _logger)
     {
+        cookieService = _cookieService;
         tokenService = _tokenService;
         dbContext = _dbContext;
         logger= _logger;
@@ -23,6 +25,7 @@ public class JWTMiddleware : IMiddleware
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
+        logger.LogInformation("startr");
         var endpoint = context.GetEndpoint();
 
         if(endpoint is null)
@@ -38,6 +41,8 @@ public class JWTMiddleware : IMiddleware
         }
 
         string token = context.Request.Cookies["Bearer"]!;
+
+        logger.LogInformation(token);
 
         var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -65,9 +70,9 @@ public class JWTMiddleware : IMiddleware
                         var newAccessToken = tokenService.GenerateAccessTokenGuest();
                         var newRefreshToken = tokenService.GenerateRefreshToken();
 
-                        context.Response.Cookies.Append("Bearer", newAccessToken, StaticCookiesOptions.AuthCookieOption);
-                        context.Response.Cookies.Append("Refresh", newRefreshToken, StaticCookiesOptions.RefreshTokenOption);
-                        context.Response.Cookies.Append("LanguagePreference", "en", StaticCookiesOptions.MiscCookieOption);
+                        context.Response.Cookies.Append("Bearer", newAccessToken, cookieService.AuthCookieOption);
+                        context.Response.Cookies.Append("Refresh", newRefreshToken, cookieService.RefreshTokenOption);
+                        context.Response.Cookies.Append("LanguagePreference", "en", cookieService.MiscCookieOption);
 
                         context.Items["Bearer"] = newAccessToken;
 
@@ -87,9 +92,9 @@ public class JWTMiddleware : IMiddleware
                         dbContext.Update(user);
                         await dbContext.SaveChangesAsync();
 
-                        context.Response.Cookies.Append("Bearer", newAccessToken, StaticCookiesOptions.AuthCookieOption);
-                        context.Response.Cookies.Append("Refresh", newRefreshToken, StaticCookiesOptions.RefreshTokenOption);
-                        context.Response.Cookies.Append("LanguagePreference", user.LanguagePreference, StaticCookiesOptions.MiscCookieOption);
+                        context.Response.Cookies.Append("Bearer", newAccessToken, cookieService.AuthCookieOption);
+                        context.Response.Cookies.Append("Refresh", newRefreshToken, cookieService.RefreshTokenOption);
+                        context.Response.Cookies.Append("LanguagePreference", user.LanguagePreference, cookieService.MiscCookieOption);
 
                         context.Items["Bearer"] = newAccessToken;
 

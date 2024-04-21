@@ -10,13 +10,10 @@ public sealed class TokenValidationResponse
     public string? ProfileColor { get; set; }
     public long? UserId { get; set; }   
     public bool Success { get; set; }
+    public DateTime? JoinDate { get; set; }
 
     public static readonly TokenValidationResponse Unsuccessful = new TokenValidationResponse()
     {
         Success = false,
-        Username = string.Empty,
-        AvatarId = string.Empty,
-        DiscordId = string.Empty,
-        ProfileColor = string.Empty,
     };
 }

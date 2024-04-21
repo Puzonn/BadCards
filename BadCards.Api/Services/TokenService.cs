@@ -52,7 +52,7 @@ public class TokenService : ITokenService
 
     public string GenerateAccessToken(UserDb user)
     {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtKey));
+         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
@@ -63,7 +63,8 @@ public class TokenService : ITokenService
               new Claim("DiscordUserId", user.DiscordId.ToString()),
               new Claim("ProfileColor", user.ProfileColor),
               new Claim("DiscordAvatarId", user.AvatarId == null ? string.Empty : user.AvatarId),
-              new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+              new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+              new Claim("JoinDate", user.JoinDate.ToString())
         };
 
         var token = new JwtSecurityToken(JwtIssuer,
@@ -74,7 +75,6 @@ public class TokenService : ITokenService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-
 
     public string GenerateAccessTokenGuest()
     {
@@ -124,6 +124,7 @@ public class TokenService : ITokenService
                 var avatarId = claimsPrincipal.FindFirst("DiscordAvatarId")?.Value;
                 var discordId = claimsPrincipal.FindFirst("DiscordUserId")?.Value;
                 var profileColor = claimsPrincipal.FindFirst("ProfileColor")?.Value;
+                var joinDate = claimsPrincipal.FindFirst("JoinDate")?.Value;
                 var role = claimsPrincipal.FindFirst(ClaimTypes.Role)?.Value;
                 var date = DateTime.Now;
                 var claimUserId = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -139,6 +140,7 @@ public class TokenService : ITokenService
                     Role = role,
                     DiscordId = discordId!.ToString(),
                     Success = true,
+                    JoinDate = DateTime.Parse(joinDate),
                     UserId = userId
                 };
 

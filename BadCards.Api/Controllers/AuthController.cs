@@ -17,9 +17,11 @@ public class AuthController : Controller
 {
     private readonly BadCardsContext dbContext;
     private readonly ITokenService tokenService;
+    private readonly CookieService cookieService;
 
-    public AuthController(BadCardsContext _dbContext, ITokenService _tokenService)
+    public AuthController(CookieService _cookieService, BadCardsContext _dbContext, ITokenService _tokenService)
     {
+        cookieService = _cookieService;
         tokenService = _tokenService;
         dbContext = _dbContext;
     }
@@ -71,9 +73,9 @@ public class AuthController : Controller
 
         var token = tokenService.GenerateAccessToken(user);
 
-        Response.Cookies.Append("Bearer", token, StaticCookiesOptions.AuthCookieOption);
-        Response.Cookies.Append("Refresh", refreshToken, StaticCookiesOptions.RefreshTokenOption);
-        Response.Cookies.Append("LanguagePreference", user.LanguagePreference, StaticCookiesOptions.MiscCookieOption);
+        Response.Cookies.Append("Bearer", token, cookieService.AuthCookieOption);
+        Response.Cookies.Append("Refresh", refreshToken, cookieService.RefreshTokenOption);
+        Response.Cookies.Append("LanguagePreference", user.LanguagePreference, cookieService.MiscCookieOption);
 
         return Ok();
     }
@@ -86,9 +88,9 @@ public class AuthController : Controller
 
         var token = tokenService.GenerateAccessTokenGuest();
 
-        Response.Cookies.Append("Bearer", token, StaticCookiesOptions.AuthCookieOption);
-        Response.Cookies.Append("Refresh", refreshToken, StaticCookiesOptions.RefreshTokenOption);
-        Response.Cookies.Append("LanguagePreference", "en", StaticCookiesOptions.MiscCookieOption);
+        Response.Cookies.Append("Bearer", token, cookieService.AuthCookieOption);
+        Response.Cookies.Append("Refresh", refreshToken, cookieService.RefreshTokenOption);
+        Response.Cookies.Append("LanguagePreference", "en", cookieService.MiscCookieOption);
 
         return Ok();
     }
@@ -159,7 +161,7 @@ public class AuthController : Controller
     [HttpGet("/auth/@me")]
     public ActionResult Validate()
     {
-        string token = (string)HttpContext.Items["Bearer"]!;
+         string token = (string)HttpContext.Items["Bearer"]!;
 
         TokenValidationResponse response = tokenService.Validate(token);
 
@@ -170,9 +172,9 @@ public class AuthController : Controller
     [HttpPost("/auth/revoke")]
     public async Task<ActionResult> Revoke()
     {
-        HttpContext.Response.Cookies.Delete("Bearer", StaticCookiesOptions.MiscCookieOption);
-        HttpContext.Response.Cookies.Delete("Refresh", StaticCookiesOptions.MiscCookieOption);
-        HttpContext.Response.Cookies.Delete("LanguagePreference", StaticCookiesOptions.MiscCookieOption);
+        HttpContext.Response.Cookies.Delete("Bearer", cookieService.MiscCookieOption);
+        HttpContext.Response.Cookies.Delete("Refresh", cookieService.MiscCookieOption);
+        HttpContext.Response.Cookies.Delete("LanguagePreference", cookieService.MiscCookieOption);
 
         string token = (string)HttpContext.Items["Bearer"]!;
 

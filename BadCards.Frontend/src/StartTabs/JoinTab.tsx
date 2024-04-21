@@ -14,10 +14,10 @@ import { AuthContext } from "../Context/AuthContext";
 
 export const JoinTab = ({
   onSubmit,
-  error
+  error,
 }: {
   onSubmit: (lobbyCode: string, password: string) => {};
-  error: string
+  error: string;
 }) => {
   const auth = useContext(AuthContext);
   const [password, setPassword] = useState<string>("");
@@ -26,67 +26,63 @@ export const JoinTab = ({
   const preSubmit = (event: FormEvent) => {
     event.preventDefault();
 
-    onSubmit(lobbyCode, password)
-  }
+    onSubmit(lobbyCode, password);
+  };
 
   return (
     <div className="tab-box text-center">
-      <LoginForm></LoginForm>
       <Container>
-        <Row>
-          <Col md="9" xs="12" lg="8">
-            {auth.IsFetched && auth.IsLoggedIn && (
-              <div className="text-start m-2">
-                <Form onSubmit={preSubmit}>
-                  <FormGroup className="mb-3" controlId="join-lobby_code">
-                    <FormLabel>Lobby Code</FormLabel>
-                    <FormControl
-                      style={{
-                        color: "white",
-                      }}
-                      maxLength={10}
-                      className="w-75"
-                      onChange={(e) => {
-                        setLobbyCode(e.target.value);
-                      }}
-                      required
-                      type="text"
-                      placeholder="Enter Lobby Code"
-                    />
-                  </FormGroup>
-                  <FormGroup controlId="join-lobby_password">
-                    <FormLabel>Lobby Password</FormLabel>
-                    <FormControl
-                      maxLength={15}
-                      className="w-75"
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                      }}
-                      type="password"
-                      placeholder="Lobby Password"
-                    />
-                  </FormGroup>
+        {auth.IsFetched && auth.IsLoggedIn && (
+          <div className="text-start m-2">
+            <Form onSubmit={preSubmit}>
+              <FormGroup className="mb-3" controlId="join-lobby_code">
+                <FormLabel>Lobby Code</FormLabel>
+                <FormControl
+                  style={{
+                    color: "white",
+                  }}
+                  maxLength={10}
+                  className="w-75"
+                  onChange={(e) => {
+                    setLobbyCode(e.target.value);
+                  }}
+                  required
+                  type="text"
+                  placeholder="Enter Lobby Code"
+                />
+              </FormGroup>
+              <FormGroup controlId="join-lobby_password">
+                <FormLabel>Lobby Password</FormLabel>
+                <div className="d-flex">
+                  <FormControl
+                    style={{ height: "40px" }}
+                    maxLength={15}
+                    className="w-75"
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
+                    type="password"
+                    placeholder="Lobby Password"
+                  />
                   <Button
                     variant="light"
                     className="text-center text-black border-0"
-                    style={{ marginTop: "15px", fontWeight: 600}}
+                    style={{
+                      marginLeft: "10px",
+                      fontWeight: 600,
+                      height: "40px",
+                    }}
                     type="submit"
                   >
                     Join Game
                   </Button>
-                </Form>
-              </div>
-            )}
-          </Col>
-          {auth.IsFetched && auth.IsLoggedIn && (
-            <Col className="d-flex align-items-center justify-content-center">
-              <Button className="border-0">Join Random Game</Button>
-            </Col>
-          )}
-        </Row>
-        {error && 
-           <span>{error}</span>
-        }
+                  <Button style={{marginLeft: "10px"}} className="border-0">Join Random Game</Button>
+                </div>
+              </FormGroup>
+            </Form>
+          </div>
+        )}
+        {error && <span>{error}</span>}
       </Container>
     </div>
   );

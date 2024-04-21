@@ -1,5 +1,4 @@
 import { FormEvent, useContext, useState } from "react";
-import { LoginForm } from "../Components/LoginForm";
 import { AuthContext } from "../Context/AuthContext";
 import {
   Button,
@@ -22,41 +21,45 @@ export const CreateTab = ({
     onSubmit(password);
   };
 
-  if(auth.User?.role === 'Guest'){
+  if (auth.User?.role === "Guest") {
     return (
       <div className="tab-box text-xl-center">
         <span>You have to be atleast Discord User to create lobby </span>
       </div>
-    )
+    );
   }
 
   return (
     <div className="tab-box text-center">
-      <LoginForm></LoginForm>
       {auth.IsFetched && auth.IsLoggedIn && (
         <>
           <div className="text-start m-3">
             <Form onSubmit={preSubmit}>
               <FormGroup controlId="create-lobby_password">
                 <FormLabel>Lobby Password</FormLabel>
-                <FormControl
-                  className="w-75"
-                  maxLength={15}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                  }}
-                  type="password"
-                  placeholder="Lobby Password"
-                />
+                <div className="d-flex">
+                  <FormControl
+                    style={{
+                      height: "40px",
+                      width: "88%"
+                    }}
+                    maxLength={15}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
+                    type="password"
+                    placeholder="Lobby Password"
+                  />
+                  <Button
+                    className="text-black"
+                    variant="light"
+                    style={{ fontWeight: 600, marginLeft: '10px', height: "40px" }}
+                    type="submit"
+                  >
+                    Create Game
+                  </Button>
+                </div>
               </FormGroup>
-              <Button
-                className="text-black"
-                variant="light"
-                style={{ marginTop: "15px", fontWeight: 600 }}
-                type="submit"
-              >
-                Create Game
-              </Button>
             </Form>
           </div>
         </>
