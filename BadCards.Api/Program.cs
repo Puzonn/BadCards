@@ -62,13 +62,12 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
-
 builder.Services.AddDbContext<BadCardsContext>();
 
-builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddSingleton<CookieService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<JWTMiddleware>();
+builder.Services.AddScoped<ICardService, CardService>();
 
 var app = builder.Build();
 

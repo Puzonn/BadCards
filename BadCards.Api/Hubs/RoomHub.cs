@@ -10,6 +10,7 @@ using BadCards.Api.Database;
 using BadCards.Api.Models.Hub;
 using BadCards.Api.Models.Database;
 using BadCards.Api.Models.Hub.Events;
+using SQLitePCL;
 
 namespace BadCards.Api.Hubs;
 
@@ -21,9 +22,11 @@ public class RoomHub : Hub
     private readonly BadCardsContext dbContext;
     private readonly ITokenService tokenService;
     private readonly ICardService cardService;
+    private readonly ILogger<RoomHub> logger;
 
-    public RoomHub(BadCardsContext _dbContext, ITokenService _tokenService, ICardService _cardService)
+    public RoomHub(BadCardsContext _dbContext, ITokenService _tokenService, ICardService _cardService, ILogger<RoomHub> _logger)
     {
+        logger = _logger;
         tokenService = _tokenService;
         dbContext = _dbContext;
         cardService = _cardService;
@@ -61,7 +64,7 @@ public class RoomHub : Hub
         }
     }
 
-    public override Task OnConnectedAsync()
+    public override async Task OnConnectedAsync()
     {
         string? bearer = (string?)Context.GetHttpContext().Items["Bearer"];
 
@@ -69,7 +72,7 @@ public class RoomHub : Hub
         {
             Context.Abort();
 
-            return Task.CompletedTask;
+            return;
         }
 
         TokenValidationResponse response = tokenService.Validate(bearer);
@@ -79,7 +82,18 @@ public class RoomHub : Hub
             Context.Abort();
         }
 
-        return base.OnConnectedAsync();
+        await ValidateDatabse();
+
+        await base.OnConnectedAsync();
+    }
+
+    public async Task ValidateDatabse()
+    {
+        if(dbContext.Cards.Count() == 0)
+        {
+            logger.LogInformation("Cards are empty, filling database");
+            await cardService.FillDatabaseCards();
+        }
     }
 
     public async Task JoinAsGuest(string lobbyCode, long userId, ClaimsIdentity identity)
@@ -319,7 +333,7 @@ public class RoomHub : Hub
 
         if(room.Players.Count <= 1)
         {
-            return false;
+           // return false;
         }
 
         room.StartGame(cardService.GetRandomBlackCard());
@@ -334,7 +348,7 @@ public class RoomHub : Hub
             {
                 AnswerCount = room.RequiredAnswerCount,
                 IsJudge = player == room.Judge,
-                WhiteCards = GetRandomWhiteCards(10, player.UserId, player.Locale),
+                WhiteCards = await GetRandomWhiteCards(10, player.UserId, player.Locale),
                 Players = lobbyPlayers,
                 BlackCard = translatedBlackCard,
                 RoomCode = room.RoomCode,
@@ -374,7 +388,7 @@ public class RoomHub : Hub
 
             if(playerCards.Count != 10)
             {
-                playerCards.AddRange(GetRandomWhiteCards(10 - playerCards.Count, lobbyPlayer.UserId, lobbyPlayer.Locale));
+                playerCards.AddRange(await GetRandomWhiteCards(10 - playerCards.Count, lobbyPlayer.UserId, lobbyPlayer.Locale));
             }
 
             Card newBlackCard = new Card(room.BlackCardId, true, cardService.GetCardTranslation(room.BlackCardId, lobbyPlayer.Locale), 0);
@@ -492,14 +506,14 @@ public class RoomHub : Hub
         return room.Players.Find(x => x.UserId == userId)!;
     }
 
-    public IEnumerable<Card> GetRandomWhiteCards(int count, uint userId, string locale)
+    public async Task<IEnumerable<Card>> GetRandomWhiteCards(int count, uint userId, string locale)
     {
         if (count <= 0)
         {
             return new List<Card>();
         }
 
-        var cards = cardService.GetRandomWhiteCards(count).Select(card => new Card(card.CardId,
+        var cards = (await cardService.GetRandomWhiteCards(count)).Select(card => new Card(card.CardId,
             false, cardService.GetCardTranslation(card.CardId, locale), userId)).ToList();
 
         return cards;

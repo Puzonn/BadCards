@@ -19,7 +19,7 @@ export const Auth = () => {
     try {
       const response= axios.post('https://discord.com/api/oauth2/token', params)
       .then(e => {
-        const { access_token,token_type}= e.data
+        const { access_token,token_type} = e.data
 
         const authJson = {
           Access_token: access_token,

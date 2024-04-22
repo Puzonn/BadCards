@@ -14,11 +14,11 @@ public class CookieService
     {
         if (environment.IsDevelopment())
         {
-            _domain = "api.puzonnsthings.pl";
+            _domain = "localhost";
         }
         else
         {
-            _domain = "localhost";
+            _domain = "api.puzonnsthings.pl";
         }
 
         AuthCookieOption = new CookieOptions()

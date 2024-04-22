@@ -25,7 +25,6 @@ public class JWTMiddleware : IMiddleware
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        logger.LogInformation("startr");
         var endpoint = context.GetEndpoint();
 
         if(endpoint is null)
@@ -41,8 +40,6 @@ public class JWTMiddleware : IMiddleware
         }
 
         string token = context.Request.Cookies["Bearer"]!;
-
-        logger.LogInformation(token);
 
         var tokenHandler = new JwtSecurityTokenHandler();
 

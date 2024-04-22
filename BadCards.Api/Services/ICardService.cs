@@ -7,6 +7,6 @@ public interface ICardService
 {
     public Task<CardServiceResponse> FillDatabaseCards();
     public CardDb GetRandomBlackCard();
-    public IEnumerable<CardDb> GetRandomWhiteCards(int count);
+    public Task<IEnumerable<CardDb>> GetRandomWhiteCards(int count);
     public string GetCardTranslation(uint cardId, string locale);
 }

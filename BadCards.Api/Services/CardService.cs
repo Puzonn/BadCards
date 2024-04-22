@@ -9,10 +9,12 @@ namespace BadCards.Api.Services;
 public class CardService : ICardService
 {
     private readonly BadCardsContext dbContext;
+    private readonly ILogger logger;
 
-    public CardService(BadCardsContext _dbContext)
+    public CardService(BadCardsContext _dbContext, ILogger<CardService> _logger)
     {
         dbContext = _dbContext;
+        logger = _logger;
     }
 
     public async Task<CardServiceResponse> FillDatabaseCards()
@@ -106,8 +108,13 @@ public class CardService : ICardService
         return dbContext.Cards.Where(x => x.IsBlack).OrderBy(x => EF.Functions.Random()).First();
     }
 
-    public IEnumerable<CardDb> GetRandomWhiteCards(int count)
+    public async Task<IEnumerable<CardDb>> GetRandomWhiteCards(int count)
     {
+        if(dbContext.Cards.Count() == 0)
+        {
+            await FillDatabaseCards();
+        }
+
         return dbContext.Cards.Where(x => !x.IsBlack).OrderBy(x => EF.Functions.Random()).Take(count);
     }
 

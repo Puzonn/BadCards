@@ -18,11 +18,13 @@ public class UserController : Controller
         "en"
     };
 
+    private readonly CookieService cookieService;
     private readonly BadCardsContext dbContext;
     private readonly ITokenService tokenService;
 
-    public UserController(BadCardsContext _dbContext, ITokenService _tokenService)
+    public UserController(CookieService _cookieService, BadCardsContext _dbContext, ITokenService _tokenService)
     {
+        cookieService = _cookieService;
         dbContext = _dbContext;
         tokenService = _tokenService;   
     }
@@ -57,7 +59,7 @@ public class UserController : Controller
 
         await dbContext.SaveChangesAsync();
 
-        HttpContext.Response.Cookies.Append("LanguagePreference", language, StaticCookiesOptions.MiscCookieOption);
+        HttpContext.Response.Cookies.Append("LanguagePreference", language, cookieService.MiscCookieOption);
 
         return Ok();
     }
@@ -117,7 +119,7 @@ public class UserController : Controller
 
             string newToken = tokenService.GenerateAccessToken(user);
 
-            HttpContext.Response.Cookies.Append("Bearer", newToken, StaticCookiesOptions.AuthCookieOption);
+            HttpContext.Response.Cookies.Append("Bearer", newToken, cookieService.AuthCookieOption);
 
             return Ok(user.ProfileColor);
         }

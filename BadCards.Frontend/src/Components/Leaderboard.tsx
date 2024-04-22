@@ -5,18 +5,22 @@ export const Leaderboard = ({ Players }: ILeaderboard) => {
   const sortedPlayers = Players.sort((a, b) => b.Points - a.Points);
 
   return (
-    <div className="leaderboard-container">
+    <div className="leaderboard-container text-white">
       <span className="leaderboard-name">Leaderboard</span>
       <ul>
         {sortedPlayers.map((player, index) => {
           return (
             <li key={`leaderboard_${index}`}>
               <img
-                style={{ borderColor: `#${player.ProfileColor}` }}
+                style={{
+                  borderColor: "white",
+                  borderWidth: "2px",
+                  borderRadius: "20px",
+                }}
                 alt="UserDiscordAvatar"
-                src={`https://cdn.discordapp.com/avatars/${player.DiscordUserId}/${player.DiscordAvatarId}.webp?size=64`}
+                src={`https://cdn.discordapp.com/avatars/${player.DiscordUserId}/${player.DiscordAvatarId}.webp?size=64 `}
               ></img>
-              <span className="leaderboard-name" style={{ color: `#${player.ProfileColor}` }}>
+              <span className="leaderboard-name">
                 {player.Username.substring(0, 12)}
               </span>
               <span className="leaderboard-points">{player.Points}</span>

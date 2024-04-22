@@ -65,8 +65,8 @@ export const NavBar = () => {
             <div
               style={{ left: "93%" }}
               className="position-absolute top-0 end-0 p-1"
-            >
-              {auth.IsLoggedIn && (
+            > 
+              {false && auth.IsLoggedIn && (
                 <>
                   <div className="d-flex navbar-user-profile">
                     <img
