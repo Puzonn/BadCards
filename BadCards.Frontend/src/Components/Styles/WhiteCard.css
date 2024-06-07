@@ -6,13 +6,12 @@
   font-size: large;
   position: relative;
   margin-bottom: 20px;
-  margin-right: 10px;
   overflow: auto;
-  border-radius: 10px;
-  -webkit-box-shadow: -1px 8px 24px 0px rgba(66, 68, 90, 1);
-  -moz-box-shadow: -1px 8px 24px 0px rgba(66, 68, 90, 1);
-  box-shadow: -1px 8px 24px 0px rgba(66, 68, 90, 1);
-  scrollbar-width: none;
+  box-shadow: 0 4px 10px -10px;
+  box-shadow: 5.6px 5.2px 5.2px hsla(0, 2%, 68%, 0.45);
+
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .white-card-bottom-rounded {

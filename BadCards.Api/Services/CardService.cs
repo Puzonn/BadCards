@@ -9,7 +9,7 @@ namespace BadCards.Api.Services;
 public class CardService : ICardService
 {
     private readonly BadCardsContext dbContext;
-    private readonly ILogger logger;
+    private readonly ILogger<CardService> logger;
 
     public CardService(BadCardsContext _dbContext, ILogger<CardService> _logger)
     {

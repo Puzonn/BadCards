@@ -12,6 +12,7 @@ import "./i18n";
 import { Legal } from "./Components/Legal";
 import { Config } from "./Config";
 import { GameController } from "./Components/GameController";
+import { ConnectionProvider } from "./Components/ConnectionProvider/ConnectionProvider";
 
 Config.default = new Config();
 
@@ -21,18 +22,20 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <AuthProvider>
-    <Trans i18n={i18next}>
-      <NavBar></NavBar>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Start />}></Route>
-          <Route path="/legal" element={<Legal />}></Route>
-          <Route path="/start" element={<Start />}></Route>
-          <Route path="/auth/discord" element={<Auth />}></Route>
-          <Route path="/lobby" element={<GameController />}></Route>
-          <Route path="*" element={<Start />}></Route>
-        </Routes>
-      </BrowserRouter>
-    </Trans>
+    <ConnectionProvider>
+      <Trans i18n={i18next}>
+        <NavBar />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Start />}></Route>
+            <Route path="/legal" element={<Legal />}></Route>
+            <Route path="/lobby" element={<GameController />}></Route>
+            <Route path="/start" element={<Start />}></Route>
+            <Route path="/auth/discord" element={<Auth />}></Route>
+            <Route path="*" element={<Start />}></Route>
+          </Routes>
+        </BrowserRouter>
+      </Trans>
+    </ConnectionProvider>
   </AuthProvider>
 );

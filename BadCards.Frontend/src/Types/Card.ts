@@ -12,6 +12,7 @@ export interface IWhiteCardUI extends Card {
 }
 
 export type Player = {
+  IsBot: boolean;
   Username: string;
   Points: number;
   DiscordAvatarId: string;

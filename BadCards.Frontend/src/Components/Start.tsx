@@ -13,10 +13,6 @@ export const Start = () => {
   const auth = useContext(AuthContext);
 
   const [error, setError] = useState("");
-  const [inputFields, setInputFields] = useState({
-    lobbyCode: "",
-    password: "",
-  });
 
   useEffect(() => {
     axios.defaults.withCredentials = true;

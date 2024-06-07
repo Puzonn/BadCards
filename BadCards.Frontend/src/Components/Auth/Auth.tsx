@@ -17,7 +17,7 @@ export const Auth = () => {
     params.append('redirect_uri',  Config.default.RedirectUri);
 
     try {
-      const response= axios.post('https://discord.com/api/oauth2/token', params)
+      axios.post('https://discord.com/api/oauth2/token', params)
       .then(e => {
         const { access_token,token_type} = e.data
 

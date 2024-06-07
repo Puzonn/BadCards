@@ -8,6 +8,7 @@ import { Leaderboard } from "./Leaderboard";
 import { SelectedCardsContainer } from "./SelectedCardsContiner";
 import { useEffect, useState } from "react";
 import { Lobby } from "./Lobby";
+import { Col, Container, Row } from "react-bootstrap";
 
 export const Game = ({
   BlackCard,
@@ -31,14 +32,6 @@ export const Game = ({
   const [codeCopied, setCodeCopied] = useState(false);
 
   useEffect(() => {
-    const cpy = Players[0];
-    const arr = [];
-
-    for (let i = 0; i < 5; i++) {
-      arr.push(cpy);
-    }
-    Players = arr;
-
     setCodeCopied(true);
   });
 
@@ -49,7 +42,6 @@ export const Game = ({
       setCodeCopied(false);
     }, 2500);
   };
-
 
   if (!GameStarted) {
     return (
@@ -64,36 +56,20 @@ export const Game = ({
 
   return (
     <div style={{ paddingTop: "15px" }}>
-      <div className="cards-container">
-        <BlackCardUI
-          CardId={BlackCard.CardId}
-          Content={BlackCard.Content}
-          IsBlack={BlackCard.IsBlack}
-        />
-        <div className="cards-selected-container">
-          {SelectedCards && (
-            <SelectedCardsContainer
-              LobbyCode={LobbyCode}
-              AnswerCount={AnswerCount}
-              Players={Players}
-              GameStarted={true}
-              IsCreator={IsCreator}
-              HasSelectedRequired={HasSelectedRequired}
-              IsWaitingForNextRound={IsWaitingForNextRound}
-              IsJudge={IsJudge}
-              SelectedCards={SelectedCards}
-              StateNextRound={() => {}}
-              BlackCard={BlackCard}
-              WhiteCards={WhiteCards}
-              JudgeUsername={JudgeUsername}
-              IsWaitingForJudge={IsWaitingForJudge}
-              StateSelectCard={StateSelectCard}
-              StateStartGame={() => {}}
-            ></SelectedCardsContainer>
-          )}
-        </div>
-        <Leaderboard Players={Players} />
-      </div>
+      <Container>
+        <Row>
+          <Col md={4}>
+            <BlackCardUI
+              CardId={BlackCard.CardId}
+              Content={BlackCard.Content}
+              IsBlack={BlackCard.IsBlack}
+            />
+          </Col>
+          <Col md={{ span: 4, offset: 4 }}>
+            <Leaderboard Players={Players} />
+          </Col>
+        </Row>
+      </Container>
       <div className="judge-username-container">
         <span className="judge-username">
           {!IsWaitingForNextRound && (
@@ -123,27 +99,34 @@ export const Game = ({
         </span>
         {IsWaitingForNextRound && (
           <div>
-            <button onClick={StateNextRound} className="cards-next-round-btn">
+            <button
+              onClick={StateNextRound}
+              className="text-black cards-next-round-btn"
+            >
               {t("game.next-round")}
             </button>
           </div>
         )}
       </div>
-      <div className="white-cards-container">
-        {WhiteCards.map((card) => {
-          return (
-            <WhiteCardUI
-              HasSelectedRequired={HasSelectedRequired}
-              IsSelected={false}
-              key={`white_card_${card.CardId}`}
-              IsJudge={IsJudge}
-              StateCardClicked={StateSelectCard}
-              CardId={card.CardId}
-              Content={card.Content}
-              IsBlack={card.IsBlack}
-            />
-          );
-        })}
+      <div style={{ overflowX: "auto" }}>
+        <Row style={{ flexWrap: "nowrap" }}>
+          {WhiteCards.map((card) => {
+            return (
+              <Col>
+                <WhiteCardUI
+                  HasSelectedRequired={HasSelectedRequired}
+                  IsSelected={false}
+                  key={`white_card_${card.CardId}`}
+                  IsJudge={IsJudge}
+                  StateCardClicked={StateSelectCard}
+                  CardId={card.CardId}
+                  Content={card.Content}
+                  IsBlack={card.IsBlack}
+                />
+              </Col>
+            );
+          })}
+        </Row>
       </div>
     </div>
   );

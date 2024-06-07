@@ -161,7 +161,7 @@ public class AuthController : Controller
     [HttpGet("/auth/@me")]
     public ActionResult Validate()
     {
-         string token = (string)HttpContext.Items["Bearer"]!;
+        string token = (string)HttpContext.Items["Bearer"]!;
 
         TokenValidationResponse response = tokenService.Validate(token);
 

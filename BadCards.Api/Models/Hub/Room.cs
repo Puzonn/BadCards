@@ -13,10 +13,10 @@ public class Room
     public uint SelectedCardByJudgeId = 0;
     public uint RoomId;
 
-    public Player Creator { get; }
+    public readonly Player Creator;
     public Player? Judge { get; set; }
 
-    public string RoomCode { get; }
+    public readonly string RoomCode;
 
     public bool GameStarted { get; private set; } = false;
     public bool CanJudge => Players.Where(player => player.HasSelectedRequired).Count() == Players.Count - 1;
@@ -49,23 +49,22 @@ public class Room
         return selectedCards;
     }
 
-    /*
-        => Players.Where(player => player.HasSelectedRequired).Select(player => player.SelectCard
-            x => new SelectedCard(x.SelectedCard.Content)
-            {
-                IsSelectedByJudge = SelectedCardByJudge == x.SelectedCard.CardId,
-                SelectedBy = x.Username,
-                CardId = x.SelectedCard.CardId,
-                IsBlack = false
-            });
-    */
-
     public Room(string roomCode, uint roomId, Player creator)
     {
         RoomId = roomId;
         Creator = creator;
         RoomCode = roomCode;
         Players.Add(creator);
+    }
+
+    public List<Player> GetConnectedPlayers()
+    {
+        return Players.FindAll(x => !x.IsBot);
+    }
+
+    public List<Player> GetBots()
+    {
+        return Players.FindAll(x => x.IsBot);
     }
 
     public void SetSelectedCardByJudge(uint cardId)
@@ -85,7 +84,17 @@ public class Room
 
     public bool VoteNextRound(uint userId)
     {
-        return NextRoundVotes.Add(userId);
+        if (!NextRoundVotes.Add(userId))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public ApiPlayer[] GetApiPlayers()
+    {
+        return Players.Select(x => x.ToApiPlayer()).ToArray();
     }
 
     public bool NextRoundEnoughVotes()
@@ -132,7 +141,7 @@ public class Room
         SelectedCardByJudgeId = 0;
         BlackCardId = nextBlackCardId;
         NextRoundVotes.Clear();
-        Judge = GetRandomPerson(true);
+        Judge = GetRandomPerson(excludeJudge: true);
     }
 
     public Player GetRandomPerson(bool excludeJudge = false)

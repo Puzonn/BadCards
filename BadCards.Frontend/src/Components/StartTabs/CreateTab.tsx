@@ -35,7 +35,7 @@ export const CreateTab = ({
   return (
     <Container className="tab-box">
       <Row className="justify-content-center">
-        <Col xs={12} sm={8} md={6} lg={6}>
+        <Col xs={12} sm={8} md={6} lg={10}>
           {auth.IsFetched && auth.IsLoggedIn && (
             <div className="text-start m-3">
               <Form onSubmit={preSubmit}>

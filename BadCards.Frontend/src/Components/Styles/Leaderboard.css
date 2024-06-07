@@ -1,11 +1,9 @@
 .leaderboard-container {
   min-width: 200px;
   height: 300px;
-  background-color: var(--bg-default);
   border-radius: 10px;
   margin-right: 50px;
   text-align: center;
-  border: 1px solid white;
   overflow: auto;
 }
 

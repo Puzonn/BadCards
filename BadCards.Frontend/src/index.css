@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --sec-default: hsl(223.64deg 12.94% 16.67%);
   --bg-default: #09090b;
@@ -71,9 +75,6 @@ body {
   padding: 20px;
   border-radius: 10px;
   background-color: var(--bg-default);
-  -webkit-box-shadow: -7px 1px 13px -1px rgba(29, 29, 31, 1);
-  -moz-box-shadow: -7px 1px 13px -1px rgba(29, 29, 31, 1);
-  box-shadow: -7px 1px 13px -1px rgba(29, 29, 31, 1);
 }
 
 input::placeholder {

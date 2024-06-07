@@ -126,6 +126,7 @@ public class TokenService : ITokenService
                 var profileColor = claimsPrincipal.FindFirst("ProfileColor")?.Value;
                 var joinDate = claimsPrincipal.FindFirst("JoinDate")?.Value;
                 var role = claimsPrincipal.FindFirst(ClaimTypes.Role)?.Value;
+
                 var date = DateTime.Now;
                 var claimUserId = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 long userId;
@@ -140,7 +141,7 @@ public class TokenService : ITokenService
                     Role = role,
                     DiscordId = discordId!.ToString(),
                     Success = true,
-                    JoinDate = DateTime.Parse(joinDate),
+                    JoinDate = joinDate == null ? null : DateTime.Parse(joinDate),
                     UserId = userId
                 };
 

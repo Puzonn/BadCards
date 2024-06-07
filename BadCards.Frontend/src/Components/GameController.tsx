@@ -1,40 +1,49 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Round } from "../Types/Card";
 import { Game } from "./Game";
 import { Config } from "../Config";
-import useConnection from "../Hooks/useConnection";
+import { ConnectionContext } from "../Context/ConnectionContext";
+import { HubConnection, HubConnectionState } from "@microsoft/signalr";
 
 export const GameController = () => {
-  const hubConnection = useConnection(
-    `${Config.default.ApiUrl}/services/roomHub`,
-    () => {
-      hubConnection.onclose(() => {
-        window.location.href = "/dashboard";
-      });
-      hubConnection.on("OnJoinEvent", (e) => {
-        const round = JSON.parse(e) as Round;
-        round.WhiteCards.forEach((x) => (x.StateCardClicked = StateSelectCard));
-        setRound(round);
-      });
-      hubConnection.on("OnStartGame", OnStartGame);
-      hubConnection.on("OnStateSelectCard", OnStateSelectCard);
-      hubConnection.on("OnJudgeSelectCard", OnJudgeSelectCard);
-      hubConnection.on("OnUserDisconnect", OnUserDisconnect);
-      hubConnection.on("DebugLog", (e) => console.log(e));
-      hubConnection.on("OnNextRound", OnNextRound);
-      hubConnection.send("Join", `${code}`);
-    }
-  );
+  const { Connection, Build, Send, RegisterHandler } =
+    useContext(ConnectionContext);
 
   const [round, setRound] = useState<Round>();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const code = searchParams.get("code");
 
+  useEffect(() => {
+    Build(`${Config.default.ApiUrl}/services/roomHub`);
+  }, []);
+
+  useEffect(() => {
+    if (
+      typeof Connection === undefined ||
+      Connection?.state === HubConnectionState.Connected
+    ) {
+      return;
+    }
+    Connection?.start().then(() => {
+      RegisterHandler("OnJoinEvent", (e) => {
+        const round = JSON.parse(e) as Round;
+        round.WhiteCards.forEach((x) => (x.StateCardClicked = StateSelectCard));
+        setRound(round);
+      });
+      RegisterHandler("OnStartGame", OnStartGame);
+      RegisterHandler("OnStateSelectCard", OnStateSelectCard);
+      RegisterHandler("OnJudgeSelectCard", OnJudgeSelectCard);
+      RegisterHandler("OnUserDisconnect", OnUserDisconnect);
+      RegisterHandler("DebugLog", (e) => console.log(e));
+      RegisterHandler("OnNextRound", OnNextRound);
+      Send("Join", code);
+    });
+  }, [Connection]);
+
   const StateStartGame = () => {
-    console.log('r')
-    const response = hubConnection.invoke("StartGame");
+    const response = Connection?.invoke("StartGame");
     if (!response) {
       console.error("<StartGameResponse> Need more players");
     }
@@ -79,17 +88,17 @@ export const GameController = () => {
   };
 
   const StateSelectCard = async (cardId: number) => {
-    if (typeof hubConnection === "undefined") {
+    if (typeof Connection === "undefined") {
       return;
     }
-    await hubConnection.send("SelectCard", cardId);
+    await Connection?.send("SelectCard", cardId);
   };
 
   const StateNextRound = async () => {
-    if (typeof hubConnection === "undefined") {
+    if (typeof Connection === "undefined") {
       return;
     }
-    await hubConnection.send("VoteNextRound");
+    await Connection.send("VoteNextRound");
   };
 
   const OnNextRound = (event: any) => {
@@ -152,30 +161,30 @@ export const GameController = () => {
     setRound(round);
   };
 
-  if (typeof round !== "undefined") {
-    return (
-      <>
-        <Game
-          AnswerCount={round.AnswerCount}
-          HasSelectedRequired={round.HasSelectedRequired}
-          IsWaitingForNextRound={round.IsWaitingForNextRound}
-          IsWaitingForJudge={round.IsWaitingForJudge}
-          JudgeUsername={round.JudgeUsername}
-          IsJudge={round.IsJudge}
-          SelectedCards={round.SelectedCards}
-          LobbyCode={code as string}
-          IsCreator={round.IsCreator}
-          GameStarted={round.GameStarted}
-          Players={round.Players}
-          WhiteCards={round.WhiteCards}
-          BlackCard={round.BlackCard}
-          StateNextRound={StateNextRound}
-          StateSelectCard={StateSelectCard}
-          StateStartGame={StateStartGame}
-        />
-      </>
-    );
+  if (typeof round === "undefined") {
+    return <></>;
   }
 
-  return <></>;
+  return (
+    <>
+      <Game
+        AnswerCount={round.AnswerCount}
+        HasSelectedRequired={round.HasSelectedRequired}
+        IsWaitingForNextRound={round.IsWaitingForNextRound}
+        IsWaitingForJudge={round.IsWaitingForJudge}
+        JudgeUsername={round.JudgeUsername}
+        IsJudge={round.IsJudge}
+        SelectedCards={round.SelectedCards}
+        LobbyCode={code as string}
+        IsCreator={round.IsCreator}
+        GameStarted={round.GameStarted}
+        Players={round.Players}
+        WhiteCards={round.WhiteCards}
+        BlackCard={round.BlackCard}
+        StateNextRound={StateNextRound}
+        StateSelectCard={StateSelectCard}
+        StateStartGame={StateStartGame}
+      />
+    </>
+  );
 };

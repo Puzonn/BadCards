@@ -4,6 +4,7 @@ namespace BadCards.Api.Models.Hub;
 
 public class Player
 {
+    public bool IsBot { get; set; }   
     public string ConnectionId { get; set; }
     public string Username { get; }
     public string Locale { get; set; } = "en";
@@ -29,7 +30,9 @@ public class Player
         Locale = user.LanguagePreference;
     }
 
-    /* Reserved for guests */
+    /// <summary>
+    /// Use only for guests
+    /// </summary>
     public Player(string connectionId, string username, uint userId)
     {
         UserId = userId;
@@ -41,6 +44,19 @@ public class Player
         DiscordAvatarId = string.Empty;
     }
 
+    /// <summary>
+    /// Use only for bots
+    /// </summary>
+    public Player()
+    {
+        UserId = (uint)Random.Shared.Next(0, 100000);
+        ConnectionId = string.Empty;
+        Username = "Bot";
+        IsGuest = false;
+        ProfileColor = string.Empty;
+        DiscordAvatarId = string.Empty;
+    }
+
     public void SetCards(IEnumerable<Card> cards)
     {
         WhiteCards = cards.ToList();
@@ -48,7 +64,10 @@ public class Player
 
     public ApiPlayer ToApiPlayer()
     {
-        return new ApiPlayer(Username, Points, DiscordUserId, DiscordAvatarId, ProfileColor);
+        return new ApiPlayer(Username, Points, DiscordUserId, DiscordAvatarId, ProfileColor)
+        {
+            IsBot = IsBot
+        };
     }
 
     private Card? GetCard(uint cardId) => WhiteCards.Find(x => x.CardId == cardId);

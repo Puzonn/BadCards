@@ -69,6 +69,6 @@ export const AuthProvider = ({ children }: IProps) => {
   );
 };
 
-interface IProps {
+export interface IProps {
   children: ReactNode;
 }
