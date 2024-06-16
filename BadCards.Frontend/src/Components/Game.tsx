@@ -1,46 +1,47 @@
-import { Round } from "../Types/Card";
-import { BlackCardUI } from "./BlackCardUI";
-import { WhiteCardUI } from "./WhiteCardUI";
+import { Card, Player, Round } from "../Types/Card";
 import "./Styles/Game.css";
 import "./Styles/LobbyManager.css";
-import { useTranslation } from "react-i18next";
-import { Leaderboard } from "./Leaderboard";
-import { SelectedCardsContainer } from "./SelectedCardsContiner";
 import { useEffect, useState } from "react";
-import { Lobby } from "./Lobby";
-import { Col, Container, Row } from "react-bootstrap";
+import { Lobby } from "./Lobby/Lobby";
+import { LobbySelectedCardsUI } from "./Lobby/LobbySelectedCardsUI";
+import LeaderboardIcon from "../Assets/Icons/leaderboard_icon.svg";
+import { GameMenuContext } from "./GameMenuContext";
+import { Leaderboard } from "./Leaderboard";
 
 export const Game = ({
   BlackCard,
   WhiteCards,
   Players,
   GameStarted,
+  LobbySelectedCards,
   JudgeUsername,
   HasSelectedRequired,
-  SelectedCards,
+  PlayerSelectedCards,
   IsWaitingForJudge,
+  SelectedWinnerId,
   IsWaitingForNextRound,
   IsJudge,
   IsCreator,
   AnswerCount,
   LobbyCode,
+  OnSelectCard,
+  StateJudgeSelectCard,
   StateStartGame,
-  StateSelectCard,
+  StateSelectCards,
   StateNextRound,
 }: Round) => {
-  const { t } = useTranslation();
   const [codeCopied, setCodeCopied] = useState(false);
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(true);
+  const AnswerColors: string[] = ["blue-600", "orange-600", "purple-600"];
 
   useEffect(() => {
-    setCodeCopied(true);
-  });
+    if (IsWaitingForNextRound) {
+      //setSelectedCards(LobbySelectedCards);
+    }
+  }, [LobbySelectedCards]);
 
-  const CopyCode = async () => {
-    await navigator.clipboard.writeText(LobbyCode);
-    setCodeCopied(!codeCopied);
-    setTimeout(() => {
-      setCodeCopied(false);
-    }, 2500);
+  const isCardSelected = (card: Card) => {
+    return PlayerSelectedCards.includes(card);
   };
 
   if (!GameStarted) {
@@ -54,79 +55,196 @@ export const Game = ({
     );
   }
 
+  const onSelectedCardClicked = (cards: Card[]) => {
+    if (!IsWaitingForJudge) {
+      console.error(
+        "OnSelectedCardClicked invoked when IsWaitingForJudge is false"
+      );
+    }
+
+    OnSelectCard(cards);
+  };
+
+  const formatContent = (content: string): string[] => {
+    const words = content.split(" ");
+    const formattedWords = words.map((word) => word.replace(/_/g, "@special"));
+    return formattedWords;
+  };
+
+  let QuestionSpecialColorIndex: number = -1;
+  let AnswerSpecialColorIndex: number = -1;
+
   return (
-    <div style={{ paddingTop: "15px" }}>
-      <Container>
-        <Row>
-          <Col md={4}>
-            <BlackCardUI
-              CardId={BlackCard.CardId}
-              Content={BlackCard.Content}
-              IsBlack={BlackCard.IsBlack}
-            />
-          </Col>
-          <Col md={{ span: 4, offset: 4 }}>
-            <Leaderboard Players={Players} />
-          </Col>
-        </Row>
-      </Container>
-      <div className="judge-username-container">
-        <span className="judge-username">
-          {!IsWaitingForNextRound && (
-            <p>
+    <div>
+      <div
+        className={`grid min-w-screen h-screen ${
+          isLeaderboardOpen ? "md:grid-cols-[minmax(150px,_250px)_1fr]" : ""
+        } gap-4`}
+      >
+        <Leaderboard
+          OnToggleLeaderboard={() => setIsLeaderboardOpen(!isLeaderboardOpen)}
+          Players={Players}
+          IsLeaderboardOpen={isLeaderboardOpen}
+          JudgeUsername={JudgeUsername}
+        />
+        <div className={`${isLeaderboardOpen ? "hidden" : ""} md:block`}>
+          <div className="flex flex-col justify-centerw w-100">
+            <div className="text-white w-full items-center text-xl font-medium pl-6 pb-3 pt-3 flex">
+              <div className="justify-end mr-7 flex w-full hover:text-opacity-80">
+                <div
+                  onClick={() => setIsLeaderboardOpen(!isLeaderboardOpen)}
+                  className="cursor-pointer hover:text-gray-400"
+                >
+                  <button
+                    className="inline-flex h-10 hover:scale-105 mr-3 justify-center items-center rounded-md bg-white 
+             text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                  >
+                    <img
+                      className="w-full px-3 py-2 h-full object-cover"
+                      src={LeaderboardIcon}
+                      alt="Leaderboard Icon"
+                    />
+                  </button>
+                </div>
+
+                <GameMenuContext />
+              </div>
+            </div>
+            <div className="text-white bg-black md:mx-4 rounded border border-white">
+              <div className="font-medium text-2xl whitespace-pre-wrap p-2">
+                {formatContent(BlackCard.Content).map((word, index) => {
+                  /* TODO: fix multiple function invoking for getting length */
+                  if (word.startsWith("@special")) {
+                    QuestionSpecialColorIndex++;
+                    const showContent =
+                      PlayerSelectedCards.length > QuestionSpecialColorIndex;
+                    const isSpecialRegex = /[^a-zA-Z0-9\s]/;
+                    let selectedCardContent = undefined;
+
+                    if (showContent) {
+                      selectedCardContent =
+                        PlayerSelectedCards[QuestionSpecialColorIndex].Content;
+                      if (isSpecialRegex.test(selectedCardContent)) {
+                        selectedCardContent = selectedCardContent.substring(
+                          0,
+                          selectedCardContent.length - 1
+                        );
+                      }
+                    }
+
+                    return (
+                      <span
+                        className=" break-words"
+                        key={`question_word_${index}`}
+                      >
+                        <div
+                          className={`relative m-0 border-b-2 border-${
+                            AnswerColors[QuestionSpecialColorIndex]
+                          } inline-flex mr-2 ${
+                            !showContent ? "min-w-20" : ""
+                          } w-auto`}
+                        >
+                          {showContent && <>{selectedCardContent}</>}
+                        </div>
+                        {word.replace("@special", "")}
+                      </span>
+                    );
+                  }
+                  return <span key={`question_word_${index}`}>{word} </span>;
+                })}
+              </div>
+            </div>
+            <div className="flex justify-center items-center text-2xl mb-3 p-2 h-20 text-white">
+              {PlayerSelectedCards.length === AnswerCount &&
+                !IsWaitingForJudge && (
+                  <div
+                    onClick={() => StateSelectCards(PlayerSelectedCards)}
+                    className="cursor-pointer border-2 hover:bg-white hover:text-black border-white p-2 rounded"
+                  >
+                    Approve
+                  </div>
+                )}
+              {PlayerSelectedCards.length === AnswerCount &&
+                IsWaitingForJudge &&
+                IsJudge &&
+                !IsWaitingForNextRound && (
+                  <div
+                    onClick={() =>
+                      StateJudgeSelectCard(PlayerSelectedCards[0].OwnerId)
+                    }
+                    className="cursor-pointer border-2 hover:bg-white px-4  hover:text-black border-white p-2 rounded"
+                  >
+                    Pick
+                  </div>
+                )}
+              {IsWaitingForNextRound && (
+                <div
+                  onClick={() => StateNextRound()}
+                  className="cursor-pointer border-2 hover:bg-white  px-4  hover:text-black border-white p-2 rounded"
+                >
+                  Next Round
+                </div>
+              )}
               {IsJudge && !IsWaitingForJudge && (
-                <span> {t("game.you-are-judge")} </span>
+                <div className=" border-b-2 border-white px-4 p-2 rounded">
+                  You're the judge. Wait for all users to choose their cards.
+                </div>
               )}
               {IsJudge && IsWaitingForJudge && (
-                <span> {t("game.select-winning-card")} </span>
+                <div className="border-2 border-white  px-4  p-2 rounded">
+                  You're the judge. Choose winner.
+                </div>
               )}
-              {!IsJudge && !IsWaitingForJudge && SelectedCards && (
-                <>
-                  <span>
-                    {t("game.judge")}: {JudgeUsername}
-                  </span>
-                  <p>Select {AnswerCount - SelectedCards?.length} more cards</p>
-                </>
-              )}
-
               {!IsJudge && IsWaitingForJudge && (
-                <span>
-                  {t("game.judge-waiting", { "judge.name": JudgeUsername })}
-                </span>
+                <div className="border-2 border-white px-5 p-2 rounded">
+                  Wait for judge to choose a winner.
+                </div>
               )}
-            </p>
-          )}
-        </span>
-        {IsWaitingForNextRound && (
-          <div>
-            <button
-              onClick={StateNextRound}
-              className="text-black cards-next-round-btn"
-            >
-              {t("game.next-round")}
-            </button>
+            </div>
+            {!IsWaitingForJudge && !IsJudge && (
+              <div>
+                {WhiteCards.map((card, index) => {
+                  if (isCardSelected(card)) {
+                    AnswerSpecialColorIndex++;
+                  }
+
+                  return (
+                    <div
+                      onClick={() => OnSelectCard(card)}
+                      key={`answer_card_${index}`}
+                      className={`h-auto white-shadow cursor-pointer bg-white hover:bg-default text-2xl font-medium my-2 mx-4 p-3
+         shadow-white text-black rounded ${
+           isCardSelected(card)
+             ? `border-3 border-${AnswerColors[AnswerSpecialColorIndex]}`
+             : ""
+         }`}
+                    >
+                      <div>{card.Content}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {IsWaitingForJudge && (
+              <div>
+                <LobbySelectedCardsUI
+                  onJudgeSelectedCardClicked={StateJudgeSelectCard}
+                  isJudge={IsJudge}
+                  isWaitingForJudge={IsWaitingForJudge}
+                  selectedWinnerId={SelectedWinnerId}
+                  lobbySelectedCards={LobbySelectedCards}
+                  isWaitingForNextRound={IsWaitingForNextRound}
+                  showUsernames={IsWaitingForNextRound}
+                  selectedCards={PlayerSelectedCards}
+                  onSelectedCardClicked={onSelectedCardClicked}
+                  answerCount={AnswerCount}
+                  cards={LobbySelectedCards}
+                ></LobbySelectedCardsUI>
+              </div>
+            )}
           </div>
-        )}
-      </div>
-      <div style={{ overflowX: "auto" }}>
-        <Row style={{ flexWrap: "nowrap" }}>
-          {WhiteCards.map((card) => {
-            return (
-              <Col>
-                <WhiteCardUI
-                  HasSelectedRequired={HasSelectedRequired}
-                  IsSelected={false}
-                  key={`white_card_${card.CardId}`}
-                  IsJudge={IsJudge}
-                  StateCardClicked={StateSelectCard}
-                  CardId={card.CardId}
-                  Content={card.Content}
-                  IsBlack={card.IsBlack}
-                />
-              </Col>
-            );
-          })}
-        </Row>
+        </div>
       </div>
     </div>
   );

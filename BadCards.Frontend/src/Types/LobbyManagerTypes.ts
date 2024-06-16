@@ -9,4 +9,7 @@ export type Room = {
 
 export interface ILeaderboard {
   Players: Player[];
+  IsLeaderboardOpen: boolean;
+  JudgeUsername: string;  
+  OnToggleLeaderboard: () => void;
 }

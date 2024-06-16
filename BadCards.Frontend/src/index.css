@@ -32,30 +32,6 @@ body {
   background-color: var(--bg-default);
 }
 
-button {
-  color: white !important;
-  display: unset;
-}
-
-.nav-tabs {
-  border: 0 !important;
-}
-
-.nav-tabs button {
-  background-color: transparent !important;
-  border: 0px !important;
-}
-
-.nav-tabs button.nav-link:not(.active) {
-  color: var(--bs-grey-light) !important;
-}
-
-.nav-tabs button.active > * > span {
-  padding: 4px 9px 4px 9px;
-  border-radius: 10px;
-  background-color: var(--bs-grey-dark) !important;
-}
-
 body {
   background-color: var(--bg-default);
   background-image: radial-gradient(
@@ -77,11 +53,7 @@ body {
   background-color: var(--bg-default);
 }
 
-input::placeholder {
-  color: var(--bs-grey-light) !important;
-}
-
-input {
-  color: white !important;
-  border: 1px solid grey !important;
+.white-shadow {
+  box-shadow: rgba(255, 255, 255, 0.971) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 }

@@ -8,7 +8,7 @@ import {
   FormControl,
   Button,
 } from "react-bootstrap";
-import { LoginForm } from "../LoginForm";
+import { LoginForm } from "../Lobby/LoginForm";
 import { FormEvent, useContext, useState } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 
@@ -22,6 +22,9 @@ export const JoinTab = ({
   const auth = useContext(AuthContext);
   const [password, setPassword] = useState<string>("");
   const [lobbyCode, setLobbyCode] = useState<string>("");
+  const [passwordInputFocused, setPasswordInputFocused] =
+    useState<boolean>(false);
+  const [codeInputFocused, setCodeInputFocused] = useState<boolean>(false);
 
   const preSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -29,57 +32,78 @@ export const JoinTab = ({
     onSubmit(lobbyCode, password);
   };
 
+  const OnCodeInputFocus = (state: boolean) => {
+    if (password !== "" && state === false) {
+      return;
+    }
+    setCodeInputFocused(state);
+  };
+
+  const OnPasswordInputFocus = (state: boolean) => {
+    if (password !== "" && state === false) {
+      return;
+    }
+    setPasswordInputFocused(state);
+  };
+
   return (
-      <Container className="tab-box">
-        <Row className="justify-content-center">
-          <Col xs={12} sm={8} md={6} lg={10}>
-            {auth.IsFetched && auth.IsLoggedIn && (
-              <div className="text-start m-2">
-                <Form onSubmit={preSubmit}>
-                  <FormGroup controlId="join-lobby_code">
-                    <FormLabel>Lobby Code</FormLabel>
-                    <FormControl
-                      style={{ color: "white" }}
-                      maxLength={10}
-                      onChange={(e) => setLobbyCode(e.target.value)}
-                      required
-                      type="text"
-                      placeholder="Enter Lobby Code"
-                    />
-                  </FormGroup>
-                  <FormGroup style={{marginTop: "10px"}} controlId="join-lobby_password">
-                    <FormLabel>Lobby Password</FormLabel>
-                    <FormControl
-                      style={{ height: "40px" }}
-                      maxLength={15}
-                      onChange={(e) => setPassword(e.target.value)}
-                      type="password"
-                      placeholder="Lobby Password"
-                    />
-                  </FormGroup>
-                  <div style={{ marginTop: "15px" }} className="d-grid gap-2">
-                    <Button
-                      style={{ fontWeight: 600 }}
-                      variant="light"
-                      className="text-center text-black"
-                      type="submit"
-                    >
-                      Join Game
-                    </Button>
-                    <Button
-                      style={{ fontWeight: 600 }}
-                      className="text-center"
-                      type="button"
-                    >
-                      Join Random Game
-                    </Button>
-                  </div>
-                </Form>
-              </div>
-            )}
-            {error && <span>{error}</span>}
-          </Col>
-        </Row>
-      </Container>
+    <form onSubmit={preSubmit} className="relative w-full text-black">
+      <div className="relative w-full bg-transparent h-20 border-2 border-black rounded bg-white">
+        <p
+          className={`flex inset-0 transition-all pointer-events-none font-normal bg-transparent absolute  ${
+            !codeInputFocused
+              ? "flex justify-start pl-4 items-center text-3xl normal-text"
+              : "pl-3 focused-text justify-start "
+          }`}
+        >
+          Lobby Code (required)
+        </p>
+        <input
+          type="text"
+          maxLength={10}
+          onChange={(e) => setLobbyCode(e.target.value)}
+          onFocus={() => {
+            OnCodeInputFocus(true);
+          }}
+          onBlur={() => {
+            OnCodeInputFocus(false);
+          }}
+          className={`inset-0 w-full placeholder:text-black outline-none bg-transparent pt-3 text-3xl pl-3 h-full ${
+            !codeInputFocused ? "opacity-0" : ""
+          }`}
+        />
+      </div>
+      <div className="relative w-full bg-transparent mt-3 h-20 border-2 border-black rounded bg-white">
+        <p
+          className={`flex inset-0 transition-all pointer-events-none font-normal bg-transparent absolute  ${
+            !passwordInputFocused
+              ? "flex justify-start pl-4 items-center text-3xl normal-text"
+              : "pl-3 focused-text justify-start "
+          }`}
+        >
+          Password (not required)
+        </p>
+        <input
+          type="password"
+          onChange={(e) => setPassword(e.target.value)}
+          onFocus={() => {
+            OnPasswordInputFocus(true);
+          }}
+          onBlur={() => {
+            OnPasswordInputFocus(false);
+          }}
+          className={`inset-0 w-full placeholder:text-black outline-none bg-transparent pt-3 text-3xl pl-3 h-full ${
+            !passwordInputFocused ? "opacity-0" : ""
+          }`}
+        />
+      </div>
+
+      <input
+        type="submit"
+        className={`rounded-lg mt-4 py-4 px-10 text-center align-middle text-1xl hover:scale-105 
+        font-bold text-white shadow-md transition-all bg-black`}
+        value="Join Lobby"
+      />
+    </form>
   );
 };

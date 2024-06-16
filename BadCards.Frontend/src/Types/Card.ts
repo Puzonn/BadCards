@@ -2,13 +2,14 @@ export type Card = {
   IsBlack: boolean;
   Content: string;
   CardId: number;
+  OwnerId: number;
+  OwnerUsername: string;
 };
 
-export interface IWhiteCardUI extends Card {
+export interface IWhiteCard extends Card {
   IsSelected: boolean;
   IsJudge: boolean;
   HasSelectedRequired: boolean;
-  StateCardClicked?: (cardId: number) => void;
 }
 
 export type Player = {
@@ -19,21 +20,6 @@ export type Player = {
   DiscordUserId: string;
   ProfileColor: string;
 };
-
-export interface ISelectedWhiteCard extends IWhiteCardUI {
-  AnswerCount: number;
-  AnswerSelectedIndex: number;
-  IsSelectedByJudge?: boolean;
-  SelectedBy: string;
-  ShowContent: boolean;
-  IsOwner: boolean;
-  IsJudge: boolean;
-  SelectedByUsername: string;
-  ShowUsername: boolean;
-  IsSelected: boolean;
-  IsWaitingForNextRound: boolean;
-  HandleAnswerIndexClick: (index: number) => void;
-}
 
 export type Round = {
   HasSelectedRequired: boolean;
@@ -46,12 +32,16 @@ export type Round = {
   IsWaitingForJudge: boolean;
   IsWaitingForNextRound: boolean;
   JudgeUsername: string;
-  WhiteCards: IWhiteCardUI[];
+  WhiteCards: IWhiteCard[];
   BlackCard: Card;
-  SelectedCards: ISelectedWhiteCard[] | undefined;
+  PlayerSelectedCards: Card[];
+  LobbySelectedCards: Card[];
+  SelectedWinnerId: number;
   StateNextRound: () => void;
-  StateSelectCard: (cardId: number) => void;
+  StateSelectCards: (cards: Card[]) => void;
   StateStartGame: () => void;
+  StateJudgeSelectCard: (ownerId: number) => void;
+  OnSelectCard: (card: Card | Card[]) => void;
 };
 
 export type OnJudgeSelectCardEvent = {

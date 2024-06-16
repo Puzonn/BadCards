@@ -17,7 +17,7 @@ public class Player
     public bool IsGuest = false;
     public bool HasSelectedRequired { get; set; }  
     public List<Card> WhiteCards { get; private set; } = new List<Card>(0);
-    public List<Card> SelectedCards { get; set; } = new List<Card>(3);
+    public uint[] SelectedCards { get; set; } = new uint[] { };
 
     public Player(string connectionId, UserDb user)
     {
@@ -28,6 +28,11 @@ public class Player
         ConnectionId = connectionId;
         Username = user.Username;
         Locale = user.LanguagePreference;
+    }
+
+    public IEnumerable<Card> GetSelectedCards()
+    {
+        return SelectedCards.Select(selectedCardId => WhiteCards.Find(x => x.CardId == selectedCardId)!);
     }
 
     /// <summary>
@@ -70,41 +75,41 @@ public class Player
         };
     }
 
-    private Card? GetCard(uint cardId) => WhiteCards.Find(x => x.CardId == cardId);
+    public Card? GetCard(uint cardId) => WhiteCards.Find(x => x.CardId == cardId);
 
-    public Card? HasSelectedCard(uint cardId) => SelectedCards.Find(x=>x.CardId == cardId);
-
-    public bool SelectCard(uint cardId)
+    /// <summary>
+    /// Returns false is cards dose not exist in current deck
+    /// </summary>
+    /// <param name="cards">Selected cards by player</param>
+    /// <returns></returns>
+    public bool SelectCard(uint[] cards)
     {
-        if(SelectedCards.Find(x => x.CardId == cardId) is not null)
+        IEnumerable<uint> whiteCardsId = WhiteCards.Select(x => x.CardId);
+
+        if (cards.All(whiteCardsId.Contains))
         {
-            return false;
+            SelectedCards = cards;
+
+            return true;
         }
 
-        Card? card = GetCard(cardId);
-
-        if (card is null)
-        {
-            throw new ArgumentException($"Card with given id: {cardId} dose not exist in player deck");
-        }
-
-        if (card == Card.Empty)
-        {
-            throw new ArgumentException($"User cannot have a empty card as selected card");
-        }
-
-        SelectedCards.Add(card);
-
-        return RemoveCardFromDeck(cardId);
+        return false;
     }
 
-    public bool RemoveCardFromDeck(uint cardId)
+    public bool RemoveCardsFromDeck(uint[] cards)
     {
-        Card? card = GetCard(cardId);
+        foreach (uint cardId in cards) 
+        { 
+            Card? card = GetCard(cardId);
 
-        if (card is null)
-            return false;
+            if(card is null)
+            {
+                return false;
+            }
 
-        return WhiteCards.Remove(card);
+            WhiteCards.Remove(card);
+        }
+
+        return true;
     }
 }

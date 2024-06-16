@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import "./Styles/LobbyManager.css";
-import { Room } from "../Types/LobbyManagerTypes";
-import { AuthContext } from "../Context/AuthContext";
+import { Room } from "../../Types/LobbyManagerTypes";
+import { AuthContext } from "../../Context/AuthContext";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
-import { Config } from "../Config";
+import { Config } from "../../Config";
 
 export const LobbyManager = () => {
   const [lobbyCodeInput, setLobbyCodeInput] = useState<string>("");

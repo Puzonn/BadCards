@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Round } from "../Types/Card";
+import { Card, Round } from "../Types/Card";
 import { Game } from "./Game";
 import { Config } from "../Config";
 import { ConnectionContext } from "../Context/ConnectionContext";
-import { HubConnection, HubConnectionState } from "@microsoft/signalr";
+import { HubConnectionState } from "@microsoft/signalr";
+import { setSelectionRange } from "@testing-library/user-event/dist/utils";
 
 export const GameController = () => {
   const { Connection, Build, Send, RegisterHandler } =
@@ -26,15 +27,17 @@ export const GameController = () => {
     ) {
       return;
     }
+
     Connection?.start().then(() => {
       RegisterHandler("OnJoinEvent", (e) => {
         const round = JSON.parse(e) as Round;
-        round.WhiteCards.forEach((x) => (x.StateCardClicked = StateSelectCard));
+        console.log("OnJoinEvent: ", round);
         setRound(round);
       });
       RegisterHandler("OnStartGame", OnStartGame);
       RegisterHandler("OnStateSelectCard", OnStateSelectCard);
       RegisterHandler("OnJudgeSelectCard", OnJudgeSelectCard);
+      RegisterHandler("OnWaitingForJudgeState", OnWaitingForJudgeState);
       RegisterHandler("OnUserDisconnect", OnUserDisconnect);
       RegisterHandler("DebugLog", (e) => console.log(e));
       RegisterHandler("OnNextRound", OnNextRound);
@@ -42,11 +45,30 @@ export const GameController = () => {
     });
   }, [Connection]);
 
+  const OnWaitingForJudgeState = (event: any) => {
+    /* TODO: Fix json crap i hate this */
+    const selectedCards: Card[] = JSON.parse(event).LobbySelectedCards;
+
+    setRound((prev) => {
+      if (!prev) {
+        return;
+      }
+      return {
+        ...prev,
+        LobbySelectedCards: selectedCards,
+        IsWaitingForJudge: true,
+      };
+    });
+  };
+
   const StateStartGame = () => {
     const response = Connection?.invoke("StartGame");
     if (!response) {
       console.error("<StartGameResponse> Need more players");
+
+      return;
     }
+    Connection?.send("StartGame");
   };
 
   const OnUserDisconnect = (discordUserId: any) => {
@@ -72,7 +94,6 @@ export const GameController = () => {
       const updatedRound: Round = {
         ...prev,
         HasSelectedRequired: response.HasSelectedRequired,
-        SelectedCards: response.SelectedCards,
         IsWaitingForJudge: response.IsWaitingForJudge,
       };
 
@@ -87,11 +108,19 @@ export const GameController = () => {
     });
   };
 
-  const StateSelectCard = async (cardId: number) => {
+  const StateJudgeSelectCard = async (ownerId: number) => {
+    await Connection?.send("JudgeSelectWinner", ownerId);
+  };
+
+  const StateSelectCard = async (cards: Card[]) => {
     if (typeof Connection === "undefined") {
       return;
     }
-    await Connection?.send("SelectCard", cardId);
+
+    await Connection?.send(
+      "SelectCards",
+      cards.map((x) => x.CardId)
+    );
   };
 
   const StateNextRound = async () => {
@@ -119,7 +148,7 @@ export const GameController = () => {
         WhiteCards: parsedEvent.WhiteCards,
         IsWaitingForJudge: false,
         IsWaitingForNextRound: false,
-        SelectedCards: [],
+        PlayerSelectedCards: [],
       };
 
       return updatedRound;
@@ -127,38 +156,81 @@ export const GameController = () => {
   };
 
   const OnJudgeSelectCard = (e: any) => {
+    console.log("judge:", e);
+    const parsedEvent = JSON.parse(e);
+    console.log("Winner: ", parsedEvent);
+    console.log("Winner: ", parsedEvent.CardOwnerId);
     setRound((prev) => {
       if (prev) {
-        const updated: Round = {
+        return {
           ...prev,
+          SelectedWinnerId: parsedEvent.CardOwnerId,
           IsWaitingForNextRound: true,
         };
-
-        const index = prev.SelectedCards?.findIndex(
-          (x) => x.CardId === JSON.parse(e).SelectedCardId
-        );
-
-        if (
-          index !== -1 &&
-          typeof index !== "undefined" &&
-          typeof prev.SelectedCards !== "undefined"
-        ) {
-          updated.SelectedCards!.at(index)!.IsSelectedByJudge = true;
-        }
-
-        console.log("Updated at JudgeSelectCard ", updated);
-        return updated;
       }
       return prev;
     });
   };
 
+  useEffect(() => {
+    console.log("Round updated: ", round);
+  }, [round]);
+
   const OnStartGame = (e: string) => {
     const round = JSON.parse(e) as Round;
     round.IsWaitingForJudge = false;
     round.IsWaitingForNextRound = false;
-    round.SelectedCards = [];
+    round.PlayerSelectedCards = [];
+    round.LobbySelectedCards = [];
     setRound(round);
+  };
+
+  const OnSelectCard = (card: Card | Card[]) => {
+    if (Array.isArray(card)) {
+      setRound((prev) => {
+        if (!prev) {
+          return prev;
+        }
+
+        if (card.length === 1) {
+          if (prev.PlayerSelectedCards.includes(card[0])) {
+            return {
+              ...prev,
+              PlayerSelectedCards: prev.PlayerSelectedCards.filter(
+                (x) => x !== card[0]
+              ),
+            };
+          }
+        }
+
+        return {
+          ...prev,
+          PlayerSelectedCards: card,
+        };
+      });
+
+      return;
+    }
+
+    setRound((prev) => {
+      if (!prev) {
+        return prev;
+      }
+
+      if (prev.PlayerSelectedCards.includes(card)) {
+        return {
+          ...prev,
+          PlayerSelectedCards: prev.PlayerSelectedCards.filter(
+            (x) => x !== card
+          ),
+        };
+      }
+
+      return {
+        ...prev,
+        PlayerSelectedCards: [...prev.PlayerSelectedCards, card],
+      };
+    });
   };
 
   if (typeof round === "undefined") {
@@ -168,21 +240,25 @@ export const GameController = () => {
   return (
     <>
       <Game
+        OnSelectCard={OnSelectCard}
+        SelectedWinnerId={round.SelectedWinnerId}
+        LobbySelectedCards={round.LobbySelectedCards}
         AnswerCount={round.AnswerCount}
         HasSelectedRequired={round.HasSelectedRequired}
         IsWaitingForNextRound={round.IsWaitingForNextRound}
         IsWaitingForJudge={round.IsWaitingForJudge}
         JudgeUsername={round.JudgeUsername}
         IsJudge={round.IsJudge}
-        SelectedCards={round.SelectedCards}
+        PlayerSelectedCards={round.PlayerSelectedCards}
         LobbyCode={code as string}
         IsCreator={round.IsCreator}
         GameStarted={round.GameStarted}
         Players={round.Players}
         WhiteCards={round.WhiteCards}
         BlackCard={round.BlackCard}
+        StateJudgeSelectCard={StateJudgeSelectCard}
         StateNextRound={StateNextRound}
-        StateSelectCard={StateSelectCard}
+        StateSelectCards={StateSelectCard}
         StateStartGame={StateStartGame}
       />
     </>

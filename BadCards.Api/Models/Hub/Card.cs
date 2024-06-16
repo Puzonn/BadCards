@@ -4,10 +4,11 @@ namespace BadCards.Api.Models.Hub;
 
 public class Card
 {
+    public uint OwnerId { get; set; }
     public uint CardId { get; set; }
     public bool IsBlack { get; set; }
     public string Content { get; set; }
-    public uint OwnerId { get; set; }
+    public string OwnerUsername { get; set; }
 
     [JsonIgnore]
     public bool IsEmpty { get; set; } = false;

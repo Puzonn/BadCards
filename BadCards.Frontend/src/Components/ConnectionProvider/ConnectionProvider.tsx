@@ -19,7 +19,7 @@ export const ConnectionProvider = ({ children }: IProps) => {
         skipNegotiation: true,
         transport: HttpTransportType.WebSockets,
       })
-      .configureLogging(LogLevel.Error)
+      .configureLogging(LogLevel.Critical)
       .build();
     setConnection(connection);
   };

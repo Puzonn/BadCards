@@ -4,17 +4,17 @@ namespace BadCards.Api.Models.Hub;
 
 public class Room
 {
-    public readonly List<Player> Players = new List<Player>();
+    private readonly List<Player> Players = new List<Player>();
     private readonly HashSet<uint> NextRoundVotes = new HashSet<uint>();
 
     public int RequiredAnswerCount { get; private set; }   
 
     public uint BlackCardId = 0;
-    public uint SelectedCardByJudgeId = 0;
+    public uint SelectedWinnerId;
     public uint RoomId;
 
     public readonly Player Creator;
-    public Player? Judge { get; set; }
+    public Player Judge { get; private set; }
 
     public readonly string RoomCode;
 
@@ -27,30 +27,33 @@ public class Room
     /// Gets all cards selected by users and convers them to generic SelectedCard
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<SelectedCard> GetSelectedCards()
+    public IEnumerable<Card> GetSelectedCards()
     {
-        List<SelectedCard> selectedCards = new List<SelectedCard>();
+        List<Card> lobbySelectedCards = new List<Card>();
 
-        foreach(var player in Players)
+        foreach (var lobbyPlayer in Players)
         {
-            foreach(var card in player.SelectedCards)
+            var cards = lobbyPlayer.SelectedCards.Select(e => lobbyPlayer.WhiteCards.Find(x => e == x.CardId));
+
+            if(cards is null)
             {
-                selectedCards.Add(new SelectedCard(card.Content)
-                {
-                    OwnerId = player.UserId,
-                    IsOwner = player.UserId == card.OwnerId,
-                    CardId = card.CardId,
-                    IsSelectedByJudge = SelectedCardByJudgeId == card.CardId,
-                    SelectedByUsername = player.Username
-                });
+                continue;
             }
+
+            foreach(var card in cards)
+            {
+                card.OwnerUsername = lobbyPlayer.Username;
+            }
+
+            lobbySelectedCards.AddRange(cards);
         }
 
-        return selectedCards;
+        return lobbySelectedCards;
     }
 
     public Room(string roomCode, uint roomId, Player creator)
     {
+        Judge = creator;
         RoomId = roomId;
         Creator = creator;
         RoomCode = roomCode;
@@ -62,24 +65,24 @@ public class Room
         return Players.FindAll(x => !x.IsBot);
     }
 
+    public List<Player> GetPlayers()
+    {
+        return Players;
+    }
+
+    public void AddPlayer(Player player)
+    {
+        Players.Add(player);
+    }
+
     public List<Player> GetBots()
     {
         return Players.FindAll(x => x.IsBot);
     }
 
-    public void SetSelectedCardByJudge(uint cardId)
+    public void SetSelectedCardByJudge(uint cardOwnerId)
     {
-        Card? selectedCard;
-
-        foreach (var player in Players)
-        {
-            selectedCard = player.HasSelectedCard(cardId);
-
-            if(selectedCard is not null)
-            {
-                SelectedCardByJudgeId = selectedCard.CardId;
-            }
-        }
+        SelectedWinnerId = cardOwnerId;
     }
 
     public bool VoteNextRound(uint userId)
@@ -115,7 +118,7 @@ public class Room
     public void StartGame(CardDb blackCard)
     {
         GameStarted = true;
-        Judge = GetRandomPerson();
+        Judge = Players[0];
         RequiredAnswerCount = blackCard.AnswerCount;
         BlackCardId = blackCard.CardId;
     }
@@ -129,16 +132,16 @@ public class Room
 
         foreach(var lobbyPlayer in Players)
         {
-            if(lobbyPlayer.SelectedCards.Any(x => x.CardId == SelectedCardByJudgeId))
-            {
-                lobbyPlayer.Points++;
-            }
+            //if(lobbyPlayer.SelectedCards.Any(x => x.CardId == SelectedCardByJudgeId))
+            //{
+            //    lobbyPlayer.Points++;
+            //}
         }
 
         IsWaitingForJudge = false;
         IsWaitingForNextRound = false;
 
-        SelectedCardByJudgeId = 0;
+        //SelectedWinnerId = new uint[0];
         BlackCardId = nextBlackCardId;
         NextRoundVotes.Clear();
         Judge = GetRandomPerson(excludeJudge: true);

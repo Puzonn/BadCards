@@ -10,6 +10,7 @@ using BadCards.Api.Database;
 using BadCards.Api.Models.Hub;
 using BadCards.Api.Models.Database;
 using BadCards.Api.Models.Hub.Events;
+using System.Linq.Expressions;
 
 namespace BadCards.Api.Hubs;
 
@@ -40,11 +41,16 @@ public class RoomHub : Hub
             return;
         }
 
-        Room room = GetRoom(player.UserId);
+        Room? room = GetRoom(player.UserId);
+
+        if(room is null)
+        {
+            return;
+        }
 
         player.IsActive = false;
 
-        if(room.Players.All(x => !x.IsActive))
+        if(room.GetPlayers().All(x => !x.IsActive))
         {
             rooms.Remove(room);
             RoomDb? roomDb = dbContext.Rooms.Where(x => x.LobbyCode == room.RoomCode).FirstOrDefault();
@@ -109,21 +115,22 @@ public class RoomHub : Hub
         }
 
         /* Create new player on join */
-        if (room.Players.Find(x => x.UserId == userId) == null)
+        if (room.GetPlayers().Find(x => x.UserId == userId) == null)
         {
             Player player = new Player(Context.ConnectionId, username, (uint)userId);
 
-            room.Players.Add(player);
+            room.AddPlayer(player);
         }
         else
         {
             /* Update connectionId on reconnect to game */
-            Player reconnectedPlayer = room.Players.Find(x => x.UserId == userId)!;
+            Player reconnectedPlayer = room.GetPlayers().Find(x => x.UserId == userId)!;
             reconnectedPlayer.ConnectionId = Context.ConnectionId;
             reconnectedPlayer.IsActive = true;
         }
 
-        IEnumerable<ApiPlayer> lobbyPlayers = room.Players.Select(x => x.ToApiPlayer());
+        IEnumerable<ApiPlayer> lobbyPlayers = room.GetPlayers().Select(x => x.ToApiPlayer());
+        IEnumerable<Card> lobbySelectedCards = room.GetSelectedCards();
 
         foreach (var lobbyPlayer in room.GetConnectedPlayers())
         {
@@ -131,12 +138,14 @@ public class RoomHub : Hub
             {
                 OnJoinEvent onJoinEvent = new OnJoinEvent()
                 {
+                    SelectedWinnerId = room.SelectedWinnerId,
+                    LobbySelectedCards = lobbySelectedCards,
                     HasSelected = false,
                     AnswerCount = room.RequiredAnswerCount,
                     IsWaitingForNextRound = false,
                     IsWaitingForJudge = false,
                     IsJudge = false,
-                    SelectedCards = new SelectedCard[0],
+                    PlayerSelectedCards = lobbyPlayer.GetSelectedCards(),
                     Players = lobbyPlayers,
                     WhiteCards = new Card[0],
                     BlackCard = Card.Empty,
@@ -154,12 +163,14 @@ public class RoomHub : Hub
 
                 OnJoinEvent onJoinEvent = new OnJoinEvent()
                 {
+                    SelectedWinnerId = room.SelectedWinnerId,
+                    LobbySelectedCards = lobbySelectedCards,
                     AnswerCount = room.RequiredAnswerCount,
                     HasSelected = lobbyPlayer.HasSelectedRequired,
                     IsWaitingForNextRound = room.IsWaitingForNextRound,
                     IsWaitingForJudge = room.IsWaitingForJudge,
                     IsJudge = room.Judge == lobbyPlayer,
-                    SelectedCards = room.GetSelectedCards(),
+                    PlayerSelectedCards = lobbyPlayer.GetSelectedCards(),
                     Players = lobbyPlayers,
                     WhiteCards = lobbyPlayer.WhiteCards,
                     BlackCard = translatedBlackCard,
@@ -189,7 +200,7 @@ public class RoomHub : Hub
                 return;
             }
 
-            UserDb user = await dbContext.Users.Where(x => x.Id == userId).FirstOrDefaultAsync();
+            UserDb user = await dbContext.Users.Where(x => x.Id == userId).FirstAsync();
 
             Room? room;
 
@@ -220,33 +231,37 @@ public class RoomHub : Hub
             else
             {
                 /* Create new player on join */
-                if (room.Players.Find(x => x.UserId == userId) == null)
+                if (room.GetPlayers().Find(x => x.UserId == userId) == null)
                 {
                     Player player = new Player(Context.ConnectionId, user);
 
-                    room.Players.Add(player);
+                    room.GetPlayers().Add(player);
                 }
                 else
                 {
                     /* Update connectionId on reconnect to game */
-                    Player reconnectedPlayer = room.Players.Find(x => x.UserId == userId)!;
+                    Player reconnectedPlayer = room.GetPlayers().Find(x => x.UserId == userId)!;
                     reconnectedPlayer.ConnectionId = Context.ConnectionId;
                     reconnectedPlayer.IsActive = true;
                 }
             }
 
-            foreach (var lobbyPlayer in room.Players)
+            IEnumerable<Card> lobbySelectedCards = room.GetSelectedCards();
+
+            foreach (var lobbyPlayer in room.GetConnectedPlayers())
             {
                 if (!room.GameStarted)
                 {
                     OnJoinEvent onJoinEvent = new OnJoinEvent()
                     {
+                        SelectedWinnerId = room.SelectedWinnerId,
+                        LobbySelectedCards = lobbySelectedCards,
                         HasSelected = false,
                         AnswerCount = room.RequiredAnswerCount,
                         IsWaitingForNextRound = false,
                         IsWaitingForJudge = false,
                         IsJudge = false,
-                        SelectedCards = new SelectedCard[0],
+                        PlayerSelectedCards = lobbyPlayer.GetSelectedCards(),
                         Players = room.GetApiPlayers(),
                         WhiteCards = new Card[0],
                         BlackCard = Card.Empty,
@@ -264,12 +279,14 @@ public class RoomHub : Hub
 
                     OnJoinEvent onJoinEvent = new OnJoinEvent()
                     {
+                        SelectedWinnerId = room.SelectedWinnerId,
+                        LobbySelectedCards = lobbySelectedCards,
                         AnswerCount = room.RequiredAnswerCount,
                         HasSelected = lobbyPlayer.HasSelectedRequired,
                         IsWaitingForNextRound = room.IsWaitingForNextRound,
                         IsWaitingForJudge = room.IsWaitingForJudge,
                         IsJudge = room.Judge == lobbyPlayer,
-                        SelectedCards = room.GetSelectedCards(),
+                        PlayerSelectedCards = lobbyPlayer.GetSelectedCards(),
                         Players = room.GetApiPlayers(),
                         WhiteCards = lobbyPlayer.WhiteCards,
                         BlackCard = translatedBlackCard,
@@ -303,7 +320,7 @@ public class RoomHub : Hub
                 TotalVotes = room.GetNextRoundTotalVotes()
             };
 
-            foreach (Player player in room.Players)
+            foreach (Player player in room.GetConnectedPlayers())
             {
                 await SendAsync(player, "OnNextRoundVote", JsonSerializer.Serialize(voteEvent));
             }
@@ -323,18 +340,21 @@ public class RoomHub : Hub
             return false;
         }
 
-        if(room.Players.Count <= 1)
+        if(room.GetPlayers().Count <= 1)
         {
-           // return false;
+#if RELEASE
+            return false;
+#endif
         }
 
-        room.StartGame(cardService.GetRandomBlackCard());
+        room.StartGame(await cardService.GetRandomBlackCard());
 
-        IEnumerable<ApiPlayer> lobbyPlayers = room.Players.Select(x => x.ToApiPlayer());
+        IEnumerable<ApiPlayer> lobbyPlayers = room.GetPlayers().Select(x => x.ToApiPlayer());
 
-        foreach (var lobbyPlayer in room.Players)
+        foreach (var lobbyPlayer in room.GetPlayers())
         {
-            Card translatedBlackCard = new Card(room.BlackCardId, true, cardService.GetCardTranslation(room.BlackCardId, lobbyPlayer.Locale), lobbyPlayer.UserId);
+            Card translatedBlackCard = new Card(room.BlackCardId, true,
+                cardService.GetCardTranslation(room.BlackCardId, lobbyPlayer.Locale), lobbyPlayer.UserId);
 
             OnStartGameEvent startEvent = new OnStartGameEvent()
             {
@@ -364,18 +384,22 @@ public class RoomHub : Hub
             IsBot = true
         };
 
-        room.Players.Add(bot);
+        room.AddPlayer(bot);
 
-        foreach(var lobbyPlayer in room.Players)
+        IEnumerable<Card> lobbySelectedCards = room.GetSelectedCards();
+
+        foreach(var lobbyPlayer in room.GetConnectedPlayers())
         {
             OnJoinEvent onJoinEvent = new OnJoinEvent()
             {
+                SelectedWinnerId = room.SelectedWinnerId,
+                LobbySelectedCards = lobbySelectedCards,
                 AnswerCount = room.RequiredAnswerCount,
                 HasSelected = lobbyPlayer.HasSelectedRequired,
                 IsWaitingForNextRound = room.IsWaitingForNextRound,
                 IsWaitingForJudge = room.IsWaitingForJudge,
                 IsJudge = room.Judge == lobbyPlayer,
-                SelectedCards = room.GetSelectedCards(),
+                PlayerSelectedCards = lobbyPlayer.GetSelectedCards(),
                 Players = room.GetApiPlayers(),
                 WhiteCards = lobbyPlayer.WhiteCards,
                 BlackCard = Card.Empty,
@@ -418,20 +442,18 @@ public class RoomHub : Hub
         Player player = GetPlayer()!;
         Room room = GetRoom(player.UserId);
 
-        uint selectedCardByJudge = room.SelectedCardByJudgeId;
+        room.NextRound((await cardService.GetRandomBlackCard()).CardId);
 
-        room.NextRound(cardService.GetRandomBlackCard().CardId);
+        IEnumerable<ApiPlayer> lobbyApiPlayers = room.GetPlayers().Select(x => x.ToApiPlayer());
 
-        IEnumerable<ApiPlayer> lobbyPlayers = room.Players.Select(x => x.ToApiPlayer());
-
-        foreach (Player lobbyPlayer in room.Players)
+        foreach (Player lobbyPlayer in room.GetPlayers())
         {
-            lobbyPlayer.SelectedCards.Clear();
+            lobbyPlayer.SelectedCards = new uint[0];
             lobbyPlayer.HasSelectedRequired = false;
 
             List<Card> playerCards = lobbyPlayer.WhiteCards;
 
-            if(playerCards.Count != 10)
+            if(playerCards.Count < 10)
             {
                 playerCards.AddRange(await GetRandomWhiteCards(10 - playerCards.Count, lobbyPlayer.UserId, lobbyPlayer.Locale));
             }
@@ -440,9 +462,9 @@ public class RoomHub : Hub
 
             OnNextRoundEvent nextRoundEvent = new OnNextRoundEvent()
             {
-                Players = lobbyPlayers,
+                Players = lobbyApiPlayers,
                 BlackCard = newBlackCard,
-                IsJudge = room.Judge!.UserId == lobbyPlayer.UserId,
+                IsJudge = room.Judge == lobbyPlayer,
                 IsWaitingForJudge = false,
                 IsWaitingForNextRound = false,
                 JudgeUsername = room.Judge.Username,
@@ -453,83 +475,95 @@ public class RoomHub : Hub
         }
     }
 
-    public async Task SelectCard(uint cardId)
+    public async Task JudgeSelectWinner(uint ownerId)
     {
         Player player = GetPlayer()!;
-        Room room = GetRoom((uint)player.UserId);
+        Room room = GetRoom(player.UserId);
 
         if (room.Judge == player)
         {
-            /* Check if card is not from sender inventory, only from other players that selected that card */
-            if (room.IsWaitingForJudge && room.GetSelectedCards().Any(x => x.CardId == cardId))
+            if (!room.IsWaitingForJudge)
             {
-                room.SetSelectedCardByJudge(cardId);
-
-                OnJudgeSelectCardEvent judgeEvent = new OnJudgeSelectCardEvent()
-                {
-                    SelectedCardId = cardId,
-                    SufficientVotes = room.GetNextRoundSufficientVotes(),
-                    TotalVotes = room.GetNextRoundTotalVotes()
-                };
-
-                foreach (Player lobbyPlayer in room.Players)
-                {
-                    await SendAsync(player, "OnJudgeSelectCard", JsonSerializer.Serialize(judgeEvent));
-                }
+                return;
             }
 
-            return;
-        }
+            IEnumerable<Card> lobbySelectedCards = room.GetSelectedCards();
 
-        /* Check if player already selceted cards */
-        if(player.SelectedCards.Count == room.RequiredAnswerCount)
+            //TODO: 
+            room.SetSelectedCardByJudge(ownerId);
+            room.IsWaitingForNextRound = true;
+
+            OnJudgeSelectCardEvent judgeEvent = new OnJudgeSelectCardEvent()
+            {
+                CardOwnerId = ownerId,
+            };
+
+            foreach (Player lobbyPlayer in room.GetConnectedPlayers())
+            {
+                await SendAsync(lobbyPlayer, "OnJudgeSelectCard", JsonSerializer.Serialize(judgeEvent));
+            }
+        }
+    }
+
+    public async Task SelectCards(uint[] cardsId)
+    {
+        Player player = GetPlayer()!;
+        Room room = GetRoom(player.UserId);
+
+        if (room.Judge == player)
         {
             return;
         }
 
-        if (player.SelectCard(cardId))
+        if (player.SelectCard(cardsId))
         {
-            if(player.SelectedCards.Count == room.RequiredAnswerCount)
+            if(player.SelectedCards.Length == room.RequiredAnswerCount)
             {
                 player.HasSelectedRequired = true;
             }
 
-            IEnumerable<SelectedCard> selectedCards = room.GetSelectedCards();
+            IEnumerable<Card> selectedCards = room.GetSelectedCards();
 
             if (room.CanJudge)
             {
                 selectedCards = selectedCards.OrderBy(rnd => Random.Shared.Next());
                 room.IsWaitingForJudge = true;
             }
-             
-            foreach (Player lobbyPlayer in room.Players)
-            {
-                IEnumerable<SelectedCard> translatedSelectedCards = selectedCards
-                    .Select(x => new SelectedCard(cardService.GetCardTranslation(x.CardId, lobbyPlayer.Locale))
-                    {
-                        CardId = x.CardId,
-                        IsSelectedByJudge = x.IsSelectedByJudge,
-                        SelectedByUsername = x.SelectedByUsername,
-                        IsOwner = x.OwnerId == lobbyPlayer.UserId
-                    });
 
-                OnSelectCardEvent selectCardEvent = new OnSelectCardEvent()
+            OnSelectCardEvent selectCardEvent = new OnSelectCardEvent()
+            {
+                HasSelectedRequired = player.HasSelectedRequired,
+                IsWaitingForJudge = room.IsWaitingForJudge,
+                IsWaitingForNextRound = room.IsWaitingForNextRound,
+                ShowSelectedCards = room.CanJudge,
+            };
+
+            await SendAsync(player, "OnStateSelectCard", JsonSerializer.Serialize(selectCardEvent));
+
+            /* Check if all players has already select their cards */
+            if (room.GetPlayers().Where(x => x != room.Judge).All(x => x.HasSelectedRequired))
+            {
+                room.IsWaitingForJudge = true;
+            }
+
+            if(room.IsWaitingForJudge)
+            {
+                IEnumerable<Card> lobbySelectedCards = room.GetSelectedCards();
+
+                OnWaitingForJudge waitingForJudge = new OnWaitingForJudge()
                 {
-                    HasSelectedRequired = lobbyPlayer.HasSelectedRequired,
-                    IsWaitingForJudge = room.IsWaitingForJudge,
-                    IsWaitingForNextRound = room.IsWaitingForNextRound,
-                    SelectedCards = translatedSelectedCards,
-                    ShowSelectedCards = room.CanJudge,
-                    SelectDeletedCard = lobbyPlayer.UserId == player.UserId ? cardId : null,
-                    ShouldDeleteCard = lobbyPlayer.UserId == player.UserId
+                    LobbySelectedCards = lobbySelectedCards
                 };
 
-                await SendAsync(lobbyPlayer, "OnStateSelectCard", JsonSerializer.Serialize(selectCardEvent));
+                foreach(var lobbyPlayer in room.GetConnectedPlayers())
+                {
+                    await SendAsync(lobbyPlayer, "OnWaitingForJudgeState", JsonSerializer.Serialize(waitingForJudge));
+                }
             }
         }
     }
 
-    public Room GetRoom(uint userId) => rooms.Where(x => x.Players.Find(x => x.UserId == userId) != null).SingleOrDefault()!;
+    public Room GetRoom(uint userId) => rooms.Where(x => x.GetPlayers().Find(x => x.UserId == userId) != null).SingleOrDefault()!;
 
     public uint GetUserId()
     {
@@ -541,14 +575,14 @@ public class RoomHub : Hub
     public Player? GetPlayer()
     {
         uint userId = GetUserId();
-        Room room = rooms.Find(x => x.Players.Find(x => x.UserId == userId) != null)!;
+        Room room = rooms.Find(x => x.GetPlayers().Find(x => x.UserId == userId) != null)!;
 
         if(room is null)
         {
             return null;
         }
 
-        return room.Players.Find(x => x.UserId == userId)!;
+        return room.GetPlayers().Find(x => x.UserId == userId)!;
     }
 
     public async Task<IEnumerable<Card>> GetRandomWhiteCards(int count, uint userId, string locale)
@@ -566,7 +600,7 @@ public class RoomHub : Hub
 
     public static bool HasLobby(long userId, out Room? room)
     {
-        room = rooms.Find(x => x.Players.Find(x => x.UserId == userId) != null);
+        room = rooms.Find(x => x.GetPlayers().Find(x => x.UserId == userId) != null);
 
         return room is not null;
     }

@@ -1,15 +1,6 @@
-import { FormEvent, useContext, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Context/AuthContext";
-import {
-  Button,
-  FormControl,
-  FormGroup,
-  FormLabel,
-  Form,
-  Container,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { ConsoleLogger } from "@microsoft/signalr/dist/esm/Utils";
 
 export const CreateTab = ({
   onSubmit,
@@ -18,10 +9,19 @@ export const CreateTab = ({
 }) => {
   const auth = useContext(AuthContext);
   const [password, setPassword] = useState<string>("");
+  const [passwordInputFocused, setPasswordInputFocused] =
+    useState<boolean>(false);
 
   const preSubmit = (event: FormEvent) => {
     event.preventDefault();
     onSubmit(password);
+  };
+
+  const OnPasswordInputFocus = (state: boolean) => {
+    if (password !== "" && state === false) {
+      return;
+    }
+    setPasswordInputFocused(state);
   };
 
   if (auth.User?.role === "Guest") {
@@ -33,46 +33,37 @@ export const CreateTab = ({
   }
 
   return (
-    <Container className="tab-box">
-      <Row className="justify-content-center">
-        <Col xs={12} sm={8} md={6} lg={10}>
-          {auth.IsFetched && auth.IsLoggedIn && (
-            <div className="text-start m-3">
-              <Form onSubmit={preSubmit}>
-                <FormGroup controlId="create-lobby_password">
-                  <FormLabel>Lobby Password</FormLabel>
-                  <FormControl
-                    style={{
-                      height: "40px",
-                      width: "100%", // Adjusted width to 100%
-                    }}
-                    maxLength={15}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                    }}
-                    type="password"
-                    placeholder="Lobby Password"
-                  />
-                  <div style={{ marginTop: "15px" }}>
-                    <Button
-                      className="text-black"
-                      variant="light"
-                      style={{
-                        fontWeight: 600,
-                        height: "40px",
-                        width: "100%", // Adjusted width to 100%
-                      }}
-                      type="submit"
-                    >
-                      Create Game
-                    </Button>
-                  </div>
-                </FormGroup>
-              </Form>
-            </div>
-          )}
-        </Col>
-      </Row>
-    </Container>
+    <form onSubmit={preSubmit} className="relative w-full text-black">
+      <div className="relative w-full bg-transparent h-20 border-2 border-black rounded bg-white">
+        <p
+          className={`flex inset-0 transition-all pointer-events-none font-normal bg-transparent absolute  ${
+            !passwordInputFocused
+              ? "flex justify-start pl-4 items-center text-3xl normal-text"
+              : "pl-3 focused-text justify-start "
+          }`}
+        >
+          Password (not requried)
+        </p>
+        <input
+          type="password"
+          onChange={(e) => setPassword(e.target.value)}
+          onFocus={() => {
+            OnPasswordInputFocus(true);
+          }}
+          onBlur={() => {
+            OnPasswordInputFocus(false);
+          }}
+          className={`inset-0 w-full placeholder:text-black outline-none bg-transparent pt-3 text-3xl pl-3 h-full ${
+            !passwordInputFocused ? "opacity-0" : ""
+          }`}
+        />
+      </div>
+      <input
+        type="submit"
+        className={`rounded-lg mt-4 py-4 px-10 text-center align-middle text-1xl hover:scale-105 
+        font-bold text-white shadow-md transition-all bg-black`}
+        value="Create Lobby"
+      />
+    </form>
   );
 };

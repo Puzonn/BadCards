@@ -103,9 +103,9 @@ public class CardService : ICardService
         return dbContext.CardTranslations.Where(x => x.CardId == cardId && x.Locale == locale).Single().Translation;
     }
 
-    public CardDb GetRandomBlackCard()
+    public async Task<CardDb> GetRandomBlackCard()
     {
-        return dbContext.Cards.Where(x => x.IsBlack).OrderBy(x => EF.Functions.Random()).First();
+        return await dbContext.Cards.Where(x => x.IsBlack).OrderBy(x => EF.Functions.Random()).FirstAsync();
     }
 
     public async Task<IEnumerable<CardDb>> GetRandomWhiteCards(int count)

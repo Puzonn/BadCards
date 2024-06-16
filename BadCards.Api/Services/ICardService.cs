@@ -6,7 +6,7 @@ namespace BadCards.Api.Services;
 public interface ICardService
 {
     public Task<CardServiceResponse> FillDatabaseCards();
-    public CardDb GetRandomBlackCard();
+    public Task<CardDb> GetRandomBlackCard();
     public Task<IEnumerable<CardDb>> GetRandomWhiteCards(int count);
     public string GetCardTranslation(uint cardId, string locale);
 }

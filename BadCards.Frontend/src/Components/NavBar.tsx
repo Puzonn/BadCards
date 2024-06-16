@@ -1,13 +1,10 @@
 import "./Styles/NavBar.css";
 import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Cookies from "js-cookie";
 import { AuthContext } from "../Context/AuthContext";
 import axios from "axios";
 import { Config } from "../Config";
-import GithubLogo from "../Assets/Icons/github-mark-white.png";
-import { use } from "i18next";
-import { useSearchParams } from "react-router-dom";
+import NavGif from "../Assets/Icons/nav_gif.gif";
 
 export const NavBar = () => {
   const { i18n } = useTranslation();
@@ -24,22 +21,11 @@ export const NavBar = () => {
       .catch(() => {});
   };
 
-  useEffect(() => {
-    console.log(auth.IsFetched && auth.IsLoggedIn);
-  });
-
-  useEffect(() => {
-    console.log(auth.IsFetched && auth.IsLoggedIn);
-    const lang = Cookies.get("LanguagePreference");
-    if (lang) {
-      setLang(lang);
-      i18n.changeLanguage(lang);
-    }
-  }, []);
-
   return (
     <nav>
-      <div className="max-w-screen flex flex-wrap ml-5 md:justify-start justify-between">
+      <div className="max-w-screen bg-black shadow-sm shadow-black flex flex-wrap ml-5 md:justify-start justify-between relative">
+        <img src={NavGif} />
+
         <a
           href="https://puzonnsthings.pl/"
           className="flex items-center space-x-3 rtl:space-x-reverse"
@@ -61,8 +47,8 @@ export const NavBar = () => {
               >
                 <span className="sr-only">Open user menu</span>
                 <img
-                  className="w-8 h-8 rounded-full"
-                  src="/docs/images/people/profile-picture-3.jpg"
+                  className="w-10 h-10 rounded-full"
+                  src={`https://cdn.discordapp.com/avatars/${auth.User?.discordId}/${auth.User?.avatarId}.webp?size=100`}
                   alt="user photo"
                 />
               </button>
@@ -168,6 +154,7 @@ export const NavBar = () => {
           </ul>
         </div>
       </div>
+      <hr className="max-w-screen h-1 border-white"></hr>
     </nav>
   );
 };
