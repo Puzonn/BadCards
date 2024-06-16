@@ -7,15 +7,45 @@ import { Config } from "../Config";
 import { LoginForm } from "./Lobby/LoginForm";
 import { CreateTab } from "./StartTabs/CreateTab";
 import { JoinTab } from "./StartTabs/JoinTab";
+import { useNavigate } from "react-router-dom";
 
 export const Start = () => {
   const auth = useContext(AuthContext);
 
+  const [showInfo, setShowInfo] = useState<boolean>(false);
+  const [infoContent, setInfoContent] = useState<string>("");
   const [selectedTab, setSelectedTab] = useState<"Create" | "Join" | "Help">(
     "Create"
   );
 
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameEndedParm = urlParams.get("gameEnded");
+
+    if (gameEndedParm) {
+      setInfoContent("Game ended successfully.");
+      setShowInfo(true);
+
+      return;
+    }
+
+    const gameLeaveParm = urlParams.get("gameEnded");
+    if (gameLeaveParm) {
+      setInfoContent("Game left successfully.");
+      setShowInfo(true);
+
+      return;
+    }
+
+    const kickParm = urlParams.get("kick");
+    if (kickParm) {
+      setInfoContent("You've been kicked.");
+      setShowInfo(true);
+      return;
+    }
+  });
 
   useEffect(() => {
     axios.defaults.withCredentials = true;
@@ -88,6 +118,27 @@ export const Start = () => {
 
   return (
     <div className="flex flex-col w-screen mt-10 items-center">
+      <div>
+        {showInfo && (
+          <div
+            id="alert-1"
+            className="flex items-center p-4 mb-4 bg-white rounded text-black font-medium"
+            role="alert"
+          >
+            <svg
+              className="flex-shrink-0 w-4 h-4"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+            </svg>
+            <span className="sr-only">Info</span>
+            <div className="ms-3 text-sm font-medium">{infoContent}</div>
+          </div>
+        )}
+      </div>
       <div className="bg-white bg-opacity-20 md:w-1/2 w-screen p-3 rounded">
         <ul
           className="mb-5 flex bg-black rounded text-white list-none flex-row flex-wrap border-b-0 ps-0"

@@ -69,7 +69,7 @@ public class Player
 
     public ApiPlayer ToApiPlayer()
     {
-        return new ApiPlayer(Username, Points, DiscordUserId, DiscordAvatarId, ProfileColor)
+        return new ApiPlayer(Username, Points, DiscordUserId, DiscordAvatarId, ProfileColor, UserId)
         {
             IsBot = IsBot
         };

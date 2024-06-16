@@ -75,6 +75,21 @@ public class Room
         Players.Add(player);
     }
 
+    public void RemovePlayer(Player player)
+    {
+        Players.Remove(player); 
+    }
+
+    public Player GetPlayer(uint userId)
+    {
+        return Players.Find(x => x.UserId == userId)!;
+    }
+
+    public void RemovePlayer(uint userId)
+    {
+        RemovePlayer(Players.Find(x => x.UserId == userId)!);
+    }
+
     public List<Player> GetBots()
     {
         return Players.FindAll(x => x.IsBot);

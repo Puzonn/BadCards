@@ -26,17 +26,19 @@ export const Game = ({
   LobbyCode,
   OnSelectCard,
   StateJudgeSelectCard,
+  StateEndGame,
+  StateLeaveGame,
   StateStartGame,
+  StateKickPlayer,
   StateSelectCards,
   StateNextRound,
 }: Round) => {
-  const [codeCopied, setCodeCopied] = useState(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(true);
   const AnswerColors: string[] = ["blue-600", "orange-600", "purple-600"];
 
   useEffect(() => {
     if (IsWaitingForNextRound) {
-      //setSelectedCards(LobbySelectedCards);
+      /// setSelectedCards(LobbySelectedCards);
     }
   }, [LobbySelectedCards]);
 
@@ -47,10 +49,11 @@ export const Game = ({
   if (!GameStarted) {
     return (
       <Lobby
-        isCreator={IsCreator}
-        startGameHandler={StateStartGame}
-        lobbyCode={LobbyCode}
-        players={Players}
+        IsCreator={IsCreator}
+        StartGameHandler={StateStartGame}
+        LobbyCode={LobbyCode}
+        Players={Players}
+        KickHandler={StateKickPlayer}
       ></Lobby>
     );
   }
@@ -77,7 +80,7 @@ export const Game = ({
   return (
     <div>
       <div
-        className={`grid min-w-screen h-screen ${
+        className={`grid min-w-screen max-h-screen ${
           isLeaderboardOpen ? "md:grid-cols-[minmax(150px,_250px)_1fr]" : ""
         } gap-4`}
       >
@@ -107,10 +110,13 @@ export const Game = ({
                   </button>
                 </div>
 
-                <GameMenuContext />
+                <GameMenuContext
+                  OnEndGame={StateEndGame}
+                  OnLeaveGame={StateLeaveGame}
+                />
               </div>
             </div>
-            <div className="text-white bg-black md:mx-4 rounded border border-white">
+            <div className="text-white answer-shadow bg-black mx-2 rounded border border-white">
               <div className="font-medium text-2xl whitespace-pre-wrap p-2">
                 {formatContent(BlackCard.Content).map((word, index) => {
                   /* TODO: fix multiple function invoking for getting length */
@@ -154,7 +160,7 @@ export const Game = ({
                 })}
               </div>
             </div>
-            <div className="flex justify-center items-center text-2xl mb-3 p-2 h-20 text-white">
+            <div className="flex justify-center pt-5 md:pt-0 items-center text-2xl mb-3 p-2 h-20 text-white">
               {PlayerSelectedCards.length === AnswerCount &&
                 !IsWaitingForJudge && (
                   <div

@@ -11,6 +11,8 @@ using BadCards.Api.Models.Hub;
 using BadCards.Api.Models.Database;
 using BadCards.Api.Models.Hub.Events;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
+using System.Numerics;
 
 namespace BadCards.Api.Hubs;
 
@@ -331,6 +333,48 @@ public class RoomHub : Hub
         }
     }
 
+    public async Task KickPlayer(uint userId)
+    {
+        Player player = GetPlayer()!;
+        Room room = GetRoom(player.UserId);
+
+        if(room.Creator != player)
+        {
+            return;
+        }
+
+        await SendAsync(room.GetPlayer(userId), "ForceDisconnect", "kick");
+
+        room.RemovePlayer(userId);
+
+        foreach (var lobbyPlayer in room.GetConnectedPlayers())
+        {
+            if (!room.GameStarted)
+            {
+                OnJoinEvent onJoinEvent = new OnJoinEvent()
+                {
+                    SelectedWinnerId = room.SelectedWinnerId,
+                    LobbySelectedCards = Array.Empty<Card>(),
+                    HasSelected = false,
+                    AnswerCount = room.RequiredAnswerCount,
+                    IsWaitingForNextRound = false,
+                    IsWaitingForJudge = false,
+                    IsJudge = false,
+                    PlayerSelectedCards = lobbyPlayer.GetSelectedCards(),
+                    Players = room.GetApiPlayers(),
+                    WhiteCards = new Card[0],
+                    BlackCard = Card.Empty,
+                    JudgeUsername = string.Empty,
+                    GameStarted = room.GameStarted,
+                    RoomCode = room.RoomCode,
+                    IsCreator = lobbyPlayer.UserId == room.Creator.UserId
+                };
+
+                await SendAsync(lobbyPlayer, "OnJoinEvent", JsonSerializer.Serialize(onJoinEvent));
+            }
+        }
+        }
+
     public async Task<bool> StartGame()
     {
         Room room = GetRoom(GetUserId());
@@ -418,12 +462,12 @@ public class RoomHub : Hub
         
     }
 
-    private async Task SendAsync(string connectionId, string method, string data)
+    private async Task SendAsync(string connectionId, string method, string data = "")
     {
         await Clients.Client(connectionId).SendAsync(method, data);
     }
 
-    private async Task SendAsync(Player player, string method, string data)
+    private async Task SendAsync(Player player, string method, string data = "")
     {
         if (player.IsBot)
         {
@@ -502,6 +546,26 @@ public class RoomHub : Hub
             {
                 await SendAsync(lobbyPlayer, "OnJudgeSelectCard", JsonSerializer.Serialize(judgeEvent));
             }
+        }
+    }
+
+    public async Task EndGame()
+    {
+        Player player = GetPlayer()!;
+        Room room = GetRoom(player.UserId);
+
+        foreach(var lobbyPlayer in room.GetConnectedPlayers())
+        {
+            await SendAsync(lobbyPlayer.ConnectionId, "ForceDisconnect", "gameEnded");
+        }
+
+        rooms.Remove(room);
+        RoomDb? roomDb = dbContext.Rooms.Where(x => x.LobbyCode == room.RoomCode).FirstOrDefault();
+
+        if (roomDb is not null)
+        {
+            dbContext.Rooms.Remove(roomDb);
+            await dbContext.SaveChangesAsync();
         }
     }
 

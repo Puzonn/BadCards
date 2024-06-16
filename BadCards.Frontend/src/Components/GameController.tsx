@@ -38,12 +38,22 @@ export const GameController = () => {
       RegisterHandler("OnStateSelectCard", OnStateSelectCard);
       RegisterHandler("OnJudgeSelectCard", OnJudgeSelectCard);
       RegisterHandler("OnWaitingForJudgeState", OnWaitingForJudgeState);
+      RegisterHandler("ForceDisconnect", ForceDisconnect);
       RegisterHandler("OnUserDisconnect", OnUserDisconnect);
       RegisterHandler("DebugLog", (e) => console.log(e));
       RegisterHandler("OnNextRound", OnNextRound);
       Send("Join", code);
     });
   }, [Connection]);
+
+  const ForceDisconnect = (e: string) => {
+    console.log("disc")
+    if (e === "gameEnded") {
+      window.location.href = "/?gameEnded=true";
+    } else if (e === "kick") {
+      window.location.href = "/?kick=true";
+    }
+  };
 
   const OnWaitingForJudgeState = (event: any) => {
     /* TODO: Fix json crap i hate this */
@@ -123,6 +133,16 @@ export const GameController = () => {
     );
   };
 
+  const StateLeaveGame = async () => {};
+
+  const StateKickPlayer = async (userId: number) => {
+    await Connection?.send("KickPlayer", userId);
+  };
+
+  const StateEndGame = async () => {
+    await Connection?.send("EndGame");
+  };
+
   const StateNextRound = async () => {
     if (typeof Connection === "undefined") {
       return;
@@ -156,10 +176,8 @@ export const GameController = () => {
   };
 
   const OnJudgeSelectCard = (e: any) => {
-    console.log("judge:", e);
     const parsedEvent = JSON.parse(e);
-    console.log("Winner: ", parsedEvent);
-    console.log("Winner: ", parsedEvent.CardOwnerId);
+
     setRound((prev) => {
       if (prev) {
         return {
@@ -240,6 +258,9 @@ export const GameController = () => {
   return (
     <>
       <Game
+        StateKickPlayer={StateKickPlayer}
+        StateEndGame={StateEndGame}
+        StateLeaveGame={StateLeaveGame}
         OnSelectCard={OnSelectCard}
         SelectedWinnerId={round.SelectedWinnerId}
         LobbySelectedCards={round.LobbySelectedCards}

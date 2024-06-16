@@ -2,18 +2,14 @@ import { AuthContext } from "../../Context/AuthContext";
 import useErrorHandler from "../../Hooks/useErrorHandler";
 import { Player } from "../../Types/Card";
 import { useContext, useState } from "react";
+import { ILobby } from "../../Types/ILobby";
 
 export const Lobby = ({
-  players,
-  lobbyCode,
-  isCreator,
-  startGameHandler,
-}: {
-  players: Player[];
-  lobbyCode: string;
-  isCreator: boolean;
-  startGameHandler: () => void;
-}) => {
+  Players,
+  IsCreator,
+  StartGameHandler,
+  KickHandler,
+}: ILobby) => {
   const [selectedTab, setSelectedTab] = useState<"Players" | "Rules">(
     "Players"
   );
@@ -55,25 +51,31 @@ export const Lobby = ({
           {selectedTab === "Players" && (
             <div className="w-full duration-150 ease-linear">
               <div className="flex flex-col justify-start w-full items-start bg-black rounded">
-                {players.map((player: Player, index) => {
+                {Players.map((player: Player, index) => {
                   const rednerKick =
-                    player.Username !== User?.username && isCreator;
+                    player.Username !== User?.username && IsCreator;
 
                   return (
                     <div
                       key={`lobby_player_${index}`}
-                      className={`flex hover:opacity-80 pb-3 pt-2 font-medium pl-4 mt-2 w-full`}
+                      className={`flex pb-3 pt-2 font-medium pl-4 mt-2 w-full`}
                     >
                       <img
                         className="rounded-full w-10 h-10"
                         src={`https://cdn.discordapp.com/avatars/${player.DiscordUserId}/${player.DiscordAvatarId}.webp?size=100`}
                       />
-                      <div className={`text-2xl text-white px-2 ml-4`}>
+                      <div className={`text-2xl w-100 text-white px-2 ml-4`}>
                         {player.Username}
                       </div>
                       {rednerKick && (
-                        <div className="justify-end mr-5 w-full text-xl items-center flex">
-                          <button className="text-red-500">Kick</button>
+                        <div className="justify-end mr-5 text-xl items-center flex">
+                          <button
+                            onClick={() => KickHandler(player.UserId)}
+                            className="h-10 hover:scale-105 px-3  mr-3 justify-center items-center rounded-md
+                           bg-white text-base font-medium text-red-500 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                          >
+                            Kick
+                          </button>
                         </div>
                       )}
                     </div>
@@ -81,9 +83,9 @@ export const Lobby = ({
                 })}
               </div>
               <div className="flex pt-3 justify-center">
-                {isCreator ? (
+                {IsCreator ? (
                   <input
-                    onClick={startGameHandler}
+                    onClick={StartGameHandler}
                     type="button"
                     className={`rounded-lg mt-4 py-4 px-10 text-center align-middle text-1xl hover:scale-105 
                   font-bold text-white shadow-md transition-all bg-black`}

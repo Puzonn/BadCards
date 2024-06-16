@@ -14,6 +14,7 @@ export interface IWhiteCard extends Card {
 
 export type Player = {
   IsBot: boolean;
+  UserId: number;
   Username: string;
   Points: number;
   DiscordAvatarId: string;
@@ -41,6 +42,9 @@ export type Round = {
   StateSelectCards: (cards: Card[]) => void;
   StateStartGame: () => void;
   StateJudgeSelectCard: (ownerId: number) => void;
+  StateLeaveGame: () => void;
+  StateEndGame: () => void; 
+  StateKickPlayer: (userId: number) => void;
   OnSelectCard: (card: Card | Card[]) => void;
 };
 

@@ -7,8 +7,9 @@ import {
   MenuItems,
   Transition,
 } from "@headlessui/react";
+import { IContextMenu } from "../Types/IContextMenu";
 
-export const GameMenuContext = () => {
+export const GameMenuContext = (context: IContextMenu) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   function classNames(
@@ -36,18 +37,21 @@ export const GameMenuContext = () => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <MenuItems className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <MenuItems
+          className="absolute right-0 z-10 border-2 border-black shadow-white 
+         mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-white ring-opacity-5 focus:outline-none"
+        >
           <div className="py-1">
             <MenuItem>
               {({ focus }) => (
                 <a
                   href="#"
                   className={classNames(
-                    focus ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                    focus ? "bg-gray-100 text-gray-700" : "text-black",
                     "block px-4 py-2 text-sm"
                   )}
                 >
-                  Account settings
+                  Settings
                 </a>
               )}
             </MenuItem>
@@ -56,24 +60,11 @@ export const GameMenuContext = () => {
                 <a
                   href="#"
                   className={classNames(
-                    focus ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                    focus ? "bg-gray-100 text-red-900" : "text-red-700",
                     "block px-4 py-2 text-sm"
                   )}
                 >
-                  Support
-                </a>
-              )}
-            </MenuItem>
-            <MenuItem>
-              {({ focus }) => (
-                <a
-                  href="#"
-                  className={classNames(
-                    focus ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                    "block px-4 py-2 text-sm"
-                  )}
-                >
-                  License
+                  Leave
                 </a>
               )}
             </MenuItem>
@@ -81,13 +72,13 @@ export const GameMenuContext = () => {
               <MenuItem>
                 {({ focus }) => (
                   <button
-                    type="submit"
+                    onClick={context.OnEndGame}
                     className={classNames(
-                      focus ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                      focus ? "bg-gray-100 text-red-900" : "text-red-700",
                       "block w-full px-4 py-2 text-left text-sm"
                     )}
                   >
-                    Sign out
+                    End Game
                   </button>
                 )}
               </MenuItem>
