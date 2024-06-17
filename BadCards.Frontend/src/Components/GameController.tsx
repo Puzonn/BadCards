@@ -5,20 +5,25 @@ import { Game } from "./Game";
 import { Config } from "../Config";
 import { ConnectionContext } from "../Context/ConnectionContext";
 import { HubConnectionState } from "@microsoft/signalr";
-import { setSelectionRange } from "@testing-library/user-event/dist/utils";
+import { AuthContext } from "../Context/AuthContext";
 
 export const GameController = () => {
   const { Connection, Build, Send, RegisterHandler } =
     useContext(ConnectionContext);
-
+  const { User, IsLoggedIn, IsFetched } = useContext(AuthContext);
   const [round, setRound] = useState<Round>();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const code = searchParams.get("code");
 
   useEffect(() => {
-    Build(`${Config.default.ApiUrl}/services/roomHub`);
-  }, []);
+    if (!IsLoggedIn && IsFetched) {
+      const codeParm = searchParams.get("code");
+      window.location.href = `/start?code=${codeParm}`;
+    } else if (IsLoggedIn && IsFetched) {
+      Build(`${Config.default.ApiUrl}/services/roomHub`);
+    }
+  }, [IsLoggedIn, IsFetched]);
 
   useEffect(() => {
     if (
@@ -47,7 +52,6 @@ export const GameController = () => {
   }, [Connection]);
 
   const ForceDisconnect = (e: string) => {
-    console.log("disc")
     if (e === "gameEnded") {
       window.location.href = "/?gameEnded=true";
     } else if (e === "kick") {
@@ -190,10 +194,6 @@ export const GameController = () => {
     });
   };
 
-  useEffect(() => {
-    console.log("Round updated: ", round);
-  }, [round]);
-
   const OnStartGame = (e: string) => {
     const round = JSON.parse(e) as Round;
     round.IsWaitingForJudge = false;
@@ -219,6 +219,9 @@ export const GameController = () => {
               ),
             };
           }
+        }
+        if (prev.PlayerSelectedCards.length === round?.AnswerCount) {
+          return;
         }
 
         return {
@@ -258,6 +261,7 @@ export const GameController = () => {
   return (
     <>
       <Game
+        HasSelected={round.HasSelected}
         StateKickPlayer={StateKickPlayer}
         StateEndGame={StateEndGame}
         StateLeaveGame={StateLeaveGame}

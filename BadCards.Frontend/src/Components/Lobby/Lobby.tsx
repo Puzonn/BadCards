@@ -1,7 +1,7 @@
 import { AuthContext } from "../../Context/AuthContext";
 import useErrorHandler from "../../Hooks/useErrorHandler";
 import { Player } from "../../Types/Card";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ILobby } from "../../Types/ILobby";
 
 export const Lobby = ({
@@ -35,11 +35,11 @@ export const Lobby = ({
               </a>
             </li>
             <li
+              onClick={() => setSelectedTab("Rules")}
               role="presentation"
               className={`text-center transition-all uppercase hover:opacity-80 ${
                 selectedTab === "Rules" ? "border-b-2" : ""
               }`}
-              onClick={() => setSelectedTab("Rules")}
             >
               <a className="block border-x-0  border-t-0 border-transparent px-7">
                 Rules
@@ -64,7 +64,9 @@ export const Lobby = ({
                         className="rounded-full w-10 h-10"
                         src={`https://cdn.discordapp.com/avatars/${player.DiscordUserId}/${player.DiscordAvatarId}.webp?size=100`}
                       />
-                      <div className={`text-2xl w-100 text-white px-2 ml-4`}>
+                      <div
+                        className={`text-2xl w-100 max-w-full overflow-hidden mr-4 text-white px-2 ml-4`}
+                      >
                         {player.Username}
                       </div>
                       {rednerKick && (

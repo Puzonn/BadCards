@@ -1,4 +1,3 @@
-import "./Styles/Start.css";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../Context/AuthContext";
 import axios from "axios";
@@ -23,6 +22,18 @@ export const Start = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const gameEndedParm = urlParams.get("gameEnded");
+    const code = urlParams.get("code");
+
+    if (code !== null && auth.IsFetched && !auth.IsLoggedIn) {
+      localStorage.setItem("after-login-redirect-url", code);
+    }
+
+    const storedCode = localStorage.getItem("after-login-redirect-url");
+
+    if (storedCode !== null && auth.IsFetched && auth.IsLoggedIn) {
+      localStorage.removeItem("after-login-redirect-url");
+      window.location.href = `/lobby?code=${storedCode}`;
+    }
 
     if (gameEndedParm) {
       setInfoContent("Game ended successfully.");

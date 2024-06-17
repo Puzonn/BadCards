@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }: IProps) => {
           path === "/auth/discord" ||
           path === "/auth/discord/" ||
           path === "/legal" ||
-          path === "/start"
+          path === "/start" || path === "/lobby"
         ) {
           return;
         }

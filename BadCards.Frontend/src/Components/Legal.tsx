@@ -1,5 +1,4 @@
 import LicenseIcon from "../Assets/Icons/license_icon.jpg";
-import "./Styles/Legal.css";
 
 export const Legal = () => {
   return (

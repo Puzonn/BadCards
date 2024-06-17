@@ -107,6 +107,8 @@ public class RoomHub : Hub
         string username = identity.FindFirst(ClaimTypes.Name)!.Value;
 
         Room? room;
+        Player player;
+        bool isNewPlayer = false;
 
         if ((room = rooms.Find(x => x.RoomCode == lobbyCode)) == null)
         {
@@ -119,16 +121,25 @@ public class RoomHub : Hub
         /* Create new player on join */
         if (room.GetPlayers().Find(x => x.UserId == userId) == null)
         {
-            Player player = new Player(Context.ConnectionId, username, (uint)userId);
+            player = new Player(Context.ConnectionId, username, (uint)userId);
 
             room.AddPlayer(player);
+
+            isNewPlayer = true;
         }
         else
         {
             /* Update connectionId on reconnect to game */
-            Player reconnectedPlayer = room.GetPlayers().Find(x => x.UserId == userId)!;
-            reconnectedPlayer.ConnectionId = Context.ConnectionId;
-            reconnectedPlayer.IsActive = true;
+            player = room.GetPlayers().Find(x => x.UserId == userId)!;
+            player.ConnectionId = Context.ConnectionId;
+            player.IsActive = true;
+        }
+        /* If player just connected */
+        if (player.WhiteCards.Count < 10 && !room.IsWaitingForNextRound)
+        {
+            IEnumerable<Card> cards = await GetRandomWhiteCards(10 - player.WhiteCards.Count, player.UserId, player.Locale);
+
+            player.AppendCards(cards);
         }
 
         IEnumerable<ApiPlayer> lobbyPlayers = room.GetPlayers().Select(x => x.ToApiPlayer());

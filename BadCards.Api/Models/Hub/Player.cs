@@ -67,6 +67,16 @@ public class Player
         WhiteCards = cards.ToList();
     }
 
+    public void AppendCards(IEnumerable<Card> cards)
+    {
+        if(WhiteCards.Count + cards.Count() > 10)
+        {
+            throw new Exception($"Cannot append this many cards: WhiteCards: {WhiteCards.Count} Appended: {cards.Count()}");
+        }
+
+        WhiteCards.AddRange(cards);
+    }
+
     public ApiPlayer ToApiPlayer()
     {
         return new ApiPlayer(Username, Points, DiscordUserId, DiscordAvatarId, ProfileColor, UserId)

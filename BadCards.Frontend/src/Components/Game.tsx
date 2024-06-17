@@ -1,5 +1,4 @@
 import { Card, Player, Round } from "../Types/Card";
-import "./Styles/Game.css";
 import "./Styles/LobbyManager.css";
 import { useEffect, useState } from "react";
 import { Lobby } from "./Lobby/Lobby";
@@ -7,6 +6,7 @@ import { LobbySelectedCardsUI } from "./Lobby/LobbySelectedCardsUI";
 import LeaderboardIcon from "../Assets/Icons/leaderboard_icon.svg";
 import { GameMenuContext } from "./GameMenuContext";
 import { Leaderboard } from "./Leaderboard";
+import { hasSelectionSupport } from "@testing-library/user-event/dist/utils";
 
 export const Game = ({
   BlackCard,
@@ -23,6 +23,7 @@ export const Game = ({
   IsJudge,
   IsCreator,
   AnswerCount,
+  HasSelected,
   LobbyCode,
   OnSelectCard,
   StateJudgeSelectCard,
@@ -180,7 +181,7 @@ export const Game = ({
                     }
                     className="cursor-pointer border-2 hover:bg-white px-4  hover:text-black border-white p-2 rounded"
                   >
-                    Pick
+                    Pick Winner
                   </div>
                 )}
               {IsWaitingForNextRound && (
@@ -191,23 +192,25 @@ export const Game = ({
                   Next Round
                 </div>
               )}
-              {IsJudge && !IsWaitingForJudge && (
-                <div className=" border-b-2 border-white px-4 p-2 rounded">
+              {IsJudge && !IsWaitingForJudge && !IsWaitingForNextRound && (
+                <div className="border-b-2 border-white px-4 p-2 rounded">
                   You're the judge. Wait for all users to choose their cards.
                 </div>
               )}
-              {IsJudge && IsWaitingForJudge && (
-                <div className="border-2 border-white  px-4  p-2 rounded">
-                  You're the judge. Choose winner.
-                </div>
-              )}
+              {IsJudge &&
+                IsWaitingForJudge &&
+                PlayerSelectedCards.length === 0 && (
+                  <div className="border-2 border-white  px-4  p-2 rounded">
+                    You're the judge. Choose winner.
+                  </div>
+                )}
               {!IsJudge && IsWaitingForJudge && (
                 <div className="border-2 border-white px-5 p-2 rounded">
                   Wait for judge to choose a winner.
                 </div>
               )}
             </div>
-            {!IsWaitingForJudge && !IsJudge && (
+            {!IsWaitingForJudge && !IsJudge && !HasSelected && (
               <div>
                 {WhiteCards.map((card, index) => {
                   if (isCardSelected(card)) {
@@ -233,7 +236,7 @@ export const Game = ({
             )}
 
             {IsWaitingForJudge && (
-              <div>
+              <div className="pt-5">
                 <LobbySelectedCardsUI
                   onJudgeSelectedCardClicked={StateJudgeSelectCard}
                   isJudge={IsJudge}

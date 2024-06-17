@@ -32,6 +32,7 @@ export type Round = {
   IsJudge: boolean;
   IsWaitingForJudge: boolean;
   IsWaitingForNextRound: boolean;
+  HasSelected: boolean;
   JudgeUsername: string;
   WhiteCards: IWhiteCard[];
   BlackCard: Card;

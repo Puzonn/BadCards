@@ -5,6 +5,7 @@ import {
   HttpTransportType,
   HubConnection,
   HubConnectionBuilder,
+  HubConnectionState,
   LogLevel,
 } from "@microsoft/signalr";
 
@@ -32,9 +33,6 @@ export const ConnectionProvider = ({ children }: IProps) => {
   };
 
   const Send = (methodName: string, data: any) => {
-    console.log(
-      `[ConnectionProvider] [Send] Method: ${methodName} data: ${data}`
-    );
     Connection?.send(methodName, data);
   };
 

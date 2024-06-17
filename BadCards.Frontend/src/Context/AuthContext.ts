@@ -9,7 +9,7 @@ export const AuthContext = createContext<AuthContextModel>({
   User: undefined,
 });
 
-type AuthContextModel = {
+export type AuthContextModel = {
   IsLoggedIn: boolean;
   IsFetched: boolean;
   SetAuth: (state: User | undefined) => void;
