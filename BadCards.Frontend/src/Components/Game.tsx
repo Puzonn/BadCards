@@ -1,5 +1,5 @@
-import { Card, Player, Round } from "../Types/Card";
-import "./Styles/LobbyManager.css";
+import { Card } from "../Types/Card";
+import { Round } from "../Types/Round";
 import { useEffect, useState } from "react";
 import { Lobby } from "./Lobby/Lobby";
 import { LobbySelectedCardsUI } from "./Lobby/LobbySelectedCardsUI";

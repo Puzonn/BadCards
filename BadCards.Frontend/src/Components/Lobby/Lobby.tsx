@@ -1,8 +1,8 @@
 import { AuthContext } from "../../Context/AuthContext";
 import useErrorHandler from "../../Hooks/useErrorHandler";
-import { Player } from "../../Types/Card";
+import { Player } from "../../Types/Player";
 import { useContext, useEffect, useState } from "react";
-import { ILobby } from "../../Types/ILobby";
+import { ILobby } from "../../Types/Props";
 
 export const Lobby = ({
   Players,

@@ -1,6 +1,5 @@
 import { Button, ButtonGroup, Modal } from "react-bootstrap";
-import { Player } from "../../Types/Card";
-import { NOTFOUND } from "dns";
+import { Player } from "../../Types/Player";
 
 export const PlayerTabModal = ({
   State,

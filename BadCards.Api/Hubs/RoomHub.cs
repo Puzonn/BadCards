@@ -10,9 +10,6 @@ using BadCards.Api.Database;
 using BadCards.Api.Models.Hub;
 using BadCards.Api.Models.Database;
 using BadCards.Api.Models.Hub.Events;
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
-using System.Numerics;
 
 namespace BadCards.Api.Hubs;
 
@@ -50,8 +47,6 @@ public class RoomHub : Hub
             return;
         }
 
-        player.IsActive = false;
-
         if(room.GetPlayers().All(x => !x.IsActive))
         {
             rooms.Remove(room);
@@ -63,6 +58,8 @@ public class RoomHub : Hub
                 await dbContext.SaveChangesAsync();
             }
         }
+
+        player.IsActive = false;
 
         foreach(Player lobbyPlayer in room.GetConnectedPlayers())
         {
@@ -108,7 +105,6 @@ public class RoomHub : Hub
 
         Room? room;
         Player player;
-        bool isNewPlayer = false;
 
         if ((room = rooms.Find(x => x.RoomCode == lobbyCode)) == null)
         {
@@ -124,8 +120,6 @@ public class RoomHub : Hub
             player = new Player(Context.ConnectionId, username, (uint)userId);
 
             room.AddPlayer(player);
-
-            isNewPlayer = true;
         }
         else
         {

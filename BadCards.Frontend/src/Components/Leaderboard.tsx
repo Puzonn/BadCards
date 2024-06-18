@@ -1,5 +1,4 @@
-import { ILeaderboard } from "../Types/LobbyManagerTypes";
-import "./Styles/Leaderboard.css";
+import { ILeaderboard } from "../Types/Props";
 import WinIcon from "../Assets/Icons/win_icon.svg";
 import LeaderboardIcon from "../Assets/Icons/leaderboard_icon.svg";
 

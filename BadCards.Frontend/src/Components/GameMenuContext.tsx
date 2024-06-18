@@ -7,7 +7,7 @@ import {
   MenuItems,
   Transition,
 } from "@headlessui/react";
-import { IContextMenu } from "../Types/IContextMenu";
+import { IContextMenu } from "../Types/Props";
 
 export const GameMenuContext = (context: IContextMenu) => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);

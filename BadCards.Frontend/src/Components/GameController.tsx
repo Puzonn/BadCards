@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Card, Round } from "../Types/Card";
+import { Round } from "../Types/Round";
+import { Card } from "../Types/Card";
 import { Game } from "./Game";
 import { Config } from "../Config";
 import { ConnectionContext } from "../Context/ConnectionContext";
@@ -10,7 +11,7 @@ import { AuthContext } from "../Context/AuthContext";
 export const GameController = () => {
   const { Connection, Build, Send, RegisterHandler } =
     useContext(ConnectionContext);
-  const { User, IsLoggedIn, IsFetched } = useContext(AuthContext);
+  const { IsLoggedIn, IsFetched } = useContext(AuthContext);
   const [round, setRound] = useState<Round>();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -85,21 +86,20 @@ export const GameController = () => {
     Connection?.send("StartGame");
   };
 
-  const OnUserDisconnect = (discordUserId: any) => {
+  const OnUserDisconnect = (userId: number) => {
     setRound((prev) => {
       if (!prev) {
         return prev;
       }
 
-      const players = [...prev.Players].filter(
-        (x) => x.DiscordUserId != (discordUserId as string)
-      );
+      const players = [...prev.Players].filter((x) => x.UserId === userId);
       return { ...prev, Players: players };
     });
   };
 
   const OnStateSelectCard = (event: any) => {
     const response = JSON.parse(event);
+
     setRound((prev) => {
       if (!prev) {
         return prev;
@@ -204,6 +204,7 @@ export const GameController = () => {
   };
 
   const OnSelectCard = (card: Card | Card[]) => {
+    /* If answer count is >= AnswerCount */
     if (Array.isArray(card)) {
       setRound((prev) => {
         if (!prev) {
@@ -245,6 +246,10 @@ export const GameController = () => {
             (x) => x !== card
           ),
         };
+      }
+
+      if (prev.PlayerSelectedCards.length === round?.AnswerCount) {
+        return { ...prev, PlayerSelectedCards: [card] };
       }
 
       return {

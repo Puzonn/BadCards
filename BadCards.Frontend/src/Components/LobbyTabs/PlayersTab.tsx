@@ -1,5 +1,4 @@
-import { DropdownButton } from "react-bootstrap";
-import { Player } from "../../Types/Card";
+import { Player } from "../../Types/Player";
 import { useContext, useState } from "react";
 import { ConnectionContext } from "../../Context/ConnectionContext";
 import RobotIcon from "../../Assets/Icons/robot_icon.png";
