@@ -65,6 +65,11 @@ public class Room
         return Players.FindAll(x => !x.IsBot);
     }
 
+    public List<Player> GetBots()
+    {
+        return Players.FindAll(x => x.IsBot);
+    }
+
     public List<Player> GetPlayers()
    {
         return Players;
@@ -88,11 +93,6 @@ public class Room
     public void RemovePlayer(uint userId)
     {
         RemovePlayer(Players.Find(x => x.UserId == userId)!);
-    }
-
-    public List<Player> GetBots()
-    {
-        return Players.FindAll(x => x.IsBot);
     }
 
     public void SetSelectedCardByJudge(uint cardOwnerId)

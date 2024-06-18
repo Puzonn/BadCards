@@ -6,7 +6,6 @@ import { LobbySelectedCardsUI } from "./Lobby/LobbySelectedCardsUI";
 import LeaderboardIcon from "../Assets/Icons/leaderboard_icon.svg";
 import { GameMenuContext } from "./GameMenuContext";
 import { Leaderboard } from "./Leaderboard";
-import { hasSelectionSupport } from "@testing-library/user-event/dist/utils";
 
 export const Game = ({
   BlackCard,
@@ -33,6 +32,7 @@ export const Game = ({
   StateKickPlayer,
   StateSelectCards,
   StateNextRound,
+  StateAddBot,
 }: Round) => {
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(true);
   const AnswerColors: string[] = ["blue-600", "orange-600", "purple-600"];
@@ -50,6 +50,7 @@ export const Game = ({
   if (!GameStarted) {
     return (
       <Lobby
+        AddBotHandler={StateAddBot}
         IsCreator={IsCreator}
         StartGameHandler={StateStartGame}
         LobbyCode={LobbyCode}

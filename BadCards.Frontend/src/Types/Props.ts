@@ -6,6 +6,7 @@ export interface ILobby {
     IsCreator: boolean;
     StartGameHandler: () => void;
     KickHandler: (userId: number) => void;
+    AddBotHandler: () => void;
 }
 
 export interface ILeaderboard {

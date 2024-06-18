@@ -7,36 +7,8 @@
       "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\hubs\\roomhub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\models\\hub\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\models\\hub\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\middleware\\jwtmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\middleware\\jwtmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\controllers\\gamecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\controllers\\gamecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\services\\tokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\services\\tokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\services\\cardservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\services\\cardservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\controllers\\databasemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\controllers\\databasemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\models\\hub\\room.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\models\\hub\\room.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -46,79 +18,20 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "JWTMiddleware.cs",
-              "DocumentMoniker": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Middleware\\JWTMiddleware.cs",
-              "RelativeDocumentMoniker": "BadCards.Api\\Middleware\\JWTMiddleware.cs",
-              "ToolTip": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Middleware\\JWTMiddleware.cs",
-              "RelativeToolTip": "BadCards.Api\\Middleware\\JWTMiddleware.cs",
-              "ViewState": "AQIAABQAAAAAAAAAAAAQwDAAAAAYAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-18T20:16:35.499Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "UserController.cs",
-              "DocumentMoniker": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Controllers\\UserController.cs",
-              "RelativeDocumentMoniker": "BadCards.Api\\Controllers\\UserController.cs",
-              "ToolTip": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Controllers\\UserController.cs",
-              "RelativeToolTip": "BadCards.Api\\Controllers\\UserController.cs",
-              "ViewState": "AQIAAB4AAAAAAAAAAAAAACMAAAAIAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-18T20:14:11.01Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "AuthController.cs",
-              "DocumentMoniker": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Controllers\\AuthController.cs",
-              "RelativeDocumentMoniker": "BadCards.Api\\Controllers\\AuthController.cs",
-              "ToolTip": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Controllers\\AuthController.cs",
-              "RelativeToolTip": "BadCards.Api\\Controllers\\AuthController.cs",
-              "ViewState": "AQIAAGMAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-18T20:14:02.441Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "GameController.cs",
-              "DocumentMoniker": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Controllers\\GameController.cs",
-              "RelativeDocumentMoniker": "BadCards.Api\\Controllers\\GameController.cs",
-              "ToolTip": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Controllers\\GameController.cs",
-              "RelativeToolTip": "BadCards.Api\\Controllers\\GameController.cs",
-              "ViewState": "AQIAAEIAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-18T20:12:57.522Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "TokenService.cs",
-              "DocumentMoniker": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Services\\TokenService.cs",
-              "RelativeDocumentMoniker": "BadCards.Api\\Services\\TokenService.cs",
-              "ToolTip": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Services\\TokenService.cs",
-              "RelativeToolTip": "BadCards.Api\\Services\\TokenService.cs",
-              "ViewState": "AQIAADAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-18T20:10:13.355Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Player.cs",
-              "DocumentMoniker": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Models\\Hub\\Player.cs",
-              "RelativeDocumentMoniker": "BadCards.Api\\Models\\Hub\\Player.cs",
-              "ToolTip": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Models\\Hub\\Player.cs",
-              "RelativeToolTip": "BadCards.Api\\Models\\Hub\\Player.cs",
-              "ViewState": "AQIAABQAAAAAAAAAAAAnwC0AAAAYAAAA",
+              "Title": "Room.cs",
+              "DocumentMoniker": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Models\\Hub\\Room.cs",
+              "RelativeDocumentMoniker": "BadCards.Api\\Models\\Hub\\Room.cs",
+              "ToolTip": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Models\\Hub\\Room.cs",
+              "RelativeToolTip": "BadCards.Api\\Models\\Hub\\Room.cs",
+              "ViewState": "AQIAAIkAAAAAAAAAAAAIwF8AAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-18T20:03:59.34Z"
+              "WhenOpened": "2024-06-18T22:15:15.382Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -128,34 +41,10 @@
               "RelativeDocumentMoniker": "BadCards.Api\\Hubs\\RoomHub.cs",
               "ToolTip": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Hubs\\RoomHub.cs",
               "RelativeToolTip": "BadCards.Api\\Hubs\\RoomHub.cs",
-              "ViewState": "AQIAAIIBAAAAAAAAAAAqwJUBAAAMAAAA",
+              "ViewState": "AQIAAJABAAAAAAAAAAASwJYBAAAsAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-18T19:51:35.991Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "CardService.cs",
-              "DocumentMoniker": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Services\\CardService.cs",
-              "RelativeDocumentMoniker": "BadCards.Api\\Services\\CardService.cs",
-              "ToolTip": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Services\\CardService.cs",
-              "RelativeToolTip": "BadCards.Api\\Services\\CardService.cs",
-              "ViewState": "AQIAACgAAAAAAAAAAAASwDsAAAAxAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-18T19:45:15.387Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "DatabaseManager.cs",
-              "DocumentMoniker": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Controllers\\DatabaseManager.cs",
-              "RelativeDocumentMoniker": "BadCards.Api\\Controllers\\DatabaseManager.cs",
-              "ToolTip": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Controllers\\DatabaseManager.cs",
-              "RelativeToolTip": "BadCards.Api\\Controllers\\DatabaseManager.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-18T19:45:11.671Z"
             }
           ]
         }

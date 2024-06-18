@@ -25,5 +25,6 @@ export type Round = {
   StateLeaveGame: () => void;
   StateEndGame: () => void;
   StateKickPlayer: (userId: number) => void;
+  StateAddBot: () => void;  
   OnSelectCard: (card: Card | Card[]) => void;
 };

@@ -42,9 +42,6 @@ export const NavBar = () => {
                 type="button"
                 className="flex text-sm rounded-full md:me-0"
                 id="user-menu-button"
-                aria-expanded="false"
-                data-dropdown-toggle="user-dropdown"
-                data-dropdown-placement="bottom"
               >
                 <span className="sr-only">Open user menu</span>
                 <img

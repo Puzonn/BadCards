@@ -1,14 +1,15 @@
 import { AuthContext } from "../../Context/AuthContext";
-import useErrorHandler from "../../Hooks/useErrorHandler";
 import { Player } from "../../Types/Player";
 import { useContext, useEffect, useState } from "react";
 import { ILobby } from "../../Types/Props";
+import AddBotIcon from "../../Assets/Icons/robot_icon.svg";
 
 export const Lobby = ({
   Players,
   IsCreator,
   StartGameHandler,
   KickHandler,
+  AddBotHandler,
 }: ILobby) => {
   const [selectedTab, setSelectedTab] = useState<"Players" | "Rules">(
     "Players"
@@ -22,10 +23,10 @@ export const Lobby = ({
           className="mb-5 flex bg-black rounded text-white list-none flex-row flex-wrap border-b-0 ps-0"
           role="tablist"
         >
-          <div className="flex p-3 w-full font-bold text-sm justify-center items-center">
+          <div className="flex p-3  w-full font-bold text-sm justify-center items-center">
             <li
               role="presentation"
-              className={`text-center uppercase transition-all hover:opacity-80 ${
+              className={`text-center cursor-pointer uppercase transition-all hover:opacity-80 ${
                 selectedTab === "Players" ? "border-b-2" : ""
               }`}
               onClick={() => setSelectedTab("Players")}
@@ -37,7 +38,7 @@ export const Lobby = ({
             <li
               onClick={() => setSelectedTab("Rules")}
               role="presentation"
-              className={`text-center transition-all uppercase hover:opacity-80 ${
+              className={`text-center cursor-pointer transition-all uppercase hover:opacity-80 ${
                 selectedTab === "Rules" ? "border-b-2" : ""
               }`}
             >
@@ -83,6 +84,25 @@ export const Lobby = ({
                     </div>
                   );
                 })}
+              </div>
+              <div className="cursor-pointer hover:text-gray-400">
+                <button
+                  className="inline-flex h-10 w-36 border-2 border-black mt-4 hover:scale-105 mr-3 
+                  justify-center items-center rounded-md bg-white 
+                  text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                >
+                  <div
+                    onClick={() => AddBotHandler()}
+                    className="flex items-center font-medium"
+                  >
+                    <img
+                      src={AddBotIcon}
+                      className="fill-current w-10 h-6 mr-2"
+                      alt="Leaderboard Icon"
+                    />
+                    <span>Add Bot</span>
+                  </div>
+                </button>
               </div>
               <div className="flex pt-3 justify-center">
                 {IsCreator ? (

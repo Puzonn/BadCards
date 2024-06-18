@@ -13,7 +13,7 @@ public class Card
     [JsonIgnore]
     public bool IsEmpty { get; set; } = false;
 
-    public Card(uint cardId, bool isBlack, string content, uint ownerId)
+    public Card(uint cardId, bool isBlack, string content,  uint ownerId)
     {
         CardId = cardId;
         IsBlack = isBlack;

@@ -37,7 +37,6 @@ export const GameController = () => {
     Connection?.start().then(() => {
       RegisterHandler("OnJoinEvent", (e) => {
         const round = JSON.parse(e) as Round;
-        console.log("OnJoinEvent: ", round);
         setRound(round);
       });
       RegisterHandler("OnStartGame", OnStartGame);
@@ -86,6 +85,10 @@ export const GameController = () => {
       return;
     }
     Connection?.send("StartGame");
+  };
+
+  const StateAddBot = () => {
+    Connection?.send("AddBot");
   };
 
   const OnUserDisconnect = (userId: number) => {
@@ -268,6 +271,7 @@ export const GameController = () => {
   return (
     <>
       <Game
+        StateAddBot={StateAddBot}
         HasSelected={round.HasSelected}
         StateKickPlayer={StateKickPlayer}
         StateEndGame={StateEndGame}

@@ -132,7 +132,7 @@ public class RoomHub : Hub
         /* If player just connected */
         if (player.WhiteCards.Count < 10 && !room.IsWaitingForNextRound)
         {
-            IEnumerable<Card> cards = await GetRandomWhiteCards(10 - player.WhiteCards.Count, player.UserId, player.Locale);
+            IEnumerable<Card> cards = await GetRandomWhiteCards(10 - player.WhiteCards.Count, player);
 
             player.AppendCards(cards);
         }
@@ -379,7 +379,7 @@ public class RoomHub : Hub
                 await SendAsync(lobbyPlayer, "OnJoinEvent", JsonSerializer.Serialize(onJoinEvent));
             }
         }
-        }
+    }
 
     public async Task<bool> StartGame()
     {
@@ -403,16 +403,22 @@ public class RoomHub : Hub
 
         foreach (var lobbyPlayer in room.GetPlayers())
         {
-            Card translatedBlackCard = new Card(room.BlackCardId, true,
-                cardService.GetCardTranslation(room.BlackCardId, lobbyPlayer.Locale), lobbyPlayer.UserId);
+            /* Translated card is only for players not bots */
+            Card? translatedBlackCard = null;
+
+            if(!lobbyPlayer.IsBot)
+            {
+               translatedBlackCard = new Card(room.BlackCardId, true, cardService.GetCardTranslation(room.BlackCardId,
+               lobbyPlayer.Locale), lobbyPlayer.UserId);
+            }
 
             OnStartGameEvent startEvent = new OnStartGameEvent()
             {
                 AnswerCount = room.RequiredAnswerCount,
                 IsJudge = lobbyPlayer == room.Judge,
-                WhiteCards = await GetRandomWhiteCards(10, lobbyPlayer.UserId, lobbyPlayer.Locale),
+                WhiteCards = await GetRandomWhiteCards(10, lobbyPlayer),
                 Players = lobbyPlayers,
-                BlackCard = translatedBlackCard,
+                BlackCard = translatedBlackCard!,
                 RoomCode = room.RoomCode,
                 JudgeUsername = room.Judge!.Username,
                 GameStarted = true,
@@ -429,6 +435,7 @@ public class RoomHub : Hub
     public async Task AddBot()
     {
         Room room = GetRoom(GetUserId());
+
         Player bot = new Player()
         {
             IsBot = true
@@ -505,7 +512,7 @@ public class RoomHub : Hub
 
             if(playerCards.Count < 10)
             {
-                playerCards.AddRange(await GetRandomWhiteCards(10 - playerCards.Count, lobbyPlayer.UserId, lobbyPlayer.Locale));
+                playerCards.AddRange(await GetRandomWhiteCards(10 - playerCards.Count, lobbyPlayer));
             }
 
             Card newBlackCard = new Card(room.BlackCardId, true, cardService.GetCardTranslation(room.BlackCardId, lobbyPlayer.Locale), 0);
@@ -655,17 +662,29 @@ public class RoomHub : Hub
         return room.GetPlayers().Find(x => x.UserId == userId)!;
     }
 
-    public async Task<IEnumerable<Card>> GetRandomWhiteCards(int count, uint userId, string locale)
+    public async Task<IEnumerable<Card>> GetRandomWhiteCards(int count, Player player)
     {
         if (count <= 0)
         {
             return new List<Card>();
         }
 
-        var cards = (await cardService.GetRandomWhiteCards(count)).Select(card => new Card(card.CardId,
-            false, cardService.GetCardTranslation(card.CardId, locale), userId)).ToList();
+        if (player.IsBot)
+        {
+            var cards = (await cardService.GetRandomWhiteCards(count)).Select(card => new Card(card.CardId,
+                 false, string.Empty, player.UserId)
+                 { OwnerUsername = player.Username }).ToList();
 
-        return cards;
+            return cards;
+        }
+        else
+        {
+            var cards = (await cardService.GetRandomWhiteCards(count)).Select(card => new Card(card.CardId,
+                 false, cardService.GetCardTranslation(card.CardId, player.Locale), player.UserId)
+                 { OwnerUsername = player.Username }).ToList();
+    
+            return cards;
+        }
     }
 
     public static bool HasLobby(long userId, out Room? room)
