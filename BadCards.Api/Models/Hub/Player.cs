@@ -1,4 +1,5 @@
 ﻿using BadCards.Api.Models.Database;
+using System;
 
 namespace BadCards.Api.Models.Hub;
 
@@ -12,7 +13,11 @@ public class Player
     public string DiscordAvatarId { get; }
     public ulong DiscordUserId { get; }
     public int Points { get; set; } = 0;
-    public uint UserId { get; }
+
+    /// <summary>
+    /// Random unique Id binded when adding user to room. It's not the same as userId from database
+    /// </summary>
+    public uint UserId { get; private set; }
     public bool IsActive { get; set; } = true;
     public bool IsGuest = false;
     public bool HasSelectedRequired { get; set; }  
@@ -24,7 +29,6 @@ public class Player
         DiscordAvatarId = user.AvatarId!;
         ProfileColor = user.ProfileColor;
         DiscordUserId = user.DiscordId;
-        UserId = (uint)user.Id;
         ConnectionId = connectionId;
         Username = user.Username;
         Locale = user.LanguagePreference;
@@ -38,9 +42,8 @@ public class Player
     /// <summary>
     /// Use only for guests
     /// </summary>
-    public Player(string connectionId, string username, uint userId, string locale)
+    public Player(string connectionId, string username, string locale)
     {
-        UserId = userId;
         ConnectionId = connectionId;
         Username = username;
         Locale = locale;
@@ -65,6 +68,11 @@ public class Player
     public void SetCards(IEnumerable<Card> cards)
     {
         WhiteCards = cards.ToList();
+    }
+
+    public void SetUserId(uint id)
+    {
+        UserId = id;
     }
 
     public void AppendCards(IEnumerable<Card> cards)

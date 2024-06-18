@@ -77,7 +77,22 @@ public class Room
 
     public void AddPlayer(Player player)
     {
+        player.SetUserId(CreateUserId());
+
         Players.Add(player);
+    }
+
+    public uint CreateUserId()
+    {
+        IEnumerable<uint> ids = Players.Select(x => x.UserId);
+        uint id;
+
+        do
+        {
+            id = (uint)Random.Shared.Next(int.MinValue, int.MaxValue);
+        } while (ids.Contains(id));
+
+        return id;
     }
 
     public void RemovePlayer(Player player)

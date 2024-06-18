@@ -118,7 +118,7 @@ public class RoomHub : Hub
         /* Create new player on join */
         if (room.GetPlayers().Find(x => x.UserId == userId) == null)
         {
-            player = new Player(Context.ConnectionId, username, (uint)userId, locale);
+            player = new Player(Context.ConnectionId, username, locale);
 
             room.AddPlayer(player);
         }
@@ -199,7 +199,7 @@ public class RoomHub : Hub
         {
             var identity = (ClaimsIdentity)Context.User!.Identity!;
             uint userId = uint.Parse(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            string role = identity.FindFirst(ClaimTypes.Role).Value!;
+            string role = identity.FindFirst(ClaimTypes.Role)!.Value;
             
             if(role == UserRoles.Guest)
             {
