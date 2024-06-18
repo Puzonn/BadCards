@@ -1,9 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AuthContext } from "../Context/AuthContext";
+import { AuthContext } from "../../Context/AuthContext";
 import axios from "axios";
-import { Config } from "../Config";
-import NavGif from "../Assets/Icons/nav_gif.gif";
+import { Config } from "../../Config";
+import NavGif from "../../Assets/Icons/nav_gif.gif";
+import "../../../node_modules/flag-icons/css/flag-icons.min.css";
+import { NavLanguageSelector } from "./NavLangaugeSelector";
 
 export const NavBar = () => {
   const { i18n } = useTranslation();
@@ -24,7 +26,6 @@ export const NavBar = () => {
     <nav>
       <div className="max-w-screen bg-black shadow-sm shadow-black flex flex-wrap ml-5 md:justify-start justify-between relative">
         <img src={NavGif} />
-
         <a
           href="https://puzonnsthings.pl/"
           className="flex items-center space-x-3 rtl:space-x-reverse"
@@ -35,7 +36,8 @@ export const NavBar = () => {
         </a>
         <div className="flex items-center md:order-2 ml-auto space-x-3 pr-5 md:space-x-0 rtl:space-x-reverse">
           {auth.IsFetched && auth.IsLoggedIn && (
-            <div>
+            <div className="flex">
+              <NavLanguageSelector />
               <button
                 type="button"
                 className="flex text-sm rounded-full md:me-0"

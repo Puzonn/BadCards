@@ -39,13 +39,14 @@ public class JWTMiddleware : IMiddleware
             return;
         }
 
-        string token = context.Request.Cookies["Bearer"]!;
+        string? token = context.Request.Cookies["Bearer"];
 
         var tokenHandler = new JwtSecurityTokenHandler();
 
         /* Bearer can change while token is being refreshed, use Items['Bearer'] instead */
 
         context.Items["Bearer"] = token;
+        context.Items["Locale"] = context.Request.Cookies["LanguagePreference"];
 
         try
         {
@@ -69,7 +70,7 @@ public class JWTMiddleware : IMiddleware
 
                         context.Response.Cookies.Append("Bearer", newAccessToken, cookieService.AuthCookieOption);
                         context.Response.Cookies.Append("Refresh", newRefreshToken, cookieService.RefreshTokenOption);
-                        context.Response.Cookies.Append("LanguagePreference", "en", cookieService.MiscCookieOption);
+                        context.Response.Cookies.Append("LanguagePreference", "us", cookieService.MiscCookieOption);
 
                         context.Items["Bearer"] = newAccessToken;
 

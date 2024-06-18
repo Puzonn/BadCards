@@ -28,7 +28,6 @@ export const AuthProvider = ({ children }: IProps) => {
         },
       })
       .then((response) => {
-        console.log(response.data)
         SetAuth(response.data);
       })
       .catch((er) => {

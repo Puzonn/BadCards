@@ -50,7 +50,7 @@ public class AuthController : Controller
                 Role = UserRoles.User,
                 Username = discordUser.Username,
                 RefreshToken = refreshToken,
-                LanguagePreference = "en",
+                LanguagePreference = "us",
                 LastProfileColorChange = DateTime.UtcNow,
                 JoinDate = DateTime.UtcNow,
             };
@@ -90,7 +90,7 @@ public class AuthController : Controller
 
         Response.Cookies.Append("Bearer", token, cookieService.AuthCookieOption);
         Response.Cookies.Append("Refresh", refreshToken, cookieService.RefreshTokenOption);
-        Response.Cookies.Append("LanguagePreference", "en", cookieService.MiscCookieOption);
+        Response.Cookies.Append("LanguagePreference", "us", cookieService.MiscCookieOption);
 
         return Ok();
     }
@@ -154,7 +154,7 @@ public class AuthController : Controller
             return "pl";
         }
 
-        return "en";
+        return "us";
     }
 
     [Authorize]

@@ -15,7 +15,7 @@ public class UserController : Controller
     private static readonly List<string> AvailableLanguages = new List<string>()
     {
         "pl",
-        "en"
+        "us"
     };
 
     private readonly CookieService cookieService;
@@ -29,6 +29,7 @@ public class UserController : Controller
         tokenService = _tokenService;   
     }
 
+    [AllowAnonymous]
     [HttpPatch("/user/set-language")]
     public async Task<ActionResult> SetLanguagePreference([FromBody] string language)
     {
@@ -41,23 +42,14 @@ public class UserController : Controller
 
         TokenValidationResponse response = tokenService.Validate(token);
 
-        if (!response.Success)
-        {
-            return Forbid("Invalid bearer token");
-        }
-
         UserDb? user = await dbContext.Users.FindAsync(response.UserId);
 
-        if(user is null)
+        if(user is not null)
         {
-            return Forbid("User with given token dose not exist");
+            user.LanguagePreference = language;
+            dbContext.Update(user);
+            await dbContext.SaveChangesAsync();
         }
-
-        user.LanguagePreference = language;
-
-        dbContext.Update(user);
-
-        await dbContext.SaveChangesAsync();
 
         HttpContext.Response.Cookies.Append("LanguagePreference", language, cookieService.MiscCookieOption);
 

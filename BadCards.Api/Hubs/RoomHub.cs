@@ -102,6 +102,7 @@ public class RoomHub : Hub
     public async Task JoinAsGuest(string lobbyCode, long userId, ClaimsIdentity identity)
     {
         string username = identity.FindFirst(ClaimTypes.Name)!.Value;
+        string locale = (string?)Context.GetHttpContext()!.Items["Locale"] ?? "us";
 
         Room? room;
         Player player;
@@ -117,7 +118,7 @@ public class RoomHub : Hub
         /* Create new player on join */
         if (room.GetPlayers().Find(x => x.UserId == userId) == null)
         {
-            player = new Player(Context.ConnectionId, username, (uint)userId);
+            player = new Player(Context.ConnectionId, username, (uint)userId, locale);
 
             room.AddPlayer(player);
         }
@@ -220,7 +221,7 @@ public class RoomHub : Hub
                 //If not disconnect user
                 if (apiRoom == null)
                 {
-                    Context.Abort();
+                    await SendAsync(Context.ConnectionId, "ForceDisconnect");
                     return;
                 }
 

@@ -21,7 +21,7 @@ public class CardService : ICardService
     {
         try
         {
-            string[] locales = new string[] { "en", "pl" };
+            string[] locales = new string[] { "us", "pl" };
             bool appendCards = true;
 
             await ClearDatabaseCards();
@@ -30,7 +30,7 @@ public class CardService : ICardService
 
             foreach (var locale in locales)
             {
-                if (!File.Exists($"./Cards/{locale}-cards.txt"))
+                if (!File.Exists($"./Localization/{locale}-cards.txt"))
                 {
                     return new CardServiceResponse(false, $"Cannot reload cards. '{locale}-cards.txt' file dose not exist");
                 }
@@ -57,7 +57,7 @@ public class CardService : ICardService
         bool appendQuestion = false;
         uint cardId = 1;
 
-        using (var fileStream = File.OpenRead($"./Cards/{locale}-cards.txt"))
+        using (var fileStream = File.OpenRead($"./Localization/{locale}-cards.txt"))
         using (var streamReader = new StreamReader(fileStream, Encoding.UTF8, true, bufferSize))
         {
             string? line;
@@ -105,7 +105,7 @@ public class CardService : ICardService
 
     public async Task<CardDb> GetRandomBlackCard()
     {
-        return await dbContext.Cards.Where(x => x.IsBlack && x.AnswerCount == 2).OrderBy(x => EF.Functions.Random()).FirstAsync();
+        return await dbContext.Cards.Where(x => x.IsBlack).OrderBy(x => EF.Functions.Random()).FirstAsync();
     }
 
     public async Task<IEnumerable<CardDb>> GetRandomWhiteCards(int count)

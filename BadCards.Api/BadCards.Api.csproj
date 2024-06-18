@@ -18,10 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Cards\en-cards.txt">
+    <None Update="Localization\us-cards.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Cards\pl-cards.txt">
+    <None Update="Localization\pl-cards.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

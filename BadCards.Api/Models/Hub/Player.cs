@@ -38,12 +38,12 @@ public class Player
     /// <summary>
     /// Use only for guests
     /// </summary>
-    public Player(string connectionId, string username, uint userId)
+    public Player(string connectionId, string username, uint userId, string locale)
     {
         UserId = userId;
         ConnectionId = connectionId;
         Username = username;
-        Locale = "en";
+        Locale = locale;
         IsGuest = true;
         ProfileColor = string.Empty;
         DiscordAvatarId = string.Empty;

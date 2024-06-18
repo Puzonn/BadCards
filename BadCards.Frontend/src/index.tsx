@@ -5,7 +5,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Auth } from "./Components/Auth/Auth";
 import { AuthProvider } from "./Components/Auth/AuthProvider";
 import { Start } from "./Components/Start";
-import { NavBar } from "./Components/NavBar";
+import { NavBar } from "./Components/NavBar/NavBar";
 import { Trans } from "react-i18next";
 import i18next from "i18next";
 import "./i18n";

@@ -58,6 +58,8 @@ export const GameController = () => {
     } else if (e === "kick") {
       window.location.href = "/?kick=true";
     }
+
+    window.location.href = "/";
   };
 
   const OnWaitingForJudgeState = (event: any) => {

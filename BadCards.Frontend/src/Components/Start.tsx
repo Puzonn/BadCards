@@ -61,13 +61,15 @@ export const Start = () => {
   useEffect(() => {
     axios.defaults.withCredentials = true;
     (async function () {
-      await axios
-        .get(`${Config.default.ApiUrl}/user/game-pending-status`, {
+      try {
+        await axios.get(`${Config.default.ApiUrl}/user/game-pending-status`, {
           headers: {
             "Content-Type": "application/json",
           },
-        })
-        .catch(() => {});
+          validateStatus: (status) =>
+            (status >= 200 && status < 300) || status === 500,
+        });
+      } catch (ex) {}
     })();
   }, []);
 
@@ -163,7 +165,7 @@ export const Start = () => {
               }`}
               onClick={() => setSelectedTab("Create")}
             >
-              <a className="block border-x-0 border-t-0 border-transparent px-7">
+              <a className="block cursor-pointer border-x-0 border-t-0 border-transparent px-7">
                 Create
               </a>
             </li>
@@ -174,7 +176,7 @@ export const Start = () => {
               }`}
               onClick={() => setSelectedTab("Join")}
             >
-              <a className="block border-x-0  border-t-0 border-transparent px-7">
+              <a className="block cursor-pointer border-x-0 border-t-0 border-transparent px-7">
                 Join
               </a>
             </li>
@@ -185,7 +187,7 @@ export const Start = () => {
               }`}
               onClick={() => setSelectedTab("Help")}
             >
-              <a className="block border-x-0 border-t-0 border-transparent px-7">
+              <a className="block cursor-pointer border-x-0 border-t-0 border-transparent px-7">
                 Help
               </a>
             </li>
