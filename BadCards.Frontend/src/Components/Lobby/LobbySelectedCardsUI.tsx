@@ -17,13 +17,13 @@ export const LobbySelectedCardsUI = ({
 }: {
   isJudge: boolean;
   isWaitingForJudge: boolean;
-  selectedWinnerId: number;
+  selectedWinnerId: string;
   lobbySelectedCards: Card[];
   isWaitingForNextRound: boolean;
   cards: Card[];
   answerCount: number;
   onSelectedCardClicked: (chunk: Card[]) => void;
-  onJudgeSelectedCardClicked: (ownerId: number) => void;
+  onJudgeSelectedCardClicked: (ownerId: string) => void;
   selectedCards: Card[];
   showUsernames: boolean;
 }) => {

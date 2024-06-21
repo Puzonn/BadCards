@@ -9,6 +9,7 @@ public class UserDb
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id { get; set; }
+    public Guid UserId { get; set; }
     public bool HasActivePendingSession { get; set; }
     public ulong DiscordId { get; set; }
     public string Username { get; set; }

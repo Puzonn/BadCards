@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: IProps) => {
           "Content-Type": "application/json",
         },
       })
-      .then((response) => {
+      .then((response: any) => {
         SetAuth(response.data);
       })
       .catch((er) => {

@@ -63,7 +63,7 @@ public class JWTMiddleware : IMiddleware
 
                     string role = expiredClaims.FindFirstValue(ClaimTypes.Role)!;
 
-                    if(role == UserRoles.Guest)
+                    if(role == Roles.Guest)
                     {
                         var newAccessToken = tokenService.GenerateAccessTokenGuest();
                         var newRefreshToken = tokenService.GenerateRefreshToken();

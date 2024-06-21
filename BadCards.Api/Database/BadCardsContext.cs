@@ -1,5 +1,4 @@
 ﻿using BadCards.Api.Models.Database;
-using BadCards.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace BadCards.Api.Database;

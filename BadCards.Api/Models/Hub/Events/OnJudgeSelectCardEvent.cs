@@ -3,5 +3,5 @@
 [Serializable]
 public class OnJudgeSelectCardEvent
 {
-    public required uint CardOwnerId { get; set; }
+    public required Guid CardOwnerId { get; set; }
 }

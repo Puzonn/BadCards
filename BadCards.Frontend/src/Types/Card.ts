@@ -2,7 +2,7 @@ export type Card = {
   IsBlack: boolean;
   Content: string;
   CardId: number;
-  OwnerId: number;
+  OwnerId: string;
   OwnerUsername: string;
 };
 

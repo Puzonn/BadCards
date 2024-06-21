@@ -1,5 +1,4 @@
-﻿using BadCards.Api.Models.Api;
-using BadCards.Api.Models;
+﻿using BadCards.Api.Models;
 using BadCards.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -21,6 +20,7 @@ public class RoomHub : Hub
     private readonly ITokenService tokenService;
     private readonly ICardService cardService;
     private readonly ILogger<RoomHub> logger;
+    private const int BOT_PROCESS_DELAY = 300;
 
     public RoomHub(BadCardsContext _dbContext, ITokenService _tokenService, ICardService _cardService, ILogger<RoomHub> _logger)
     {
@@ -69,20 +69,13 @@ public class RoomHub : Hub
 
     public override async Task OnConnectedAsync()
     {
-        string? bearer = (string?)Context.GetHttpContext().Items["Bearer"];
+        var identity = (ClaimsIdentity)Context.GetHttpContext()!.User.Identity!;
 
-        if (string.IsNullOrEmpty(bearer))
+        if(!identity.IsAuthenticated)
         {
             Context.Abort();
 
             return;
-        }
-
-        TokenValidationResponse response = tokenService.Validate(bearer);
-
-        if (!response.Success)
-        {
-            Context.Abort();
         }
 
         await ValidateDatabse();
@@ -99,7 +92,7 @@ public class RoomHub : Hub
         }
     }
 
-    public async Task JoinAsGuest(string lobbyCode, long userId, ClaimsIdentity identity)
+    public async Task JoinAsGuest(string lobbyCode, Guid userId, ClaimsIdentity identity)
     {
         string username = identity.FindFirst(ClaimTypes.Name)!.Value;
         string locale = (string?)Context.GetHttpContext()!.Items["Locale"] ?? "us";
@@ -118,7 +111,7 @@ public class RoomHub : Hub
         /* Create new player on join */
         if (room.GetPlayers().Find(x => x.UserId == userId) == null)
         {
-            player = new Player(Context.ConnectionId, username, locale);
+            player = new Player(Context.ConnectionId, username, locale, userId);
 
             room.AddPlayer(player);
         }
@@ -167,7 +160,7 @@ public class RoomHub : Hub
             }
             else
             {
-                Card translatedBlackCard = new Card(room.BlackCardId, true, cardService.GetCardTranslation(room.BlackCardId, lobbyPlayer.Locale), 0);
+                Card translatedBlackCard = new Card(room.BlackCardId, true, cardService.GetCardTranslation(room.BlackCardId, lobbyPlayer.Locale), Guid.Empty);
 
                 OnJoinEvent onJoinEvent = new OnJoinEvent()
                 {
@@ -198,17 +191,17 @@ public class RoomHub : Hub
         try
         {
             var identity = (ClaimsIdentity)Context.User!.Identity!;
-            uint userId = uint.Parse(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            Guid userId = new Guid(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             string role = identity.FindFirst(ClaimTypes.Role)!.Value;
             
-            if(role == UserRoles.Guest)
+            if(role == Roles.Guest)
             {
                 await JoinAsGuest(lobbyCode, userId, identity);
 
                 return;
             }
 
-            UserDb user = await dbContext.Users.Where(x => x.Id == userId).FirstAsync();
+            UserDb user = await dbContext.Users.Where(x => x.UserId == userId).FirstAsync();
 
             Room? room;
 
@@ -283,7 +276,7 @@ public class RoomHub : Hub
                 }
                 else
                 {
-                    Card translatedBlackCard = new Card(room.BlackCardId, true, cardService.GetCardTranslation(room.BlackCardId, lobbyPlayer.Locale), 0);
+                    Card translatedBlackCard = new Card(room.BlackCardId, true, cardService.GetCardTranslation(room.BlackCardId, lobbyPlayer.Locale), Guid.Empty);
 
                     OnJoinEvent onJoinEvent = new OnJoinEvent()
                     {
@@ -317,7 +310,7 @@ public class RoomHub : Hub
 
     public async Task VoteNextRound()
     {
-        uint userId = GetUserId();
+        Guid userId = GetUserId();
         Room room = GetRoom(userId);
 
         if (!room.VoteNextRound(userId))
@@ -339,7 +332,7 @@ public class RoomHub : Hub
         }
     }
 
-    public async Task KickPlayer(uint userId)
+    public async Task KickPlayer(Guid userId)
     {
         Player player = GetPlayer()!;
         Room room = GetRoom(player.UserId);
@@ -429,6 +422,8 @@ public class RoomHub : Hub
             await SendAsync(lobbyPlayer, "OnStartGame", JsonSerializer.Serialize(startEvent));
         }
 
+        await ProcessBots(room);
+
         return true;
     }
 
@@ -436,7 +431,7 @@ public class RoomHub : Hub
     {
         Room room = GetRoom(GetUserId());
 
-        Player bot = new Player()
+        Player bot = new Player(room.CreateUserId())
         {
             IsBot = true
         };
@@ -472,7 +467,26 @@ public class RoomHub : Hub
 
     private async Task ProcessBots(Room room)
     {
-        
+        IReadOnlyCollection<Player> bots = room.GetBots();
+
+        if (!room.IsWaitingForJudge)
+        {
+            foreach (var bot in bots)
+            {
+                await Task.Delay(BOT_PROCESS_DELAY);
+
+                uint[] randomSelectedCards = bot.WhiteCards.ToList().OrderBy(x => Random.Shared.Next()).Take(room.RequiredAnswerCount)
+                    .Select(x => x.CardId).ToArray();
+
+                await SelectCards(randomSelectedCards, room, bot);
+            }
+        }
+
+        if (room.IsWaitingForJudge && room.Judge.IsBot)
+        {
+            IEnumerable<Card> lobbySelectedCards = room.GetSelectedCards().OrderBy(rnd => Random.Shared.Next());
+            await JudgeSelectWinner(lobbySelectedCards.ElementAt(Random.Shared.Next(0, lobbySelectedCards.Count() - 1)).OwnerId, room, room.Judge);
+        }
     }
 
     private async Task SendAsync(string connectionId, string method, string data = "")
@@ -515,7 +529,7 @@ public class RoomHub : Hub
                 playerCards.AddRange(await GetRandomWhiteCards(10 - playerCards.Count, lobbyPlayer));
             }
 
-            Card newBlackCard = new Card(room.BlackCardId, true, cardService.GetCardTranslation(room.BlackCardId, lobbyPlayer.Locale), 0);
+            Card newBlackCard = new Card(room.BlackCardId, true, cardService.GetCardTranslation(room.BlackCardId, lobbyPlayer.Locale), Guid.Empty);
 
             OnNextRoundEvent nextRoundEvent = new OnNextRoundEvent()
             {
@@ -530,13 +544,26 @@ public class RoomHub : Hub
 
             await SendAsync(lobbyPlayer, "OnNextRound", JsonSerializer.Serialize(nextRoundEvent));
         }
+
+        await ProcessBots(room);
     }
 
-    public async Task JudgeSelectWinner(uint ownerId)
+    public async Task JudgeSelectWinner(Guid ownerId)
     {
-        Player player = GetPlayer()!;
+        Player? player = GetPlayer();
+
+        if (player is null)
+        {
+            throw new Exception("Player dose not exist");
+        }
+
         Room room = GetRoom(player.UserId);
 
+        await JudgeSelectWinner(ownerId, room, player);
+    }
+
+    private async Task JudgeSelectWinner(Guid ownerId, Room room, Player player)
+    {
         if (room.Judge == player)
         {
             if (!room.IsWaitingForJudge)
@@ -582,11 +609,8 @@ public class RoomHub : Hub
         }
     }
 
-    public async Task SelectCards(uint[] cardsId)
+    private async Task SelectCards(uint[] cardsId, Room room, Player player)
     {
-        Player player = GetPlayer()!;
-        Room room = GetRoom(player.UserId);
-
         if (room.Judge == player)
         {
             return;
@@ -594,7 +618,7 @@ public class RoomHub : Hub
 
         if (player.SelectCard(cardsId))
         {
-            if(player.SelectedCards.Length == room.RequiredAnswerCount)
+            if (player.SelectedCards.Length == room.RequiredAnswerCount)
             {
                 player.HasSelectedRequired = true;
             }
@@ -623,38 +647,79 @@ public class RoomHub : Hub
                 room.IsWaitingForJudge = true;
             }
 
-            if(room.IsWaitingForJudge)
+            if (room.IsWaitingForJudge)
             {
                 IEnumerable<Card> lobbySelectedCards = room.GetSelectedCards();
 
-                OnWaitingForJudge waitingForJudge = new OnWaitingForJudge()
+                foreach (var lobbyPlayer in room.GetConnectedPlayers())
                 {
-                    LobbySelectedCards = lobbySelectedCards
-                };
+                    string translation = cardService.GetCardTranslation(lobbySelectedCards.ElementAt(0).CardId, lobbyPlayer.Locale);
 
-                foreach(var lobbyPlayer in room.GetConnectedPlayers())
-                {
+                    List<Card> _cards = new List<Card>();
+
+                    foreach (var sCard in lobbySelectedCards)
+                    {
+                        _cards.Add(new Card(sCard.CardId, false, translation, sCard.OwnerId)
+                        {
+                            OwnerUsername = sCard.OwnerUsername,
+                        });
+                    }
+
+                    OnWaitingForJudge waitingForJudge = new OnWaitingForJudge()
+                    {
+                        LobbySelectedCards = _cards
+                    };
+
                     await SendAsync(lobbyPlayer, "OnWaitingForJudgeState", JsonSerializer.Serialize(waitingForJudge));
+
                 }
             }
+
+            await ProcessBots(room);
         }
     }
 
-    public Room GetRoom(uint userId) => rooms.Where(x => x.GetPlayers().Find(x => x.UserId == userId) != null).SingleOrDefault()!;
-
-    public uint GetUserId()
+    public async Task SelectCards(uint[] cardsId)
     {
-        var identity = (ClaimsIdentity)Context.User!.Identity!;
+        Player? player = GetPlayer();
 
-        return uint.Parse(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        if(player is null)
+        {
+            throw new Exception("Player dose not exist");
+        }
+
+        Room room = GetRoom(player.UserId);
+        
+        await SelectCards(cardsId, room, player);
     }
 
-    public Player? GetPlayer()
+    public Room GetRoom(Guid userId) => rooms.Where(x => x.GetPlayers().Find(x => x.UserId == userId) != null).SingleOrDefault()!;
+
+    public Guid GetUserId()
     {
-        uint userId = GetUserId();
+        var identity = (ClaimsIdentity)Context.User!.Identity!;
+        Guid id = new Guid(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        return id;
+    }
+
+    private Player? GetPlayer()
+    {
+        Guid userId = GetUserId();
         Room room = rooms.Find(x => x.GetPlayers().Find(x => x.UserId == userId) != null)!;
 
         if(room is null)
+        {
+            return null;
+        }
+
+        return room.GetPlayers().Find(x => x.UserId == userId)!;
+    }
+
+    private Player? GetPlayer(Guid userId)
+    {
+        Room room = rooms.Find(x => x.GetPlayers().Find(x => x.UserId == userId) != null)!;
+
+        if (room is null)
         {
             return null;
         }
@@ -687,7 +752,7 @@ public class RoomHub : Hub
         }
     }
 
-    public static bool HasLobby(long userId, out Room? room)
+    public static bool HasLobby(Guid userId, out Room? room)
     {
         room = rooms.Find(x => x.GetPlayers().Find(x => x.UserId == userId) != null);
 

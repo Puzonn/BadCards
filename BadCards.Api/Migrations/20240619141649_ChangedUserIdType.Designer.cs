@@ -3,6 +3,7 @@ using System;
 using BadCards.Api.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BadCards.Api.Migrations
 {
     [DbContext(typeof(BadCardsContext))]
-    partial class BadCardContextModelSnapshot : ModelSnapshot
+    [Migration("20240619141649_ChangedUserIdType")]
+    partial class ChangedUserIdType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.14");
@@ -69,8 +72,8 @@ namespace BadCards.Api.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("OwnerId")
-                        .HasColumnType("TEXT");
+                    b.Property<long>("OwnerId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Password")
                         .HasColumnType("TEXT");
@@ -94,6 +97,10 @@ namespace BadCards.Api.Migrations
 
                     b.Property<ulong>("DiscordId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("HasActivePendingSession")
                         .HasColumnType("INTEGER");
@@ -130,6 +137,17 @@ namespace BadCards.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("UserDb");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("BadCards.Api.Models.GuestDb", b =>
+                {
+                    b.HasBaseType("BadCards.Api.Models.Database.UserDb");
+
+                    b.HasDiscriminator().HasValue("GuestDb");
                 });
 #pragma warning restore 612, 618
         }

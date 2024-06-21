@@ -9,10 +9,10 @@ public class ApiPlayer
     public string DiscordUserId { get; set; }  
     public string ProfileColor { get; set; }
     public int Points { get; set; }
-    public uint UserId { get; set; }    
+    public Guid UserId { get; set; }    
     public bool IsBot { get; set; } = false;
     
-    public ApiPlayer(string username, int points, ulong discordUserId, string discordAvatarId, string profileColor, uint userId)
+    public ApiPlayer(string username, int points, ulong discordUserId, string discordAvatarId, string profileColor, Guid userId)
     {
         UserId = userId;
         ProfileColor = profileColor;

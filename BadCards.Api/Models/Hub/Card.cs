@@ -4,7 +4,7 @@ namespace BadCards.Api.Models.Hub;
 
 public class Card
 {
-    public uint OwnerId { get; set; }
+    public Guid OwnerId { get; set; }
     public uint CardId { get; set; }
     public bool IsBlack { get; set; }
     public string Content { get; set; }
@@ -13,7 +13,7 @@ public class Card
     [JsonIgnore]
     public bool IsEmpty { get; set; } = false;
 
-    public Card(uint cardId, bool isBlack, string content,  uint ownerId)
+    public Card(uint cardId, bool isBlack, string content, Guid ownerId)
     {
         CardId = cardId;
         IsBlack = isBlack;
@@ -23,7 +23,7 @@ public class Card
     }
 
     [JsonIgnore]
-    public static readonly Card Empty = new Card(0, false, string.Empty, 0)
+    public static readonly Card Empty = new Card(0, false, string.Empty, Guid.Empty)
     {
         IsEmpty = true,
     };

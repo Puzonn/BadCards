@@ -5,7 +5,7 @@ export interface ILobby {
     LobbyCode: string;
     IsCreator: boolean;
     StartGameHandler: () => void;
-    KickHandler: (userId: number) => void;
+    KickHandler: (userId: string) => void;
     AddBotHandler: () => void;
 }
 

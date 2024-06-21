@@ -17,14 +17,14 @@ export type Round = {
   BlackCard: Card;
   PlayerSelectedCards: Card[];
   LobbySelectedCards: Card[];
-  SelectedWinnerId: number;
+  SelectedWinnerId: string;
   StateNextRound: () => void;
   StateSelectCards: (cards: Card[]) => void;
   StateStartGame: () => void;
-  StateJudgeSelectCard: (ownerId: number) => void;
+  StateJudgeSelectCard: (ownerId: string) => void;
   StateLeaveGame: () => void;
   StateEndGame: () => void;
-  StateKickPlayer: (userId: number) => void;
+  StateKickPlayer: (userId: string) => void;
   StateAddBot: () => void;  
   OnSelectCard: (card: Card | Card[]) => void;
 };

@@ -7,7 +7,7 @@ public class OnJoinEvent
     public required IEnumerable<Card> WhiteCards { get; set; }
     public required IEnumerable<Card> PlayerSelectedCards { get; set; }
     public required IEnumerable<Card> LobbySelectedCards { get; set; }
-    public required uint SelectedWinnerId { get; set; }
+    public required Guid SelectedWinnerId { get; set; }
     public required Card BlackCard { get; set; }
     public required bool IsCreator { get; set; }
     public required bool GameStarted { get; set; }

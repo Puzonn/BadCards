@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -58,7 +56,7 @@ public class TokenService : ITokenService
         var claims = new[]
         {
               new Claim(ClaimTypes.Name, user.Username!),
-              new Claim(ClaimTypes.Role, UserRoles.User),
+              new Claim(ClaimTypes.Role, Roles.User),
               new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
               new Claim("DiscordUserId", user.DiscordId.ToString()),
               new Claim("ProfileColor", user.ProfileColor),
@@ -84,7 +82,7 @@ public class TokenService : ITokenService
         var claims = new[]
         {
               new Claim(ClaimTypes.Name, $"Guest {Random.Shared.Next(0, 10000)}"),
-              new Claim(ClaimTypes.Role, UserRoles.Guest),
+              new Claim(ClaimTypes.Role, Roles.Guest),
               new Claim(ClaimTypes.NameIdentifier, Random.Shared.Next(0, int.MaxValue).ToString()),
               new Claim("DiscordUserId", string.Empty),
               new Claim("ProfileColor", "FFFFFF"),

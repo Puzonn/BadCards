@@ -36,7 +36,7 @@ export const LoginForm = () => {
           <br></br>
           <Button
             onClick={HandleGuestLogin}
-            style={{fontWeight: "600" }}
+            style={{ fontWeight: "600" }}
             className="border-0 m-2 login-form_animation"
           >
             Continue as Guest

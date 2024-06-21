@@ -1,6 +1,6 @@
 export type Player = {
   IsBot: boolean;
-  UserId: number;
+  UserId: string;
   Username: string;
   Points: number;
   DiscordAvatarId: string;

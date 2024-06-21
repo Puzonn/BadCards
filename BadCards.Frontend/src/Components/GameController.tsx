@@ -63,8 +63,8 @@ export const GameController = () => {
 
   const OnWaitingForJudgeState = (event: any) => {
     /* TODO: Fix json crap i hate this */
+    console.log(event)
     const selectedCards: Card[] = JSON.parse(event).LobbySelectedCards;
-
     setRound((prev) => {
       if (!prev) {
         return;
@@ -79,19 +79,19 @@ export const GameController = () => {
 
   const StateStartGame = () => {
     const response = Connection?.invoke("StartGame");
+    
     if (!response) {
       console.error("<StartGameResponse> Need more players");
 
       return;
     }
-    Connection?.send("StartGame");
   };
 
   const StateAddBot = () => {
     Connection?.send("AddBot");
   };
 
-  const OnUserDisconnect = (userId: number) => {
+  const OnUserDisconnect = (userId: string) => {
     setRound((prev) => {
       if (!prev) {
         return prev;
@@ -104,7 +104,6 @@ export const GameController = () => {
 
   const OnStateSelectCard = (event: any) => {
     const response = JSON.parse(event);
-
     setRound((prev) => {
       if (!prev) {
         return prev;
@@ -115,19 +114,12 @@ export const GameController = () => {
         HasSelectedRequired: response.HasSelectedRequired,
         IsWaitingForJudge: response.IsWaitingForJudge,
       };
-
-      if (response.ShouldDeleteCard) {
-        const index = prev.WhiteCards.findIndex(
-          (x) => x.CardId === response.SelectDeletedCard
-        );
-        prev.WhiteCards = prev.WhiteCards.splice(index, 1);
-      }
-
+      console.log(updatedRound)
       return updatedRound;
     });
   };
 
-  const StateJudgeSelectCard = async (ownerId: number) => {
+  const StateJudgeSelectCard = async (ownerId: string) => {
     await Connection?.send("JudgeSelectWinner", ownerId);
   };
 
@@ -144,7 +136,7 @@ export const GameController = () => {
 
   const StateLeaveGame = async () => {};
 
-  const StateKickPlayer = async (userId: number) => {
+  const StateKickPlayer = async (userId: string) => {
     await Connection?.send("KickPlayer", userId);
   };
 
@@ -201,12 +193,17 @@ export const GameController = () => {
 
   const OnStartGame = (e: string) => {
     const round = JSON.parse(e) as Round;
+    console.log(round.BlackCard)
     round.IsWaitingForJudge = false;
     round.IsWaitingForNextRound = false;
     round.PlayerSelectedCards = [];
     round.LobbySelectedCards = [];
     setRound(round);
   };
+
+  useEffect(() => {
+    console.log("Black Card Changed", round?.BlackCard) 
+  }, [round?.BlackCard])
 
   const OnSelectCard = (card: Card | Card[]) => {
     /* If answer count is >= AnswerCount */

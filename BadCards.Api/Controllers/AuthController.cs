@@ -4,9 +4,11 @@ using BadCards.Api.Models.Api;
 using BadCards.Api.Models.Api.Auth;
 using BadCards.Api.Models.Database;
 using BadCards.Api.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -47,7 +49,8 @@ public class AuthController : Controller
                 ProfileColor = GetRandomProfileColor(),
                 DiscordId = discordUser.DiscordId,
                 AvatarId = discordUser.AvatarId,
-                Role = UserRoles.User,
+                Role = Roles.User,
+                UserId = Guid.NewGuid(),
                 Username = discordUser.Username,
                 RefreshToken = refreshToken,
                 LanguagePreference = "us",
@@ -71,26 +74,39 @@ public class AuthController : Controller
             await dbContext.SaveChangesAsync();
         }
 
-        var token = tokenService.GenerateAccessToken(user);
-
-        Response.Cookies.Append("Bearer", token, cookieService.AuthCookieOption);
-        Response.Cookies.Append("Refresh", refreshToken, cookieService.RefreshTokenOption);
-        Response.Cookies.Append("LanguagePreference", user.LanguagePreference, cookieService.MiscCookieOption);
+        await HttpContext.SignInAsync(new ClaimsPrincipal(
+            new ClaimsIdentity(
+                new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, Roles.User),
+                    new Claim("AvatarUrl", $"https://cdn.discordapp.com/avatars/{user.DiscordId}/{user.AvatarId}.webp?size=100")
+                }, "Auth")
+            ), new AuthenticationProperties()
+            {
+                IsPersistent = true,
+            });
 
         return Ok();
     }
 
     [AllowAnonymous]
     [HttpPost("/auth/guest")]
-    public ActionResult SignInGuest()
+    public async Task<ActionResult> SignInGuest()
     {
-        var refreshToken = tokenService.GenerateRefreshToken();
-
-        var token = tokenService.GenerateAccessTokenGuest();
-
-        Response.Cookies.Append("Bearer", token, cookieService.AuthCookieOption);
-        Response.Cookies.Append("Refresh", refreshToken, cookieService.RefreshTokenOption);
-        Response.Cookies.Append("LanguagePreference", "us", cookieService.MiscCookieOption);
+        await HttpContext.SignInAsync(new ClaimsPrincipal(
+            new ClaimsIdentity(
+                new Claim[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Role, Roles.Guest),
+                    new Claim(ClaimTypes.Name, $"Guest ${Guid.NewGuid().ToString()}")
+                }, "Auth")
+            ), new AuthenticationProperties()
+            {
+                IsPersistent = false,
+            });
 
         return Ok();
     }
@@ -161,11 +177,19 @@ public class AuthController : Controller
     [HttpGet("/auth/@me")]
     public ActionResult Validate()
     {
-        string token = (string)HttpContext.Items["Bearer"]!;
+        var identity = (ClaimsIdentity)HttpContext.User!.Identity!;
+        string role = identity.FindFirst(ClaimTypes.Role)!.Value;
+        string userId = identity.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+        string username = identity.FindFirst(ClaimTypes.Name)!.Value;
+        string? avatarUrl = identity.FindFirst("AvatarUrl")?.Value;
 
-        TokenValidationResponse response = tokenService.Validate(token);
-
-        return Ok(response);
+        return Ok(new ApiUser()
+        {
+            Role = role,
+            UserId = new Guid(userId),
+            Username = username,
+            AvatarUrl = avatarUrl,
+        });
     }
 
     [Authorize]

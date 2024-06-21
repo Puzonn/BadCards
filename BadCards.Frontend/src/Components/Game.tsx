@@ -38,6 +38,8 @@ export const Game = ({
   const AnswerColors: string[] = ["blue-600", "orange-600", "purple-600"];
 
   useEffect(() => {
+    console.log(IsJudge);
+    console.log(IsWaitingForJudge);
     if (IsWaitingForNextRound) {
       /// setSelectedCards(LobbySelectedCards);
     }
@@ -121,7 +123,7 @@ export const Game = ({
             <div className="text-white answer-shadow bg-black mx-2 rounded border border-white">
               <div className="font-medium text-2xl whitespace-pre-wrap p-2">
                 {formatContent(BlackCard.Content).map((word, index) => {
-                  /* TODO: fix multiple function invoking for getting length */
+                    /* TODO: fix multiple function invoking for getting length */
                   if (word.startsWith("@special")) {
                     QuestionSpecialColorIndex++;
                     const showContent =
@@ -205,7 +207,7 @@ export const Game = ({
                     You're the judge. Choose winner.
                   </div>
                 )}
-              {!IsJudge && IsWaitingForJudge && (
+              {!IsJudge && IsWaitingForJudge && !IsWaitingForNextRound && (
                 <div className="border-2 border-white px-5 p-2 rounded">
                   Wait for judge to choose a winner.
                 </div>

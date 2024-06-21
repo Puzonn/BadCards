@@ -5,12 +5,12 @@ namespace BadCards.Api.Models.Hub;
 public class Room
 {
     private readonly List<Player> Players = new List<Player>();
-    private readonly HashSet<uint> NextRoundVotes = new HashSet<uint>();
+    private readonly HashSet<Guid> NextRoundVotes = new HashSet<Guid>();
 
     public int RequiredAnswerCount { get; private set; }   
 
     public uint BlackCardId = 0;
-    public uint SelectedWinnerId;
+    public Guid SelectedWinnerId;
     public uint RoomId;
 
     public readonly Player Creator;
@@ -77,19 +77,17 @@ public class Room
 
     public void AddPlayer(Player player)
     {
-        player.SetUserId(CreateUserId());
-
         Players.Add(player);
     }
 
-    public uint CreateUserId()
+    public Guid CreateUserId()
     {
-        IEnumerable<uint> ids = Players.Select(x => x.UserId);
-        uint id;
+        IEnumerable<Guid> ids = Players.Select(x => x.UserId);
+        Guid id;
 
         do
         {
-            id = (uint)Random.Shared.Next(int.MinValue, int.MaxValue);
+            id = Guid.NewGuid();
         } while (ids.Contains(id));
 
         return id;
@@ -100,22 +98,22 @@ public class Room
         Players.Remove(player); 
     }
 
-    public Player GetPlayer(uint userId)
+    public Player GetPlayer(Guid userId)
     {
         return Players.Find(x => x.UserId == userId)!;
     }
 
-    public void RemovePlayer(uint userId)
+    public void RemovePlayer(Guid userId)
     {
         RemovePlayer(Players.Find(x => x.UserId == userId)!);
     }
 
-    public void SetSelectedCardByJudge(uint cardOwnerId)
+    public void SetSelectedCardByJudge(Guid cardOwnerId)
     {
         SelectedWinnerId = cardOwnerId;
     }
 
-    public bool VoteNextRound(uint userId)
+    public bool VoteNextRound(Guid userId)
     {
         if (!NextRoundVotes.Add(userId))
         {
@@ -184,15 +182,13 @@ public class Room
             return Players[Random.Shared.Next(0, Players.Count)];
         }
 
-        List<Player> copyPlayers = new List<Player>(Players);
+        List<Player> players = new List<Player>(Players.FindAll(player => player != Judge));
 
         if(Judge is null)
         {
             return Players[Random.Shared.Next(0, Players.Count)];
         }
 
-        copyPlayers.Remove(Judge);
-
-        return copyPlayers[Random.Shared.Next(0, copyPlayers.Count)];
+        return players[Random.Shared.Next(0, players.Count)];
     }
 }

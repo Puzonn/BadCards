@@ -1,5 +1,4 @@
 ﻿using BadCards.Api.Database;
-using BadCards.Api.Models;
 using BadCards.Api.Models.Api;
 using BadCards.Api.Models.Database;
 using BadCards.Api.Services;
@@ -59,7 +58,6 @@ public class UserController : Controller
     [HttpGet("/user/game-pending-status")]
     public async Task<ActionResult<bool>> HasUserActiveGameSession()
     {
-
         string token = (string)HttpContext.Items["Bearer"]!;
 
         TokenValidationResponse response = tokenService.Validate(token);

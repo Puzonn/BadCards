@@ -27,17 +27,18 @@ public class GameController : ControllerBase
     public async Task<ActionResult<ApiRoom>> CreateGame([FromBody] string? password)
     {
         var identity = (ClaimsIdentity)HttpContext.User!.Identity!;
-        var role = identity.FindFirst(ClaimTypes.Role)!.Value;
-        var userId = uint.Parse(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        string role = identity.FindFirst(ClaimTypes.Role)!.Value;
 
-        if(string.IsNullOrEmpty(role) || role == UserRoles.Guest) 
+        Guid userId = new Guid(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        if(string.IsNullOrEmpty(role) || role == Roles.Guest) 
         {
             return BadRequest("User have to be atleast DiscordUser");
         }
 
-        UserDb user = await dbContext.Users.Where(x => x.Id == uint.Parse(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value.ToString())).SingleAsync();
+        UserDb user = await dbContext.Users.Where(x => x.UserId == new Guid(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value)).SingleAsync();
 
-        if (RoomHub.HasLobby(user.Id, out Room? room))
+        if (RoomHub.HasLobby(user.UserId, out Room? room))
         {            
             if(room is null)
             {
@@ -51,11 +52,7 @@ public class GameController : ControllerBase
 
         RoomDb roomDb = new RoomDb()
         {
-            ListedPlayers = new List<ListedPlayer>
-            {
-                new ListedPlayer(userId, isOwner: true, isGuest: false, isBlacklisted: false)
-            },
-            OwnerId = user.Id,
+            OwnerId = user.UserId,
             GameStarted = false,
             LobbyCode = GenerateRandomString(8),
             PlayersCount = 0,
@@ -84,7 +81,7 @@ public class GameController : ControllerBase
         if (!string.IsNullOrEmpty(room.Password))
         {
             var identity = (ClaimsIdentity)HttpContext.User!.Identity!;
-            uint userId = uint.Parse(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value.ToString());
+            Guid userId = new Guid(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
             if (room.OwnerId == userId)
             {

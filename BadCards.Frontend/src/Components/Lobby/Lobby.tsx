@@ -85,7 +85,7 @@ export const Lobby = ({
                   );
                 })}
               </div>
-              <div className="cursor-pointer hover:text-gray-400">
+              <div>
                 <button
                   className="inline-flex h-10 w-36 border-2 border-black mt-4 hover:scale-105 mr-3 
                   justify-center items-center rounded-md bg-white 

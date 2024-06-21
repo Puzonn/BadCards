@@ -17,7 +17,7 @@ public class Player
     /// <summary>
     /// Random unique Id binded when adding user to room. It's not the same as userId from database
     /// </summary>
-    public uint UserId { get; private set; }
+    public Guid UserId { get; private set; }
     public bool IsActive { get; set; } = true;
     public bool IsGuest = false;
     public bool HasSelectedRequired { get; set; }  
@@ -26,6 +26,7 @@ public class Player
 
     public Player(string connectionId, UserDb user)
     {
+        UserId = user.UserId;
         DiscordAvatarId = user.AvatarId!;
         ProfileColor = user.ProfileColor;
         DiscordUserId = user.DiscordId;
@@ -42,8 +43,9 @@ public class Player
     /// <summary>
     /// Use only for guests
     /// </summary>
-    public Player(string connectionId, string username, string locale)
+    public Player(string connectionId, string username, string locale, Guid userId)
     {
+        UserId = userId;
         ConnectionId = connectionId;
         Username = username;
         Locale = locale;
@@ -55,11 +57,12 @@ public class Player
     /// <summary>
     /// Use only for bots
     /// </summary>
-    public Player()
+    public Player(Guid userId)
     {
-        UserId = (uint)Random.Shared.Next(0, 100000);
+        UserId = userId;
         ConnectionId = string.Empty;
         Username = "Bot";
+        Locale = "pl";
         IsGuest = false;
         ProfileColor = string.Empty;
         DiscordAvatarId = string.Empty;
@@ -70,7 +73,7 @@ public class Player
         WhiteCards = cards.ToList();
     }
 
-    public void SetUserId(uint id)
+    public void SetUserId(Guid id)
     {
         UserId = id;
     }
@@ -102,6 +105,11 @@ public class Player
     /// <returns></returns>
     public bool SelectCard(uint[] cards)
     {
+        if (HasSelectedRequired)
+        {
+            return false;
+        }
+
         IEnumerable<uint> whiteCardsId = WhiteCards.Select(x => x.CardId);
 
         if (cards.All(whiteCardsId.Contains))

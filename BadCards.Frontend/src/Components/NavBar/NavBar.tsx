@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AuthContext } from "../../Context/AuthContext";
 import axios from "axios";
@@ -21,6 +21,10 @@ export const NavBar = () => {
       })
       .catch(() => {});
   };
+
+  useEffect(() => {
+    console.log(auth.User?.avatarUrl)
+  })
 
   return (
     <nav>
@@ -46,7 +50,7 @@ export const NavBar = () => {
                 <span className="sr-only">Open user menu</span>
                 <img
                   className="w-10 h-10 rounded-full"
-                  src={`https://cdn.discordapp.com/avatars/${auth.User?.discordId}/${auth.User?.avatarId}.webp?size=100`}
+                  src={auth.User?.avatarUrl}
                   alt="user photo"
                 />
               </button>
