@@ -62,7 +62,7 @@ To get started with BadCards, follow these steps:
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](<[LICENSE](https://github.com/Puzonn/BadCards/blob/main/license)>) file for details.
 
 ## Acknowledgments
 
