@@ -93,6 +93,7 @@ export const Start = () => {
           if (response.status !== 200) {
             return;
           }
+
           const room = response.data as Room;
           window.location.href = `/lobby?code=${room.LobbyCode}`;
         })

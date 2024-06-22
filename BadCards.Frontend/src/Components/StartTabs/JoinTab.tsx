@@ -1,14 +1,3 @@
-import {
-  Col,
-  Container,
-  FormGroup,
-  Row,
-  Form,
-  FormLabel,
-  FormControl,
-  Button,
-} from "react-bootstrap";
-import { LoginForm } from "../Lobby/LoginForm";
 import { FormEvent, useContext, useState } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 
@@ -19,7 +8,6 @@ export const JoinTab = ({
   onSubmit: (lobbyCode: string, password: string) => {};
   error: string;
 }) => {
-  const auth = useContext(AuthContext);
   const [password, setPassword] = useState<string>("");
   const [lobbyCode, setLobbyCode] = useState<string>("");
   const [passwordInputFocused, setPasswordInputFocused] =

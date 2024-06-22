@@ -24,7 +24,7 @@ public class Player
     public List<Card> WhiteCards { get; private set; } = new List<Card>(0);
     public uint[] SelectedCards { get; set; } = new uint[] { };
 
-    public Player(string connectionId, UserDb user)
+    public Player(string connectionId, string locale, UserDb user)
     {
         UserId = user.UserId;
         DiscordAvatarId = user.AvatarId!;
@@ -32,7 +32,7 @@ public class Player
         DiscordUserId = user.DiscordId;
         ConnectionId = connectionId;
         Username = user.Username;
-        Locale = user.LanguagePreference;
+        Locale = locale;
     }
 
     public IEnumerable<Card> GetSelectedCards()

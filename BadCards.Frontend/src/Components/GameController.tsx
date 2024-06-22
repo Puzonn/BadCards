@@ -7,6 +7,7 @@ import { Config } from "../Config";
 import { ConnectionContext } from "../Context/ConnectionContext";
 import { HubConnectionState } from "@microsoft/signalr";
 import { AuthContext } from "../Context/AuthContext";
+import { IJoinEvent } from "../Types/Events";
 
 export const GameController = () => {
   const { Connection, Build, Send, RegisterHandler } =
@@ -47,7 +48,9 @@ export const GameController = () => {
       RegisterHandler("OnUserDisconnect", OnUserDisconnect);
       RegisterHandler("DebugLog", (e) => console.log(e));
       RegisterHandler("OnNextRound", OnNextRound);
-      Send("Join", code);
+      const locale = localStorage.getItem("locale") || "en";
+      const joinEvent: IJoinEvent = { locale: locale, lobbyCode: code! };
+      Send("Join", joinEvent);
     });
   }, [Connection]);
 
@@ -63,7 +66,7 @@ export const GameController = () => {
 
   const OnWaitingForJudgeState = (event: any) => {
     /* TODO: Fix json crap i hate this */
-    console.log(event)
+    console.log(event);
     const selectedCards: Card[] = JSON.parse(event).LobbySelectedCards;
     setRound((prev) => {
       if (!prev) {
@@ -79,7 +82,7 @@ export const GameController = () => {
 
   const StateStartGame = () => {
     const response = Connection?.invoke("StartGame");
-    
+
     if (!response) {
       console.error("<StartGameResponse> Need more players");
 
@@ -114,7 +117,7 @@ export const GameController = () => {
         HasSelectedRequired: response.HasSelectedRequired,
         IsWaitingForJudge: response.IsWaitingForJudge,
       };
-      console.log(updatedRound)
+      console.log(updatedRound);
       return updatedRound;
     });
   };
@@ -193,17 +196,13 @@ export const GameController = () => {
 
   const OnStartGame = (e: string) => {
     const round = JSON.parse(e) as Round;
-    console.log(round.BlackCard)
+    console.log(round.BlackCard);
     round.IsWaitingForJudge = false;
     round.IsWaitingForNextRound = false;
     round.PlayerSelectedCards = [];
     round.LobbySelectedCards = [];
     setRound(round);
   };
-
-  useEffect(() => {
-    console.log("Black Card Changed", round?.BlackCard) 
-  }, [round?.BlackCard])
 
   const OnSelectCard = (card: Card | Card[]) => {
     /* If answer count is >= AnswerCount */
@@ -212,7 +211,6 @@ export const GameController = () => {
         if (!prev) {
           return prev;
         }
-
         if (card.length === 1) {
           if (prev.PlayerSelectedCards.includes(card[0])) {
             return {
@@ -223,8 +221,9 @@ export const GameController = () => {
             };
           }
         }
+
         if (prev.PlayerSelectedCards.length === round?.AnswerCount) {
-          return;
+          return prev;
         }
 
         return {
@@ -249,7 +248,8 @@ export const GameController = () => {
           ),
         };
       }
-
+      console.log(prev.PlayerSelectedCards.length)
+      console.log(prev.AnswerCount)
       if (prev.PlayerSelectedCards.length === round?.AnswerCount) {
         return { ...prev, PlayerSelectedCards: [card] };
       }

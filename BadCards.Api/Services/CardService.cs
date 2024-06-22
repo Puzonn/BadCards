@@ -105,7 +105,7 @@ public class CardService : ICardService
 
     public async Task<CardDb> GetRandomBlackCard()
     {
-        return await dbContext.Cards.Where(x => x.IsBlack).OrderBy(x => EF.Functions.Random()).FirstAsync();
+        return await dbContext.Cards.Where(x => x.IsBlack && x.AnswerCount == 2).OrderBy(x => EF.Functions.Random()).FirstAsync();
     }
 
     public async Task<IEnumerable<CardDb>> GetRandomWhiteCards(int count)

@@ -88,7 +88,7 @@ export const LobbySelectedCardsUI = ({
           return (
             <div key={`selected_card_${index}`}>
               <div className="flex justify-center text-white text-3xl font-medium">
-                <div>Puzonne {isSelectedByJudge ? "🏆" : ""}</div>
+                <div> {isWaitingForNextRound ? chunk[0].OwnerUsername : ""} {isSelectedByJudge ? "🏆" : ""}</div>
               </div>
               <div
                 className={`h-auto white-shadow cursor-pointer bg-white hover:bg-default text-2xl font-medium my-2 mx-4 p-3

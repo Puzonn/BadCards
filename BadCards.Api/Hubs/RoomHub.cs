@@ -92,10 +92,9 @@ public class RoomHub : Hub
         }
     }
 
-    public async Task JoinAsGuest(string lobbyCode, Guid userId, ClaimsIdentity identity)
+    public async Task JoinAsGuest(string lobbyCode, string locale, Guid userId, ClaimsIdentity identity)
     {
         string username = identity.FindFirst(ClaimTypes.Name)!.Value;
-        string locale = (string?)Context.GetHttpContext()!.Items["Locale"] ?? "us";
 
         Room? room;
         Player player;
@@ -186,7 +185,7 @@ public class RoomHub : Hub
         }
     }
 
-    public async Task Join(string lobbyCode)
+    public async Task Join(JoinEvent joinEvent)
     {
         try
         {
@@ -196,7 +195,7 @@ public class RoomHub : Hub
             
             if(role == Roles.Guest)
             {
-                await JoinAsGuest(lobbyCode, userId, identity);
+                await JoinAsGuest(joinEvent.LobbyCode, joinEvent.Locale, userId, identity);
 
                 return;
             }
@@ -206,10 +205,10 @@ public class RoomHub : Hub
             Room? room;
 
             // Check if room is not created in memory
-            if ((room = rooms.Find(x => x.RoomCode == lobbyCode)) == null)
+            if ((room = rooms.Find(x => x.RoomCode == joinEvent.LobbyCode)) == null)
             {
                 //Check if room is in database
-                RoomDb? apiRoom = await dbContext.Rooms.Where(x => x.LobbyCode == lobbyCode).SingleOrDefaultAsync();
+                RoomDb? apiRoom = await dbContext.Rooms.Where(x => x.LobbyCode == joinEvent.LobbyCode).SingleOrDefaultAsync();
                 
                 //If not disconnect user
                 if (apiRoom == null)
@@ -223,7 +222,7 @@ public class RoomHub : Hub
 
                 await dbContext.SaveChangesAsync();
 
-                Player player = new Player(Context.ConnectionId, user);
+                Player player = new Player(Context.ConnectionId, joinEvent.Locale, user);
 
                 room = new Room(apiRoom.LobbyCode, apiRoom.RoomId, player);
 
@@ -234,7 +233,7 @@ public class RoomHub : Hub
                 /* Create new player on join */
                 if (room.GetPlayers().Find(x => x.UserId == userId) == null)
                 {
-                    Player player = new Player(Context.ConnectionId, user);
+                    Player player = new Player(Context.ConnectionId, joinEvent.Locale, user);
 
                     room.GetPlayers().Add(player);
                 }
@@ -475,7 +474,8 @@ public class RoomHub : Hub
             {
                 await Task.Delay(BOT_PROCESS_DELAY);
 
-                uint[] randomSelectedCards = bot.WhiteCards.ToList().OrderBy(x => Random.Shared.Next()).Take(room.RequiredAnswerCount)
+                var r = bot.WhiteCards.ToList().OrderBy(x => Random.Shared.Next());
+                uint[] randomSelectedCards = r.Take(room.RequiredAnswerCount)
                     .Select(x => x.CardId).ToArray();
 
                 await SelectCards(randomSelectedCards, room, bot);
@@ -653,13 +653,12 @@ public class RoomHub : Hub
 
                 foreach (var lobbyPlayer in room.GetConnectedPlayers())
                 {
-                    string translation = cardService.GetCardTranslation(lobbySelectedCards.ElementAt(0).CardId, lobbyPlayer.Locale);
-
-                    List<Card> _cards = new List<Card>();
+                    List<Card> translatedSelectedCards = new List<Card>();
 
                     foreach (var sCard in lobbySelectedCards)
                     {
-                        _cards.Add(new Card(sCard.CardId, false, translation, sCard.OwnerId)
+                        string translation = cardService.GetCardTranslation(sCard.CardId, lobbyPlayer.Locale);
+                        translatedSelectedCards.Add(new Card(sCard.CardId, false, translation, sCard.OwnerId)
                         {
                             OwnerUsername = sCard.OwnerUsername,
                         });
@@ -667,7 +666,7 @@ public class RoomHub : Hub
 
                     OnWaitingForJudge waitingForJudge = new OnWaitingForJudge()
                     {
-                        LobbySelectedCards = _cards
+                        LobbySelectedCards = translatedSelectedCards
                     };
 
                     await SendAsync(lobbyPlayer, "OnWaitingForJudgeState", JsonSerializer.Serialize(waitingForJudge));

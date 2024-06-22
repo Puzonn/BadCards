@@ -73,9 +73,9 @@ export const Game = ({
   };
 
   const formatContent = (content: string): string[] => {
+    console.log('original ', content)
     const words = content.split(" ");
-    const formattedWords = words.map((word) => word.replace(/_/g, "@special"));
-    return formattedWords;
+    return words;
   };
 
   let QuestionSpecialColorIndex: number = -1;
@@ -124,7 +124,7 @@ export const Game = ({
               <div className="font-medium text-2xl whitespace-pre-wrap p-2">
                 {formatContent(BlackCard.Content).map((word, index) => {
                     /* TODO: fix multiple function invoking for getting length */
-                  if (word.startsWith("@special")) {
+                  if (word.startsWith("_")) {
                     QuestionSpecialColorIndex++;
                     const showContent =
                       PlayerSelectedCards.length > QuestionSpecialColorIndex;
@@ -148,7 +148,7 @@ export const Game = ({
                         key={`question_word_${index}`}
                       >
                         <div
-                          className={`relative m-0 border-b-2 border-${
+                          className={`relative border-b-2 border-${
                             AnswerColors[QuestionSpecialColorIndex]
                           } inline-flex mr-2 ${
                             !showContent ? "min-w-20" : ""
@@ -156,7 +156,7 @@ export const Game = ({
                         >
                           {showContent && <>{selectedCardContent}</>}
                         </div>
-                        {word.replace("@special", "")}
+                        {word.replace('_', "")}
                       </span>
                     );
                   }
