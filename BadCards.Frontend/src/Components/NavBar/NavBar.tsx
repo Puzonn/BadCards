@@ -124,7 +124,7 @@ export const NavBar = () => {
           <ul className="flex flex-col font-medium p-2 ml-6 mt-1 md:p-0 rounded-lg md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0">
             <li className="flex">
               <a
-                href="#"
+                href="https://github.com/Puzonn/BadCards"
                 className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >
                 Github

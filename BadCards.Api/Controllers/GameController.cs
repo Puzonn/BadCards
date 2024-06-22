@@ -15,11 +15,13 @@ namespace BadCards.Api.Controllers;
 [ApiController]
 public class GameController : ControllerBase
 {
-    private readonly BadCardsContext dbContext;
+    private readonly BadCardsContext _dbContext;
+    private readonly IConfiguration _configuration;
 
-    public GameController(BadCardsContext _dbContext)
+    public GameController(BadCardsContext dbContext, IConfiguration configuration)
     {
-        dbContext = _dbContext;
+        _dbContext = dbContext;
+        _configuration = configuration;
     }
 
     [Authorize]
@@ -36,7 +38,7 @@ public class GameController : ControllerBase
             return BadRequest("User have to be atleast DiscordUser");
         }
 
-        UserDb user = await dbContext.Users.Where(x => x.UserId == new Guid(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value)).SingleAsync();
+        UserDb user = await _dbContext.Users.Where(x => x.UserId == new Guid(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value)).SingleAsync();
 
         if (RoomHub.HasLobby(user.UserId, out Room? room))
         {            
@@ -45,7 +47,7 @@ public class GameController : ControllerBase
                 throw new InvalidOperationException("Room was null");
             }
 
-            RoomDb dbRoom = dbContext.Rooms.Where(x => x.RoomId == room.RoomId).Single();
+            RoomDb dbRoom = _dbContext.Rooms.Where(x => x.RoomId == room.RoomId).Single();
 
             return Ok(JsonSerializer.Serialize(dbRoom.ToApi()));
         }
@@ -61,17 +63,38 @@ public class GameController : ControllerBase
 
         ApiRoom apiRoom = roomDb.ToApi();
 
-        await dbContext.Rooms.AddAsync(roomDb);
-        await dbContext.SaveChangesAsync();
+        await _dbContext.Rooms.AddAsync(roomDb);
+        await _dbContext.SaveChangesAsync();
 
         return Ok(JsonSerializer.Serialize(apiRoom));
+    }
+
+    [Authorize]
+    [HttpGet("/game/create-role-check")]
+    public ActionResult<bool> CreateRoleCheck()
+    {
+        var identity = (ClaimsIdentity)HttpContext.User!.Identity!;
+        string role = identity.FindFirst(ClaimTypes.Role)!.Value;
+        bool option = bool.Parse(_configuration.GetSection("Features:AllowGuestCreateLobby").Value!);
+
+        if (option)
+        {
+            return true;
+        }
+
+        if(!option && role == Roles.Guest)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     [Authorize]
     [HttpPost("/game/join")]
     public async Task<ActionResult<ApiRoom>> JoinGame([FromBody] RoomCreateModel model)
     {
-        var room = await dbContext.Rooms.Where(x => x.LobbyCode == model.LobbyCode).SingleOrDefaultAsync();
+        var room = await _dbContext.Rooms.Where(x => x.LobbyCode == model.LobbyCode).SingleOrDefaultAsync();
 
         if (room is null)
         {

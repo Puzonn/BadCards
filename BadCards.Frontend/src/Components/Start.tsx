@@ -16,6 +16,7 @@ export const Start = () => {
   const [selectedTab, setSelectedTab] = useState<"Create" | "Join" | "Help">(
     "Create"
   );
+  const [allowCreate, setAllowCreate] = useState<boolean>(false);
 
   const [error, setError] = useState("");
 
@@ -62,13 +63,18 @@ export const Start = () => {
     axios.defaults.withCredentials = true;
     (async function () {
       try {
-        await axios.get(`${Config.default.ApiUrl}/user/game-pending-status`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          validateStatus: (status) =>
-            (status >= 200 && status < 300) || status === 500,
-        });
+        await axios
+          .get(`${Config.default.ApiUrl}/game/create-role-check`, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            validateStatus: (status) =>
+              (status >= 200 && status < 300) || status === 500,
+          })
+          .then((response) => {
+            console.log(response.data);
+            setAllowCreate(response.data);
+          });
       } catch (ex) {}
     })();
   }, []);
@@ -197,7 +203,7 @@ export const Start = () => {
         <div className="mb-6 bottom flex justify-center text-white">
           {selectedTab === "Create" && (
             <div className="opacity-100 w-full duration-150 ease-linear data-[twe-tab-active]:block">
-              <CreateTab onSubmit={HandleCreate}></CreateTab>
+              <CreateTab allowCreate={allowCreate} onSubmit={HandleCreate}></CreateTab>
             </div>
           )}
           {selectedTab === "Join" && (

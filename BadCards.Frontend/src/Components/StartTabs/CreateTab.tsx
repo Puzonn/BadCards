@@ -4,10 +4,11 @@ import { ConsoleLogger } from "@microsoft/signalr/dist/esm/Utils";
 
 export const CreateTab = ({
   onSubmit,
+  allowCreate
 }: {
   onSubmit: (password: string) => {};
+  allowCreate: boolean;
 }) => {
-  const auth = useContext(AuthContext);
   const [password, setPassword] = useState<string>("");
   const [passwordInputFocused, setPasswordInputFocused] =
     useState<boolean>(false);
@@ -24,7 +25,7 @@ export const CreateTab = ({
     setPasswordInputFocused(state);
   };
 
-  if (auth.User?.role === "Guest") {
+  if (!allowCreate) {
     return (
       <div className="tab-box text-xl-center">
         <span>You have to be atleast Discord User to create lobby </span>
