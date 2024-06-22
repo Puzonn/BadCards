@@ -8,8 +8,6 @@ import "../../../node_modules/flag-icons/css/flag-icons.min.css";
 import { NavLanguageSelector } from "./NavLangaugeSelector";
 
 export const NavBar = () => {
-  const { i18n } = useTranslation();
-  const [lang, setLang] = useState("");
   const auth = useContext(AuthContext);
   const [showContext, setShowContext] = useState<boolean>(false);
 
@@ -21,10 +19,6 @@ export const NavBar = () => {
       })
       .catch(() => {});
   };
-
-  useEffect(() => {
-    console.log(auth.User?.avatarUrl)
-  })
 
   return (
     <nav>

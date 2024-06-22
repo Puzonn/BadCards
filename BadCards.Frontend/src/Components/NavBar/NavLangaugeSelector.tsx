@@ -32,15 +32,7 @@ export const NavLanguageSelector = () => {
 
   const changeLocale = (locale: string) => {
     localStorage.setItem("locale", locale);
-    axios
-      .patch(Config.default.ApiUrl + "/user/set-language", locale, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then(() => {
-        window.location.reload();
-      });
+    window.location.reload();
   };
 
   return (

@@ -3,24 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\hubs\\roomhub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\hubs\\roomhub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\services\\cardservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\services\\cardservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\models\\hub\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\models\\hub\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\models\\hub\\events\\joinevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\models\\hub\\events\\joinevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\models\\hub\\events\\onjoinevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\models\\hub\\events\\onjoinevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\models\\hub\\events\\joinevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\models\\hub\\events\\joinevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\hubs\\roomhub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\hubs\\roomhub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\models\\hub\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|solutionrelative:badcards.api\\models\\hub\\player.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C3EBF48A-11ED-41F9-9B6A-166EAFB42E80}|BadCards.Api\\BadCards.Api.csproj|c:\\users\\puzonne\\desktop\\repos\\badcards\\badcards.api\\models\\hub\\room.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -34,24 +34,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "CardService.cs",
               "DocumentMoniker": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Services\\CardService.cs",
               "RelativeDocumentMoniker": "BadCards.Api\\Services\\CardService.cs",
               "ToolTip": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Services\\CardService.cs",
               "RelativeToolTip": "BadCards.Api\\Services\\CardService.cs",
-              "ViewState": "AQIAACEAAAAAAAAAAAAAAGsAAABPAAAA",
+              "ViewState": "AQIAAGMAAAAAAAAAAAAAAGsAAABPAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-21T23:46:52.712Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 1,
               "Title": "JoinEvent.cs",
               "DocumentMoniker": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Models\\Hub\\Events\\JoinEvent.cs",
               "RelativeDocumentMoniker": "BadCards.Api\\Models\\Hub\\Events\\JoinEvent.cs",
@@ -59,11 +59,12 @@
               "RelativeToolTip": "BadCards.Api\\Models\\Hub\\Events\\JoinEvent.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-21T11:49:01.099Z"
+              "WhenOpened": "2024-06-21T11:49:01.099Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "OnJoinEvent.cs",
               "DocumentMoniker": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Models\\Hub\\Events\\OnJoinEvent.cs",
               "RelativeDocumentMoniker": "BadCards.Api\\Models\\Hub\\Events\\OnJoinEvent.cs",
@@ -71,24 +72,25 @@
               "RelativeToolTip": "BadCards.Api\\Models\\Hub\\Events\\OnJoinEvent.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-21T11:48:54.301Z"
+              "WhenOpened": "2024-06-21T11:48:54.301Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "RoomHub.cs",
               "DocumentMoniker": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Hubs\\RoomHub.cs",
               "RelativeDocumentMoniker": "BadCards.Api\\Hubs\\RoomHub.cs",
               "ToolTip": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Hubs\\RoomHub.cs",
               "RelativeToolTip": "BadCards.Api\\Hubs\\RoomHub.cs",
-              "ViewState": "AQIAAJYBAAAAAAAAAAASwKkBAAAIAAAA",
+              "ViewState": "AQIAAFICAAAAAAAAAAASwGUCAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-20T21:04:13.864Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "Player.cs",
               "DocumentMoniker": "C:\\Users\\Puzonne\\Desktop\\repos\\BadCards\\BadCards.Api\\Models\\Hub\\Player.cs",
               "RelativeDocumentMoniker": "BadCards.Api\\Models\\Hub\\Player.cs",
