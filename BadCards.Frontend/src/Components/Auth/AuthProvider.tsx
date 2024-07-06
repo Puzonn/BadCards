@@ -2,8 +2,7 @@ import { AuthContext } from "../../Context/AuthContext";
 import { ReactNode, useState, useEffect } from "react";
 import { User } from "../../Types/User";
 import { AuthStatus } from "../../Types/Auth";
-import axios from "axios";
-import { Config } from "../../Config";
+import Api from "../../Api";
 
 export const AuthProvider = ({ children }: IProps) => {
   const [status, setAuthStatus] = useState<AuthStatus>({
@@ -13,31 +12,26 @@ export const AuthProvider = ({ children }: IProps) => {
   });
 
   useEffect(() => {
-    axios.defaults.withCredentials = true;
     (async function () {
       FetchUser();
     })();
   }, []);
 
   const FetchUser = async () => {
-    await axios
-      .get(`${Config.default.ApiUrl}/auth/@me`, {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+    await Api.get("auth/@me")
       .then((response: any) => {
         SetAuth(response.data);
       })
       .catch((er) => {
         SetAuth(undefined);
         const path = window.location.pathname;
+
         if (
           path === "/auth/discord" ||
           path === "/auth/discord/" ||
           path === "/legal" ||
-          path === "/start" || path === "/lobby"
+          path === "/start" ||
+          path === "/lobby"
         ) {
           return;
         }

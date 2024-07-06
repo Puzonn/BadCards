@@ -175,7 +175,7 @@ public class AuthController : Controller
 
     [Authorize]
     [HttpGet("/auth/@me")]
-    public ActionResult Validate()
+    public ActionResult<ApiUser> Validate()
     {
         var identity = (ClaimsIdentity)HttpContext.User!.Identity!;
         string role = identity.FindFirst(ClaimTypes.Role)!.Value;

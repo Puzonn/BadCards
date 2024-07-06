@@ -22,7 +22,7 @@ export const NavBar = () => {
 
   return (
     <nav>
-      <div className="max-w-screen bg-black shadow-sm shadow-black flex flex-wrap ml-5 md:justify-start justify-between relative">
+      <div className="max-w-screen bg-background shadow-sm shadow-black flex flex-wrap ml-5 md:justify-start justify-between relative">
         <img src={NavGif} />
         <a
           href="https://puzonnsthings.pl/"
@@ -132,16 +132,16 @@ export const NavBar = () => {
             </li>
             <li>
               <a
-                href="#"
+                href="creator"
                 className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >
-                Services
+                Creator
               </a>
             </li>
 
             <li>
               <a
-                href="#"
+                href="contact"
                 className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
               >
                 Contact

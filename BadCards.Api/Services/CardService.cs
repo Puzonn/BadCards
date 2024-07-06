@@ -73,7 +73,7 @@ public class CardService : ICardService
                 {
                     dbContext.Cards.Add(new CardDb(appendQuestion)
                     {
-                        AnswerCount = appendQuestion ? GetAsnwerCount(line) : 0,
+                        AnswerCount = appendQuestion ? GetAnswerCount(line) : 0,
                         IsEmpty = false,
                     });
                 }
@@ -123,9 +123,9 @@ public class CardService : ICardService
         return line == "----------";
     }
 
-    private int GetAsnwerCount(string line)
+    public int GetAnswerCount(string content)
     {
-        int count = line.Count(f => f == '_');
+        int count = content.Count(f => f == '_');
 
         if (count == 0)
         {

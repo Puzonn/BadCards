@@ -2,16 +2,14 @@ import { useContext, useEffect, useState } from "react";
 import "./Styles/LobbyManager.css";
 import { Room } from "../../Types/LobbyManagerTypes";
 import { AuthContext } from "../../Context/AuthContext";
+import Api from "../../Api";
 import { useTranslation } from "react-i18next";
-import axios from "axios";
-import { Config } from "../../Config";
 
 export const LobbyManager = () => {
   const [lobbyCodeInput, setLobbyCodeInput] = useState<string>("");
   const [badLobbyCodeRequest, setBadLobbyCodeRequest] = useState(false);
-
-  const user = useContext(AuthContext);
   const { t } = useTranslation();
+  const user = useContext(AuthContext);
 
   useEffect(() => {
     if (user.IsFetched && !user.IsLoggedIn) {
@@ -19,35 +17,37 @@ export const LobbyManager = () => {
     }
   }, [user]);
 
-  const TryJoin = (lobbyCode: string) => {
-    (async function () {
-      axios
-        .post(`${Config.default.ApiUrl}/game/join?lobbyCode=${lobbyCode}`)
-        .then((response) => {
-          if (response.status !== 200) {
-            return;
-          }
-          const room = response.data as Room;
-          window.location.href = `/lobby?code=${room.LobbyCode}`;
-        })
-        .catch((err) => {
-          setBadLobbyCodeRequest(true);
-        });
-    })();
+  const TryJoin = async (lobbyCode: string) => {
+    await Api.post("game/join", {
+      lobbyCode: lobbyCode,
+    })
+      .then((response) => {
+        if (response.status !== 200) {
+          return;
+        }
+        const room = response.data as Room;
+        window.location.href = `/lobby?code=${room.LobbyCode}`;
+      })
+      .catch((err) => {
+        setBadLobbyCodeRequest(true);
+      });
   };
 
-  const Create = () => {
-    (async function () {
-      await fetch(`${Config.default.ApiUrl}/game/create`, {
-        method: "POST",
-        credentials: "include",
-      }).then((response) => {
-        response.json().then((x) => {
-          const room = x as Room;
-          TryJoin(room.LobbyCode);
-        });
-      });
-    })();
+  const Create = async () => {
+    console.log('creating')
+
+
+    // (async function () {
+    //   await fetch(`${Config.default.ApiUrl}/game/create`, {
+    //     method: "POST",
+    //     credentials: "include",
+    //   }).then((response) => {
+    //     response.json().then((x) => {
+    //       const room = x as Room;
+
+    //     });
+    //   });
+    // })();
   };
 
   if (user.IsLoggedIn && user.IsFetched) {

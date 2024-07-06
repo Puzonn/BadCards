@@ -37,14 +37,6 @@ export const Game = ({
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(true);
   const AnswerColors: string[] = ["blue-600", "orange-600", "purple-600"];
 
-  useEffect(() => {
-    console.log(IsJudge);
-    console.log(IsWaitingForJudge);
-    if (IsWaitingForNextRound) {
-      /// setSelectedCards(LobbySelectedCards);
-    }
-  }, [LobbySelectedCards]);
-
   const isCardSelected = (card: Card) => {
     return PlayerSelectedCards.includes(card);
   };
@@ -73,7 +65,7 @@ export const Game = ({
   };
 
   const formatContent = (content: string): string[] => {
-    console.log('original ', content)
+    console.log("original ", content);
     const words = content.split(" ");
     return words;
   };
@@ -123,7 +115,7 @@ export const Game = ({
             <div className="text-white answer-shadow bg-black mx-2 rounded border border-white">
               <div className="font-medium text-2xl whitespace-pre-wrap p-2">
                 {formatContent(BlackCard.Content).map((word, index) => {
-                    /* TODO: fix multiple function invoking for getting length */
+                  /* TODO: fix multiple function invoking for getting length */
                   if (word.startsWith("_")) {
                     QuestionSpecialColorIndex++;
                     const showContent =
@@ -156,7 +148,7 @@ export const Game = ({
                         >
                           {showContent && <>{selectedCardContent}</>}
                         </div>
-                        {word.replace('_', "")}
+                        {word.replace("_", "")}
                       </span>
                     );
                   }

@@ -1,5 +1,5 @@
 import { FormEvent, useContext, useState } from "react";
-import { AuthContext } from "../../Context/AuthContext";
+import PlayIcon from "../../Assets/Icons/play_icon.png";
 
 export const JoinTab = ({
   onSubmit,
@@ -86,12 +86,14 @@ export const JoinTab = ({
         />
       </div>
 
-      <input
+      <button
         type="submit"
-        className={`rounded-lg mt-4 py-4 px-10 text-center align-middle text-1xl hover:scale-105 
-        font-bold text-white shadow-md transition-all bg-black`}
-        value="Join Lobby"
-      />
+        className={`flex flex-row-reverse bg-blue-600 shadow-md justify-between shadow-black items-center gap-2 rounded-lg mt-4 p-2 px-10 text-center align-middle text-1xl hover:scale-105 
+        font-bold text-white transition-all w-80px]`}
+      >
+        Join Lobby
+        <img className="w-4" src={PlayIcon}></img>
+      </button>
     </form>
   );
 };

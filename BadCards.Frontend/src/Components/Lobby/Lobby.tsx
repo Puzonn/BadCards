@@ -3,6 +3,7 @@ import { Player } from "../../Types/Player";
 import { useContext, useEffect, useState } from "react";
 import { ILobby } from "../../Types/Props";
 import AddBotIcon from "../../Assets/Icons/robot_icon.svg";
+import PlayIcon from "../../Assets/Icons/play_icon.png";
 
 export const Lobby = ({
   Players,
@@ -23,7 +24,7 @@ export const Lobby = ({
           className="mb-5 flex bg-black rounded text-white list-none flex-row flex-wrap border-b-0 ps-0"
           role="tablist"
         >
-          <div className="flex p-3  w-full font-bold text-sm justify-center items-center">
+          <div className="py-3 px-5 grid grid-cols-2 gap-4 w-full font-bold text-sm">
             <li
               role="presentation"
               className={`text-center cursor-pointer uppercase transition-all hover:opacity-80 ${
@@ -106,13 +107,15 @@ export const Lobby = ({
               </div>
               <div className="flex pt-3 justify-center">
                 {IsCreator ? (
-                  <input
+                  <button
                     onClick={StartGameHandler}
                     type="button"
-                    className={`rounded-lg mt-4 py-4 px-10 text-center align-middle text-1xl hover:scale-105 
+                    className={`rounded-lg flex items-center gap-2 mt-4 py-2 px-3 text-center align-middle text-1xl hover:scale-105 
                   font-bold text-white shadow-md transition-all bg-black`}
-                    value="Start Game"
-                  />
+                  >
+                    <img className="w-5" src={PlayIcon} />
+                    Start Game
+                  </button>
                 ) : (
                   <div className="text-2xl font-medium">
                     Waiting For Creator

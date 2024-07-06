@@ -1,10 +1,9 @@
 import { FormEvent, useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../Context/AuthContext";
-import { ConsoleLogger } from "@microsoft/signalr/dist/esm/Utils";
+import PlayIcon from "../../Assets/Icons/play_icon.png";
 
 export const CreateTab = ({
   onSubmit,
-  allowCreate
+  allowCreate,
 }: {
   onSubmit: (password: string) => {};
   allowCreate: boolean;
@@ -54,17 +53,20 @@ export const CreateTab = ({
           onBlur={() => {
             OnPasswordInputFocus(false);
           }}
-          className={`inset-0 w-full placeholder:text-black outline-none bg-transparent pt-3 text-3xl pl-3 h-full ${
+          className={`inset-0 w-full placeholder:text-black outline-none bg-transparent text-3xl pl-3 h-full ${
             !passwordInputFocused ? "opacity-0" : ""
           }`}
         />
       </div>
-      <input
+      <button
         type="submit"
-        className={`rounded-lg mt-4 py-4 px-10 text-center align-middle text-1xl hover:scale-105 
-        font-bold text-white shadow-md transition-all bg-black`}
+        className={`flex flex-row-reverse bg-blue-600 shadow-md shadow-black items-center gap-2 rounded-lg mt-4 p-2 px-10 text-center align-middle text-1xl hover:scale-105 
+        font-bold text-white transition-all`}
         value="Create Lobby"
-      />
+      >
+        Create Lobby
+        <img className="w-4" src={PlayIcon}></img>
+      </button>
     </form>
   );
 };

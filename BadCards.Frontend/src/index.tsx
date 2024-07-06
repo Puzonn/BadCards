@@ -13,8 +13,8 @@ import { Legal } from "./Components/Legal";
 import { Config } from "./Config";
 import { GameController } from "./Components/GameController";
 import { ConnectionProvider } from "./Components/ConnectionProvider/ConnectionProvider";
-
-Config.default = new Config();
+import { Contact } from "./Components/Contact";
+import { Creator } from "./Components/Creator/Creator";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -32,6 +32,8 @@ root.render(
             <Route path="/lobby" element={<GameController />}></Route>
             <Route path="/start" element={<Start />}></Route>
             <Route path="/auth/discord" element={<Auth />}></Route>
+            <Route path="/contact" element={<Contact />}></Route>
+            <Route path="/creator" element={<Creator />}></Route>
             <Route path="*" element={<Start />}></Route>
           </Routes>
         </BrowserRouter>

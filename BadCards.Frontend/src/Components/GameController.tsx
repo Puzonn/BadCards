@@ -117,7 +117,7 @@ export const GameController = () => {
         HasSelectedRequired: response.HasSelectedRequired,
         IsWaitingForJudge: response.IsWaitingForJudge,
       };
-      console.log(updatedRound);
+
       return updatedRound;
     });
   };
@@ -248,8 +248,7 @@ export const GameController = () => {
           ),
         };
       }
-      console.log(prev.PlayerSelectedCards.length)
-      console.log(prev.AnswerCount)
+
       if (prev.PlayerSelectedCards.length === round?.AnswerCount) {
         return { ...prev, PlayerSelectedCards: [card] };
       }
