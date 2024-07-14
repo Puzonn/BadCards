@@ -13,3 +13,4 @@ BadCards.Api/[Dd]ebug/
 *.v2
 .vs/BadCards.Api/v17/.suo
 BadCards.Frontend/.env
+/BadCards.Api/appsettings.json
