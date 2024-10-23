@@ -15,8 +15,15 @@ public class BadCardsContext : DbContext
     public BadCardsContext(IConfiguration configuration)
     {
         _configuration = configuration;
+    }
 
-        Database.EnsureCreated();
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<CardDb>()
+            .HasMany(c => c.Translations)
+            .WithOne(t => t.Card)
+            .HasForeignKey(t => t.CardId)
+            .OnDelete(DeleteBehavior.Cascade);  
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

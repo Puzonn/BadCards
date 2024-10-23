@@ -9,24 +9,21 @@ public class CardDb
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public uint CardId { get; set; }
+    public uint Id { get; set; }
     public bool IsBlack { get; set; }
-    public int AnswerCount { get; set; }    
+    public int AnswerCount { get; set; }
+    public List<CardTranslationDb> Translations { get; set; } = new List<CardTranslationDb>();
 
-    [JsonIgnore]
-    [NotMapped]
-    public bool IsEmpty { get; set; } = false;
-
+    public CardDb(uint id, bool isBlack, int answerCount, List<CardTranslationDb> translations)
+    {
+        Id = id;
+        IsBlack = isBlack;
+        AnswerCount = answerCount;
+        Translations = translations;
+    }
+    
     public CardDb(bool isBlack)
     {
-        IsBlack = isBlack;
-        IsEmpty = false;
+        IsBlack = isBlack; 
     }
-
-    [JsonIgnore]
-    public static readonly CardDb Empty = new CardDb(false)
-    {
-        CardId = 0,
-        IsEmpty = true,
-    };
 }

@@ -513,7 +513,7 @@ public class RoomHub : Hub
         Player player = GetPlayer()!;
         Room room = GetRoom(player.UserId);
 
-        room.NextRound((await cardService.GetRandomBlackCard()).CardId);
+        room.NextRound((await cardService.GetRandomBlackCard()).Id);
 
         IEnumerable<ApiPlayer> lobbyApiPlayers = room.GetPlayers().Select(x => x.ToApiPlayer());
 
@@ -766,7 +766,7 @@ public class RoomHub : Hub
 
         if (player.IsBot)
         {
-            var cards = (await cardService.GetRandomWhiteCards(count)).Select(card => new Card(card.CardId,
+            var cards = (await cardService.GetRandomWhiteCards(count)).Select(card => new Card(card.Id,
                  false, string.Empty, player.UserId)
                  { OwnerUsername = player.Username }).ToList();
 
@@ -774,8 +774,8 @@ public class RoomHub : Hub
         }
         else
         {
-            var cards = (await cardService.GetRandomWhiteCards(count)).Select(card => new Card(card.CardId,
-                 false, cardService.GetCardTranslation(card.CardId, player.Locale), player.UserId)
+            var cards = (await cardService.GetRandomWhiteCards(count)).Select(card => new Card(card.Id,
+                 false, cardService.GetCardTranslation(card.Id, player.Locale), player.UserId)
                  { OwnerUsername = player.Username }).ToList();
     
             return cards;

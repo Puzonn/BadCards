@@ -52,7 +52,7 @@ public class CardService : ICardService
 
     private async Task ProcessCardFile(string locale, bool appendCards, Int32 bufferSize)
     {
-        /* we want to add only one iteration of locale to database*/
+        /* we want to add only one iteration of locale to database */
 
         bool appendQuestion = false;
         uint cardId = 1;
@@ -74,7 +74,6 @@ public class CardService : ICardService
                     dbContext.Cards.Add(new CardDb(appendQuestion)
                     {
                         AnswerCount = appendQuestion ? GetAnswerCount(line) : 0,
-                        IsEmpty = false,
                     });
                 }
 

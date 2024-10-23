@@ -148,7 +148,7 @@ public class Room
         GameStarted = true;
         Judge = Players[0];
         RequiredAnswerCount = blackCard.AnswerCount;
-        BlackCardId = blackCard.CardId;
+        BlackCardId = blackCard.Id;
     }
 
     public void NextRound(uint nextBlackCardId)

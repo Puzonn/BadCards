@@ -138,38 +138,38 @@ public class CreatorController : ControllerBase
     [HttpPut("/creator/accept")]
     public async Task<ActionResult<bool>> AcceptPrompt([FromBody] CreatorGenerationResult prompt)
     {
-        CardDb question = new CardDb(true)
-        {
-            AnswerCount = prompt.AnswerCount,
-        };
-        
-        /* First we put card to db to get next cardId and then we put translations */
-        List<CardDb> answers = new List<CardDb>();
-
-        foreach (var answer in prompt.Answers)
-        {
-            CardDb answerDb = new CardDb(false);
-
-            await _context.AddAsync(answerDb);
-            answers.Add(answerDb);
-        }
-
-        await _context.SaveChangesAsync();
-
-        /* Now put translations */
-        for (int i = 0; i < answers.Count; i++)
-        {
-            CardTranslationDb cardTranslation = new CardTranslationDb()
-            {
-                CardId = answers[i].CardId,
-                Locale = "us",
-                Translation = prompt.Answers[i]
-            };
-
-            await _context.CardTranslations.AddAsync(cardTranslation);
-        }
-
-        await _context.SaveChangesAsync();
+        // CardDb question = new CardDb(true)
+        // {
+        //     AnswerCount = prompt.AnswerCount,
+        // };
+        //
+        // /* First we put card to db to get next cardId and then we put translations */
+        // List<CardDb> answers = new List<CardDb>();
+        //
+        // foreach (var answer in prompt.Answers)
+        // {
+        //     CardDb answerDb = new CardDb(false);
+        //
+        //     await _context.AddAsync(answerDb);
+        //     answers.Add(answerDb);
+        // }
+        //
+        // await _context.SaveChangesAsync();
+        //
+        // /* Now put translations */
+        // for (int i = 0; i < answers.Count; i++)
+        // {
+        //     CardTranslationDb cardTranslation = new CardTranslationDb()
+        //     {
+        //         CardId = answers[i].CardId,
+        //         Locale = "us",
+        //         Translation = prompt.Answers[i]
+        //     };
+        //
+        //     await _context.CardTranslations.AddAsync(cardTranslation);
+        // }
+        //
+        // await _context.SaveChangesAsync();
 
         return true;
     }
