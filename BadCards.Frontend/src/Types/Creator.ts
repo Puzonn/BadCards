@@ -5,7 +5,7 @@ export interface Options {
   GenerateQuestion: boolean;
   GenerateAnswers: boolean;
   BatchCount: number;
-  EnableBatch: boolean;
+  UseBatch: boolean;
   AnswerCount: number;
 }
 
@@ -20,11 +20,13 @@ export interface CreatorPromptOptions {
   AdditionalPromptNote?: string;
   GenerateAnswers: boolean;
   GenerateQuestion: boolean;
+  UseBatch: boolean;
+  BatchCount: number;
 }
 
 export const DefaultOptions: Options = {
   BatchCount: 1,
-  EnableBatch: false,
+  UseBatch: false,
   DefaultPrompt: "",
   GenerateQuestion: true,
   GenerateAnswers: true,

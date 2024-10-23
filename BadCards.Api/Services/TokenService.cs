@@ -50,7 +50,7 @@ public class TokenService : ITokenService
 
     public string GenerateAccessToken(UserDb user)
     {
-         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtKey));
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
@@ -60,7 +60,7 @@ public class TokenService : ITokenService
               new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
               new Claim("DiscordUserId", user.DiscordId.ToString()),
               new Claim("ProfileColor", user.ProfileColor),
-              new Claim("DiscordAvatarId", user.AvatarId == null ? string.Empty : user.AvatarId),
+              new Claim("DiscordAvatarId", string.IsNullOrEmpty(user.AvatarId) ? string.Empty : user.AvatarId),
               new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
               new Claim("JoinDate", user.JoinDate.ToString())
         };
@@ -85,7 +85,7 @@ public class TokenService : ITokenService
               new Claim(ClaimTypes.Role, Roles.Guest),
               new Claim(ClaimTypes.NameIdentifier, Random.Shared.Next(0, int.MaxValue).ToString()),
               new Claim("DiscordUserId", string.Empty),
-              new Claim("ProfileColor", "FFFFFF"),
+              new Claim("ProfileColor", GetRandomProfileColor()),
               new Claim("DiscordAvatarId", string.Empty),
               new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
@@ -169,5 +169,16 @@ public class TokenService : ITokenService
             throw new SecurityTokenException("Invalid token");
 
         return principal;
+    }
+    
+    private string GetRandomProfileColor()
+    {
+        Random random = Random.Shared;
+
+        int red = Math.Clamp(random.Next(256), 0, 255);
+        int green = Math.Clamp(random.Next(256), 0, 255);
+        int blue = Math.Clamp(random.Next(256), 0, 255);
+
+        return $"{red:X2}{green:X2}{blue:X2}";
     }
 }

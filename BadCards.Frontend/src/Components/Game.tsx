@@ -44,6 +44,8 @@ export const Game = ({
   if (!GameStarted) {
     return (
       <Lobby
+        LeaveGame={StateLeaveGame}
+        EndGame={StateEndGame}
         AddBotHandler={StateAddBot}
         IsCreator={IsCreator}
         StartGameHandler={StateStartGame}
@@ -65,8 +67,15 @@ export const Game = ({
   };
 
   const formatContent = (content: string): string[] => {
-    console.log("original ", content);
+    console.log("Original Content", content);
     const words = content.split(" ");
+
+    for (let word of words) {
+      const isSpecialRegex = /_[\W]/;
+      if (isSpecialRegex.test(word)) {
+        words[words.indexOf(word)] = `${word} `;
+      }
+    }
     return words;
   };
 
@@ -78,7 +87,7 @@ export const Game = ({
       <div
         className={`grid min-w-screen max-h-screen ${
           isLeaderboardOpen ? "md:grid-cols-[minmax(150px,_250px)_1fr]" : ""
-        } gap-4`}
+        }`}
       >
         <Leaderboard
           OnToggleLeaderboard={() => setIsLeaderboardOpen(!isLeaderboardOpen)}
@@ -112,8 +121,8 @@ export const Game = ({
                 />
               </div>
             </div>
-            <div className="text-white answer-shadow bg-black mx-2 rounded border border-white">
-              <div className="font-medium text-2xl whitespace-pre-wrap p-2">
+            <div className="text-white bg-accent shadow-md shadow-black mx-2">
+              <div className="text-pretty text-xl px-2 py-2">
                 {formatContent(BlackCard.Content).map((word, index) => {
                   /* TODO: fix multiple function invoking for getting length */
                   if (word.startsWith("_")) {
@@ -122,7 +131,6 @@ export const Game = ({
                       PlayerSelectedCards.length > QuestionSpecialColorIndex;
                     const isSpecialRegex = /[^a-zA-Z0-9\s]/;
                     let selectedCardContent = undefined;
-
                     if (showContent) {
                       selectedCardContent =
                         PlayerSelectedCards[QuestionSpecialColorIndex].Content;
@@ -136,7 +144,7 @@ export const Game = ({
 
                     return (
                       <span
-                        className=" break-words"
+                        className="break-words"
                         key={`question_word_${index}`}
                       >
                         <div
@@ -156,72 +164,38 @@ export const Game = ({
                 })}
               </div>
             </div>
-            <div className="flex justify-center pt-5 md:pt-0 items-center text-2xl mb-3 p-2 h-20 text-white">
-              {PlayerSelectedCards.length === AnswerCount &&
-                !IsWaitingForJudge && (
-                  <div
-                    onClick={() => StateSelectCards(PlayerSelectedCards)}
-                    className="cursor-pointer border-2 hover:bg-white hover:text-black border-white p-2 rounded"
-                  >
-                    Approve
-                  </div>
-                )}
-              {PlayerSelectedCards.length === AnswerCount &&
-                IsWaitingForJudge &&
-                IsJudge &&
-                !IsWaitingForNextRound && (
-                  <div
-                    onClick={() =>
-                      StateJudgeSelectCard(PlayerSelectedCards[0].OwnerId)
-                    }
-                    className="cursor-pointer border-2 hover:bg-white px-4  hover:text-black border-white p-2 rounded"
-                  >
-                    Pick Winner
-                  </div>
-                )}
-              {IsWaitingForNextRound && (
-                <div
-                  onClick={() => StateNextRound()}
-                  className="cursor-pointer border-2 hover:bg-white  px-4  hover:text-black border-white p-2 rounded"
-                >
-                  Next Round
-                </div>
-              )}
+            <div className="flex justify-center md:pt-0 items-center text-2xl my-3 px-2 text-white">
               {IsJudge && !IsWaitingForJudge && !IsWaitingForNextRound && (
-                <div className="border-b-2 border-white px-4 p-2 rounded">
+                <div className="bg-accent items-center p-2 rounded">
                   You're the judge. Wait for all users to choose their cards.
                 </div>
               )}
-              {IsJudge &&
-                IsWaitingForJudge &&
-                PlayerSelectedCards.length === 0 && (
-                  <div className="border-2 border-white  px-4  p-2 rounded">
-                    You're the judge. Choose winner.
-                  </div>
-                )}
+              {IsJudge && IsWaitingForJudge && (
+                <div className="bg-accent items-center p-2 rounded">
+                  You're the judge. Choose winner.
+                </div>
+              )}
               {!IsJudge && IsWaitingForJudge && !IsWaitingForNextRound && (
-                <div className="border-2 border-white px-5 p-2 rounded">
+                <div className="bg-accent bg-opacity-80 p-2 rounded">
                   Wait for judge to choose a winner.
                 </div>
               )}
             </div>
             {!IsWaitingForJudge && !IsJudge && !HasSelected && (
-              <div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {WhiteCards.map((card, index) => {
                   if (isCardSelected(card)) {
                     AnswerSpecialColorIndex++;
                   }
-
                   return (
                     <div
                       onClick={() => OnSelectCard(card)}
-                      key={`answer_card_${index}`}
-                      className={`h-auto white-shadow cursor-pointer bg-white hover:bg-default text-2xl font-medium my-2 mx-4 p-3
-         shadow-white text-black rounded ${
-           isCardSelected(card)
-             ? `border-3 border-${AnswerColors[AnswerSpecialColorIndex]}`
-             : ""
-         }`}
+                      key={`answer-card-${index}`}
+                      className={`bg-accent p-2 text-white cursor-pointer hover:bg-opacity-80 mx-3 rounded ${
+                        isCardSelected(card)
+                          ? `border-3 border-${AnswerColors[AnswerSpecialColorIndex]}`
+                          : ""
+                      }`}
                     >
                       <div>{card.Content}</div>
                     </div>
@@ -231,8 +205,10 @@ export const Game = ({
             )}
 
             {IsWaitingForJudge && (
-              <div className="pt-5">
+              <>
                 <LobbySelectedCardsUI
+                  players={Players}
+                  AnswerCount={AnswerCount}
                   onJudgeSelectedCardClicked={StateJudgeSelectCard}
                   isJudge={IsJudge}
                   isWaitingForJudge={IsWaitingForJudge}
@@ -245,8 +221,48 @@ export const Game = ({
                   answerCount={AnswerCount}
                   cards={LobbySelectedCards}
                 ></LobbySelectedCardsUI>
-              </div>
+              </>
             )}
+            <div className="flex justify-center items-center bg-opacity md:pt-0 text-2xl my-3 px-2 text-white">
+              {!IsWaitingForJudge && !IsJudge && !IsWaitingForNextRound && (
+                <button
+                  onClick={() => StateSelectCards(PlayerSelectedCards)}
+                  className={`flex justify-between cursor-pointer bg-accent mb-64 hover:bg-opacity-80 items-center p-2 rounded ${
+                    PlayerSelectedCards.length === AnswerCount
+                      ? "text-white bg-accent"
+                      : "text-zinc-600 bg-opacity-30"
+                  }`}
+                >
+                  Approve
+                </button>
+              )}
+              {IsJudge && !IsWaitingForNextRound && (
+                <button
+                  onClick={() =>
+                    StateJudgeSelectCard(PlayerSelectedCards[0].OwnerId)
+                  }
+                  disabled={PlayerSelectedCards.length !== 1}
+                  className={`flex justify-between cursor-pointer bg-accent mb-64 hover:bg-opacity-80 items-center p-2 rounded ${
+                    PlayerSelectedCards.length === AnswerCount &&
+                    IsWaitingForJudge &&
+                    IsJudge &&
+                    !IsWaitingForNextRound
+                      ? "text-white bg-accent"
+                      : "text-zinc-600 bg-opacity-30"
+                  }`}
+                >
+                  Pick Winner
+                </button>
+              )}
+              {IsWaitingForNextRound && (
+                <button
+                  onClick={() => StateNextRound()}
+                  className="bg-accent hover:bg-opacity-80 items-center p-2 rounded cursor-pointer"
+                >
+                  Next Round
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -10,17 +10,17 @@ public class BadCardsContext : DbContext
     public DbSet<UserDb> Users { get; set; }
     public DbSet<CardTranslationDb> CardTranslations { get; set; }
 
-    private readonly IConfiguration configuration;
+    private readonly IConfiguration _configuration;
 
-    public BadCardsContext(IConfiguration _configuration)
+    public BadCardsContext(IConfiguration configuration)
     {
-        configuration = _configuration;
+        _configuration = configuration;
 
         Database.EnsureCreated();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite(configuration.GetConnectionString("Default"));
+        optionsBuilder.UseSqlite(_configuration.GetConnectionString("Default"));
     }
 }

@@ -22,19 +22,14 @@ export const AuthProvider = ({ children }: IProps) => {
       .then((response: any) => {
         SetAuth(response.data);
       })
-      .catch((er) => {
+      .catch(async (er) => {
         SetAuth(undefined);
-        const path = window.location.pathname;
+        
+        //Login as guest when no user is logged in
+        await Api.post("auth/guest").then(() => {
+          window.location.reload()
+        })
 
-        if (
-          path === "/auth/discord" ||
-          path === "/auth/discord/" ||
-          path === "/legal" ||
-          path === "/start" ||
-          path === "/lobby"
-        ) {
-          return;
-        }
         window.location.href = "/start";
       });
   };

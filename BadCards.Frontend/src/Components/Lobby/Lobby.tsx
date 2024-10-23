@@ -2,132 +2,90 @@ import { AuthContext } from "../../Context/AuthContext";
 import { Player } from "../../Types/Player";
 import { useContext, useEffect, useState } from "react";
 import { ILobby } from "../../Types/Props";
-import AddBotIcon from "../../Assets/Icons/robot_icon.svg";
+import AddBotIcon from "../../Assets/Icons/robot_icon-white.png";
 import PlayIcon from "../../Assets/Icons/play_icon.png";
-
+import ExitIcon from "../../Assets/Icons/join_icon.png";
+import DropdownIcon from "../../Assets/Icons/dropdown_icon.png";
 export const Lobby = ({
   Players,
   IsCreator,
   StartGameHandler,
   KickHandler,
   AddBotHandler,
+  EndGame,
+  LeaveGame,
 }: ILobby) => {
   const [selectedTab, setSelectedTab] = useState<"Players" | "Rules">(
     "Players"
   );
+  const [playerDropdown, setPlayerDropdown] = useState<Player | undefined>(
+    undefined
+  );
+
   const { User } = useContext(AuthContext);
 
-  return (
-    <div className="flex flex-col w-screen mt-10 items-center">
-      <div className="bg-white bg-opacity-20 md:w-1/2 w-screen p-3 rounded">
-        <ul
-          className="mb-5 flex bg-black rounded text-white list-none flex-row flex-wrap border-b-0 ps-0"
-          role="tablist"
-        >
-          <div className="py-3 px-5 grid grid-cols-2 gap-4 w-full font-bold text-sm">
-            <li
-              role="presentation"
-              className={`text-center cursor-pointer uppercase transition-all hover:opacity-80 ${
-                selectedTab === "Players" ? "border-b-2" : ""
-              }`}
-              onClick={() => setSelectedTab("Players")}
-            >
-              <a className="block border-x-0 border-t-0 border-transparent px-7">
-                Players
-              </a>
-            </li>
-            <li
-              onClick={() => setSelectedTab("Rules")}
-              role="presentation"
-              className={`text-center cursor-pointer transition-all uppercase hover:opacity-80 ${
-                selectedTab === "Rules" ? "border-b-2" : ""
-              }`}
-            >
-              <a className="block border-x-0  border-t-0 border-transparent px-7">
-                Rules
-              </a>
-            </li>
-          </div>
-        </ul>
-        <div className="mb-6 bottom flex justify-center">
-          {selectedTab === "Players" && (
-            <div className="w-full duration-150 ease-linear">
-              <div className="flex flex-col justify-start w-full items-start bg-black rounded">
-                {Players.map((player: Player, index) => {
-                  const rednerKick =
-                    player.Username !== User?.username && IsCreator;
+  const HandleLeave = async () => {
+    if (IsCreator) {
+      await EndGame();
+    } else {
+      await LeaveGame();
+    }
+  };
 
-                  return (
-                    <div
-                      key={`lobby_player_${index}`}
-                      className={`flex pb-3 pt-2 font-medium pl-4 mt-2 w-full`}
-                    >
-                      <img
-                        className="rounded-full w-10 h-10"
-                        src={`https://cdn.discordapp.com/avatars/${player.DiscordUserId}/${player.DiscordAvatarId}.webp?size=100`}
-                      />
-                      <div
-                        className={`text-2xl w-100 max-w-full overflow-hidden mr-4 text-white px-2 ml-4`}
-                      >
-                        {player.Username}
-                      </div>
-                      {rednerKick && (
-                        <div className="justify-end mr-5 text-xl items-center flex">
-                          <button
-                            onClick={() => KickHandler(player.UserId)}
-                            className="h-10 hover:scale-105 px-3  mr-3 justify-center items-center rounded-md
-                           bg-white text-base font-medium text-red-500 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                          >
-                            Kick
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-              <div>
-                <button
-                  className="inline-flex h-10 w-36 border-2 border-black mt-4 hover:scale-105 mr-3 
-                  justify-center items-center rounded-md bg-white 
-                  text-sm text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                >
-                  <div
-                    onClick={() => AddBotHandler()}
-                    className="flex items-center font-medium"
-                  >
-                    <img
-                      src={AddBotIcon}
-                      className="fill-current w-10 h-6 mr-2"
-                      alt="Leaderboard Icon"
-                    />
-                    <span>Add Bot</span>
-                  </div>
-                </button>
-              </div>
-              <div className="flex pt-3 justify-center">
-                {IsCreator ? (
-                  <button
-                    onClick={StartGameHandler}
-                    type="button"
-                    className={`rounded-lg flex items-center gap-2 mt-4 py-2 px-3 text-center align-middle text-1xl hover:scale-105 
-                  font-bold text-white shadow-md transition-all bg-black`}
-                  >
-                    <img className="w-5" src={PlayIcon} />
-                    Start Game
-                  </button>
-                ) : (
-                  <div className="text-2xl font-medium">
-                    Waiting For Creator
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-          {selectedTab === "Rules" && (
-            <div className="opacity-100 w-full transition-opacity duration-150 ease-linear data-[twe-tab-active]:block"></div>
-          )}
+  return (
+    <div className="flex flex-col justify-center items-center gap-3 min-h-96">
+      <div className="flex text-white justify-between text-center gap-3 text-xl">
+        <div
+          className={`hover:bg-accent hover:bg-opacity-50 p-2 cursor-pointer flex items-center gap-2`}
+        >
+          <span>Players</span>
         </div>
+        <div
+          className={`hover:bg-accent hover:bg-opacity-50 p-2 cursor-pointer flex items-center gap-2`}
+        >
+          <span>Rules</span>
+        </div>
+      </div>
+      
+      {IsCreator && (
+        <div>
+          <button
+            onClick={StartGameHandler}
+            className="text-2xl text-white bg-accent px-8 py-2 rounded hover:bg-opacity-80"
+          >
+            Start Game
+          </button>
+        </div>
+      )}
+
+      <div className="flex flex-col gap-3">
+        {Players.map((player, index) => {
+          return (
+            <div key={`player-${index}`} className="text-white gap-3 text-xl">
+              <div className="flex gap-3">
+                <img
+                  className="rounded-full w-10 h-10"
+                  src={`https://cdn.discordapp.com/avatars/${player.DiscordUserId}/${player.DiscordAvatarId}.webp?size=100`}
+                />
+                <span>{player.Username}</span>
+
+                <div
+                  onClick={() => setPlayerDropdown(player)}
+                  className="ml-auto cursor-pointer"
+                >
+                  <img src={DropdownIcon} className="w-8" />
+                </div>
+              </div>
+
+              {playerDropdown?.UserId === player.UserId && (
+                <div className="flex flex-col gap-3">
+                  <button className="text-orange-500">Promote</button>
+                  <button className="text-red-500">Kick</button>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

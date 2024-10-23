@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import {
   CreatorPromptOptions,
   DefaultOptions,
@@ -10,12 +10,14 @@ import { OptionCheck } from "./OptionCheck";
 import { TemperatureRange } from "./TemperatureRange";
 import { Textarea } from "@headlessui/react";
 import { GeneratedPrompt } from "./GeneratedPrompt";
+import { AuthContext } from "../../Context/AuthContext";
 
 export const AICreator = () => {
+  const { User } = useContext(AuthContext);
   const [promptNote, setPromptNote] = useState<string>("");
-  const [generatedPrompt, setGeneratedPrompt] = useState<Prompt | undefined>(
-    undefined
-  );
+  const [generatedPrompt, setGeneratedPrompt] = useState<
+    Prompt | Prompt[] | undefined
+  >(undefined);
   const [options, setOptions] = useState<Options>(DefaultOptions);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
 
@@ -51,7 +53,34 @@ export const AICreator = () => {
       AdditionalPromptNote: promptNote,
       GenerateAnswers: options.GenerateAnswers,
       GenerateQuestion: options.GenerateQuestion,
+      UseBatch: options.UseBatch,
+      BatchCount: options.BatchCount,
     };
+
+    if (options.UseBatch) {
+      await Api.post("creator/generate-batch", promptOptions)
+        .then((response) => {
+          setIsGenerating(false);
+          /* Some problems at deserializing this ;_; */
+          const prompts: Prompt[] = response.data.map((prompt: any) => {
+            return {
+              TokensUsed: prompt.tokensUsed,
+              AnswerCount: prompt.answerCount,
+              Question: prompt.question,
+              Answers: prompt.answers,
+            };
+          });
+
+          setGeneratedPrompt((prev) => {
+            return prompts;
+          });
+        })
+        .catch((error) => {
+          console.error("Error submitting options:", error);
+        });
+
+      return;
+    }
 
     await Api.post("creator/generate", promptOptions)
       .then((response) => {
@@ -145,18 +174,18 @@ export const AICreator = () => {
                 ></OptionCheck>
                 <OptionCheck
                   title="Batch"
-                  value={options.EnableBatch}
+                  value={options.UseBatch}
                   valueChanged={() => {
                     setOptions((prev) => {
                       return {
                         ...prev,
-                        EnableBatch: !prev.EnableBatch,
+                        UseBatch: !prev.UseBatch,
                       };
                     });
                   }}
                 ></OptionCheck>
               </div>
-              {options.EnableBatch && (
+              {options.UseBatch && (
                 <div className="flex text-sm flex-col pt-2 text-black font-medium">
                   <span>
                     Batch Count <span className="text-gray-800">(max 5)</span>
@@ -189,12 +218,22 @@ export const AICreator = () => {
             </div>
           </div>
           <div className="flex justify-center">
-            <input
-              type="submit"
-              className="rounded-lg py-2 px-10 text-center align-middle text-1xl hover:scale-105 
+            {User?.role === "Guest" && (
+              <div
+                className="rounded-lg py-2 px-10 text-center align-middle text-1xl hover:scale-105 
+                font-bold text-white shadow-md transition-all bg-red-600"
+              >
+                You have to be atleast discord user to generate
+              </div>
+            )}
+            {User?.role === "User" && (
+              <input
+                type="submit"
+                className="rounded-lg py-2 px-10 text-center align-middle text-1xl hover:scale-105 
                 font-bold text-white shadow-md transition-all bg-black"
-              value={isGenerating ? "Please wait ..." : "Generate"}
-            />
+                value={isGenerating ? "Please wait ..." : "Generate"}
+              />
+            )}
           </div>
         </div>
       </div>

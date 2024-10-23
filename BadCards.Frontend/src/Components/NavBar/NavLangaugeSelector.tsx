@@ -7,7 +7,6 @@ import {
 } from "@headlessui/react";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { Config } from "../../Config";
 import { AuthContext } from "../../Context/AuthContext";
 
 export const NavLanguageSelector = () => {
@@ -36,10 +35,10 @@ export const NavLanguageSelector = () => {
   };
 
   return (
-    <Menu as="div" className="relative inline-block text-left mr-5 pt-1">
+    <Menu as="div" className="relative pb-1 text-left mr-5 pt-1">
       <div>
         <MenuButton
-          className="inline-flex justify-center items-center hover:scale-105 gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold
+          className="justify-center items-center hover:scale-105 gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold
          text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
         >
           <span className={`fi fis fi-${locale} mr-2`}></span>

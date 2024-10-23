@@ -34,7 +34,7 @@ public class RoomHub : Hub
     {
         Player? player = GetPlayer();
 
-        if(player is null)
+        if (player is null)
         {
             Context.Abort();
             return;
@@ -42,26 +42,26 @@ public class RoomHub : Hub
 
         Room? room = GetRoom(player.UserId);
 
-        if(room is null)
+        if (room is null)
         {
             return;
         }
 
-        if(room.GetPlayers().All(x => !x.IsActive))
+        if (room.GetPlayers().All(x => !x.IsActive))
         {
             rooms.Remove(room);
             RoomDb? roomDb = dbContext.Rooms.Where(x => x.LobbyCode == room.RoomCode).FirstOrDefault();
 
-            if(roomDb is not null)
+            if (roomDb is not null)
             {
-                dbContext.Rooms.Remove(roomDb); 
+                dbContext.Rooms.Remove(roomDb);
                 await dbContext.SaveChangesAsync();
             }
         }
 
         player.IsActive = false;
 
-        foreach(Player lobbyPlayer in room.GetConnectedPlayers())
+        foreach (Player lobbyPlayer in room.GetConnectedPlayers())
         {
             await Clients.Client(lobbyPlayer.ConnectionId).SendAsync("OnUserDisconnect", player.DiscordUserId);
         }
@@ -71,21 +71,21 @@ public class RoomHub : Hub
     {
         var identity = (ClaimsIdentity)Context.GetHttpContext()!.User.Identity!;
 
-        if(!identity.IsAuthenticated)
+        if (!identity.IsAuthenticated)
         {
             Context.Abort();
 
             return;
         }
 
-        await ValidateDatabse();
+        await ValidateDatabase();
 
         await base.OnConnectedAsync();
     }
 
-    public async Task ValidateDatabse()
+    public async Task ValidateDatabase()
     {
-        if(dbContext.Cards.Count() == 0)
+        if (dbContext.Cards.Count() == 0)
         {
             logger.LogInformation("Cards are empty, filling database");
             await cardService.FillDatabaseCards();
@@ -192,8 +192,8 @@ public class RoomHub : Hub
             var identity = (ClaimsIdentity)Context.User!.Identity!;
             Guid userId = new Guid(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             string role = identity.FindFirst(ClaimTypes.Role)!.Value;
-            
-            if(role == Roles.Guest)
+
+            if (role == Roles.Guest)
             {
                 await JoinAsGuest(joinEvent.LobbyCode, joinEvent.Locale, userId, identity);
 
@@ -209,7 +209,7 @@ public class RoomHub : Hub
             {
                 //Check if room is in database
                 RoomDb? apiRoom = await dbContext.Rooms.Where(x => x.LobbyCode == joinEvent.LobbyCode).SingleOrDefaultAsync();
-                
+
                 //If not disconnect user
                 if (apiRoom == null)
                 {
@@ -300,7 +300,7 @@ public class RoomHub : Hub
                 }
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await Clients.Caller.SendAsync("ForcedQuit", ex);
             Context.Abort();
@@ -336,7 +336,7 @@ public class RoomHub : Hub
         Player player = GetPlayer()!;
         Room room = GetRoom(player.UserId);
 
-        if(room.Creator != player)
+        if (room.Creator != player)
         {
             return;
         }
@@ -377,12 +377,12 @@ public class RoomHub : Hub
     {
         Room room = GetRoom(GetUserId());
 
-        if(room.Creator.UserId != GetUserId())
+        if (room.Creator.UserId != GetUserId())
         {
             return false;
         }
 
-        if(room.GetPlayers().Count <= 1)
+        if (room.GetPlayers().Count <= 1)
         {
 #if RELEASE
             return false;
@@ -398,10 +398,10 @@ public class RoomHub : Hub
             /* Translated card is only for players not bots */
             Card? translatedBlackCard = null;
 
-            if(!lobbyPlayer.IsBot)
+            if (!lobbyPlayer.IsBot)
             {
-               translatedBlackCard = new Card(room.BlackCardId, true, cardService.GetCardTranslation(room.BlackCardId,
-               lobbyPlayer.Locale), lobbyPlayer.UserId);
+                translatedBlackCard = new Card(room.BlackCardId, true, cardService.GetCardTranslation(room.BlackCardId,
+                lobbyPlayer.Locale), lobbyPlayer.UserId);
             }
 
             OnStartGameEvent startEvent = new OnStartGameEvent()
@@ -439,7 +439,7 @@ public class RoomHub : Hub
 
         IEnumerable<Card> lobbySelectedCards = room.GetSelectedCards();
 
-        foreach(var lobbyPlayer in room.GetConnectedPlayers())
+        foreach (var lobbyPlayer in room.GetConnectedPlayers())
         {
             OnJoinEvent onJoinEvent = new OnJoinEvent()
             {
@@ -501,7 +501,7 @@ public class RoomHub : Hub
             return;
         }
 
-        await SendAsync(player.ConnectionId, method, data);   
+        await SendAsync(player.ConnectionId, method, data);
     }
 
     /// <summary>
@@ -524,7 +524,7 @@ public class RoomHub : Hub
 
             List<Card> playerCards = lobbyPlayer.WhiteCards;
 
-            if(playerCards.Count < 10)
+            if (playerCards.Count < 10)
             {
                 playerCards.AddRange(await GetRandomWhiteCards(10 - playerCards.Count, lobbyPlayer));
             }
@@ -573,7 +573,6 @@ public class RoomHub : Hub
 
             IEnumerable<Card> lobbySelectedCards = room.GetSelectedCards();
 
-            //TODO: 
             room.SetSelectedCardByJudge(ownerId);
             room.IsWaitingForNextRound = true;
 
@@ -589,10 +588,42 @@ public class RoomHub : Hub
         }
     }
 
+    public async Task LeaveGame()
+    {
+        Player? player = GetPlayer();
+
+        if (player is null)
+        {
+            Context.Abort();
+            return;
+        }
+
+        Room? room = GetRoom(player.UserId);
+
+        if (room is null)
+        {
+            return;
+        }
+        
+        room.RemovePlayer(player.UserId);
+
+        foreach (Player lobbyPlayer in room.GetConnectedPlayers())
+        {
+            await Clients.Client(lobbyPlayer.ConnectionId).SendAsync("OnUserDisconnect", player.UserId);
+        }
+
+        await SendAsync(player.ConnectionId, "ForceDisconnect");
+    }
+
     public async Task EndGame()
     {
         Player player = GetPlayer()!;
         Room room = GetRoom(player.UserId);
+
+        if(room.Creator != player)
+        {
+            return;
+        }
 
         foreach(var lobbyPlayer in room.GetConnectedPlayers())
         {

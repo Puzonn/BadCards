@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
-
-namespace BadCards.Api.Models;
+﻿namespace BadCards.Api.Models;
 
 public class ApiPlayer
 {

@@ -33,7 +33,7 @@ public class GameController : ControllerBase
 
         Guid userId = new Guid(identity.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
-        if(string.IsNullOrEmpty(role) || role == Roles.Guest) 
+        if (role == Roles.Guest) 
         {
             return BadRequest("User have to be atleast DiscordUser");
         }
@@ -75,14 +75,14 @@ public class GameController : ControllerBase
     {
         var identity = (ClaimsIdentity)HttpContext.User!.Identity!;
         string role = identity.FindFirst(ClaimTypes.Role)!.Value;
-        bool option = bool.Parse(_configuration.GetSection("Features:AllowGuestCreateLobby").Value!);
+        bool createPermission = bool.Parse(_configuration.GetSection("Features:AllowGuestCreateLobby").Value!);
 
-        if (option)
+        if (createPermission)
         {
             return true;
         }
 
-        if(!option && role == Roles.Guest)
+        if(!createPermission && role == Roles.Guest)
         {
             return false;
         }

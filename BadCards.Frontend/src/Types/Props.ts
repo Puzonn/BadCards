@@ -7,6 +7,8 @@ export interface ILobby {
     StartGameHandler: () => void;
     KickHandler: (userId: string) => void;
     AddBotHandler: () => void;
+    EndGame: () => void;
+    LeaveGame: () => void;
 }
 
 export interface ILeaderboard {

@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.14" />
     <PackageReference Include="OpenAI" Version="1.11.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
   </ItemGroup>
 
   <ItemGroup>

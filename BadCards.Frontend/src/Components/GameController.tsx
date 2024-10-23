@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useId, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Round } from "../Types/Round";
 import { Card } from "../Types/Card";
@@ -66,12 +66,13 @@ export const GameController = () => {
 
   const OnWaitingForJudgeState = (event: any) => {
     /* TODO: Fix json crap i hate this */
-    console.log(event);
     const selectedCards: Card[] = JSON.parse(event).LobbySelectedCards;
     setRound((prev) => {
       if (!prev) {
+        console.log("is null for some reason");
         return;
       }
+      console.log(prev);
       return {
         ...prev,
         LobbySelectedCards: selectedCards,
@@ -79,6 +80,10 @@ export const GameController = () => {
       };
     });
   };
+
+  useEffect(() => {
+    console.info("Round Updated", round)
+  }, [round])
 
   const StateStartGame = () => {
     const response = Connection?.invoke("StartGame");
@@ -99,8 +104,10 @@ export const GameController = () => {
       if (!prev) {
         return prev;
       }
+      console.log("user Disconnected ", userId);
+      console.log("Players ", prev?.Players);
 
-      const players = [...prev.Players].filter((x) => x.UserId === userId);
+      const players = [...prev.Players].filter((x) => x.UserId !== userId);
       return { ...prev, Players: players };
     });
   };
@@ -137,7 +144,9 @@ export const GameController = () => {
     );
   };
 
-  const StateLeaveGame = async () => {};
+  const StateLeaveGame = async () => {
+    await Connection?.send("LeaveGame");
+  };
 
   const StateKickPlayer = async (userId: string) => {
     await Connection?.send("KickPlayer", userId);
@@ -196,7 +205,6 @@ export const GameController = () => {
 
   const OnStartGame = (e: string) => {
     const round = JSON.parse(e) as Round;
-    console.log(round.BlackCard);
     round.IsWaitingForJudge = false;
     round.IsWaitingForNextRound = false;
     round.PlayerSelectedCards = [];

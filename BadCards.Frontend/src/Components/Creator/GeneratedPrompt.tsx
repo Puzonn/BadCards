@@ -1,19 +1,49 @@
-import { FormEvent } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import Api from "../../Api";
 import { Prompt } from "../../Types/Creator";
 
 export const GeneratedPrompt = ({
   GeneratedPrompt,
-  DiscardPrompt
+  DiscardPrompt,
 }: {
   DiscardPrompt: () => void;
-  GeneratedPrompt: Prompt;
+  GeneratedPrompt: Prompt | Prompt[];
 }) => {
+  const [currentPrompt, setCurrentPrompt] = useState<Prompt>(GetFirstPrompt());
+  const IsBatch = useMemo(
+    () => Array.isArray(GeneratedPrompt),
+    [GeneratedPrompt]
+  );
+
+  function GetFirstPrompt() {
+    if (Array.isArray(GeneratedPrompt)) {
+      return GeneratedPrompt[0];
+    }
+    return GeneratedPrompt;
+  }
+
+  const GetCurrentPromptIndex = () => {
+    return IsBatch ? (GeneratedPrompt as Prompt[]).indexOf(currentPrompt) : 0;
+  };
+
+  const IsCurrentPromptLast = () => {
+    return IsBatch
+      ? GetCurrentPromptIndex() === (GeneratedPrompt as Prompt[]).length - 1
+      : true;
+  };
+
   const AcceptPrompt = async (e: FormEvent) => {
     e.preventDefault();
-    await Api.put("/creator/accept", GeneratedPrompt)
+    
+    await Api.put("/creator/accept", currentPrompt)
       .then((response) => {
-        console.log(response.data);
+        if (IsCurrentPromptLast()) {
+          DiscardPrompt();
+        } else {
+          setCurrentPrompt(
+            (GeneratedPrompt as Prompt[])[GetCurrentPromptIndex() + 1]
+          );
+        }
       })
       .catch(() => {
         console.error("Error while accepting prompt");
@@ -25,29 +55,37 @@ export const GeneratedPrompt = ({
       onSubmit={async (e) => await AcceptPrompt(e)}
       className="flex flex-col overflow-x-hidden w-screen mt-10 items-center"
     >
-      <div className="md:w-1/2 w-screen pb-3">
+      <div className="md:max-w-5xl w-screen pb-3">
         <div className="bg-white bg-opacity-20 px-3 pb-1 rounded">
           <div className="mb-6 flex justify-center text-white">
             <div className="opacity-100 w-full duration-150 ease-linear">
               <div className="relative w-full text-black">
-                <div className="flex flex-col justify-center">
-                  <div className="mt-4 pb-4 font-medium flex gap-3">
-                    <span className="bg-black text-white p-2 rounded">
-                      Token Used: {GeneratedPrompt.TokensUsed}
-                    </span>
-                    <span className="bg-black text-white p-2 rounded">
-                      Answer Count: {GeneratedPrompt.AnswerCount}
-                    </span>
-                    <span className="bg-black text-white p-2 rounded">
-                      Translated: PL/US
-                    </span>
+                <div className="flex flex-col flex-wrap justify-center">
+                  <div className="flex flex-col flex-wrap items-center sm:flex-row sm:items-start">
+                    <div className="mt-4 pb-4 font-medium flex flex-wrap gap-3">
+                      <span className="bg-black text-white p-2 rounded">
+                        Tokens Used: {currentPrompt.TokensUsed}
+                      </span>
+                      <span className="bg-black text-white p-2 rounded">
+                        Answer Count: {currentPrompt.AnswerCount}
+                      </span>
+                      <span className="bg-black text-white p-2 rounded">
+                        Translated: PL/US
+                      </span>
+                      {IsBatch && (
+                        <span className="ml-auto bg-black text-white p-2 rounded">
+                          {GetCurrentPromptIndex() + 1} /{" "}
+                          {(GeneratedPrompt as Prompt[]).length}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <span className="font-bold py-1">Generated Question: </span>
                   <div className="font-medium relative justify-start w-full bg-black text-white p-3 rounded">
-                    {GeneratedPrompt.Question}
+                    {currentPrompt.Question}
                   </div>
                   <span className="font-bold py-1">Generated Answers: </span>
-                  {GeneratedPrompt.Answers.map((answer, index) => {
+                  {currentPrompt.Answers.map((answer, index) => {
                     return (
                       <div
                         key={`answer_${index}`}

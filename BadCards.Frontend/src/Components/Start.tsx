@@ -1,14 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../Context/AuthContext";
 import { Room } from "../Types/LobbyManagerTypes";
-import { LoginForm } from "./Lobby/LoginForm";
-import { CreateTab } from "./StartTabs/CreateTab";
-import { JoinTab } from "./StartTabs/JoinTab";
-import { AboutTab } from "./StartTabs/AboutTab";
 import Api from "../Api";
 import CreateTabIcon from "../Assets/Icons/plus_icon.png";
 import JoinTabIcon from "../Assets/Icons/join_icon.png";
-import InfoTabIcon from "../Assets/Icons/info_icon.png";
+import CreateLobbyIcon from "../Assets/Icons/play_icon.png";
 
 export const Start = () => {
   const auth = useContext(AuthContext);
@@ -16,11 +12,13 @@ export const Start = () => {
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [infoContent, setInfoContent] = useState<string>("");
   const [selectedTab, setSelectedTab] = useState<"Create" | "Join" | "About">(
-    "Create"
+    "Join"
   );
   const [allowCreate, setAllowCreate] = useState<boolean>(false);
-
   const [error, setError] = useState("");
+
+  const [lobbyCodeInput, setLobbyCodeInput] = useState<string>("");
+  const [lobbyPasswordInput, setLobbyPasswordInput] = useState<string>("");
 
   useEffect(() => {
     Api.get("game/create-role-check").then((response) => {
@@ -98,99 +96,73 @@ export const Start = () => {
   }
 
   if (auth.IsFetched && !auth.IsLoggedIn) {
-    return <LoginForm></LoginForm>;
+    return <div></div>;
   }
 
   return (
-    <div className="flex flex-col overflow-x-hidden w-screen mt-10 items-center">
-      <div>
-        {showInfo && (
+    <div className="flex flex-col justify-center items-center w-screen min-h-96">
+      <div className="flex flex-col gap-3">
+        <div className="flex text-white justify-between text-center gap-3 text-xl">
           <div
-            id="alert-1"
-            className="flex items-center p-4 mb-4 bg-white rounded text-black font-medium"
-            role="alert"
+            onClick={() => setSelectedTab("Create")}
+            className={`hover:bg-accent hover:bg-opacity-50 p-2 cursor-pointer flex items-center gap-2 ${
+              selectedTab === "Create" ? "bg-accent" : ""
+            }`}
           >
-            <svg
-              className="flex-shrink-0 w-4 h-4"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-            </svg>
-            <span className="sr-only">Info</span>
-            <div className="ms-3 text-sm font-medium">{infoContent}</div>
+            <img className="w-8" src={CreateTabIcon}></img>
+            <span>New Game</span>
           </div>
-        )}
-      </div>
-      <div className="md:max-w-5xl w-screen pb-3">
-        <div className="bg-white bg-opacity-20 p-3 rounded flex-wrap">
-          <ul
-            className="mb-5 bg-black rounded text-white list-none"
-            role="tablist"
+          <div
+            onClick={() => setSelectedTab("Join")}
+            className={`hover:bg-accent hover:bg-opacity-50 p-2 cursor-pointer flex items-center gap-2 ${
+              selectedTab === "Join" ? "bg-accent" : ""
+            }`}
           >
-            <div className="py-3 font-bold text-sm px-5 grid grid-cols-3 gap-4">
-              <li
-                role="presentation"
-                className={`text-center cursor-pointer py-1 uppercase transition-all hover:opacity-80 ${
-                  selectedTab === "Create" ? "border-b-2" : ""
-                }`}
-                onClick={() => setSelectedTab("Create")}
+            <img className="w-8" src={JoinTabIcon}></img>
+            <span>Join Game</span>
+          </div>
+        </div>
+
+        <div>
+          {selectedTab === "Create" && (
+            <div className="flex gap-3">
+              <input
+                placeholder="Lobby Name"
+                className="outline-none bg-accent bg-opacity-50 text-white placeholder:text-gray-300 p-2 placeholder:text-xl font-semibold text-xl"
+              />
+              <div
+                onClick={() => HandleCreate("")}
+                className="bg-accent hover:scale-105 cursor-pointer w-10 flex items-center justify-center"
               >
-                <div className="flex justify-center gap-2 items-center">
-                  <img className="w-5" src={CreateTabIcon} />
-                  <a className="block border-x-0 border-t-0 border-transparent px-2">
-                    Create
-                  </a>
-                </div>
-              </li>
-              <li
-                role="presentation"
-                className={`text-center cursor-pointer transition-all py-1 uppercase hover:opacity-80 ${
-                  selectedTab === "Join" ? "border-b-2" : ""
-                }`}
-                onClick={() => setSelectedTab("Join")}
-              >
-                <div className="flex justify-center gap-2 items-center">
-                  <img className="w-5" src={JoinTabIcon} />
-                  <a className="block border-x-0 border-t-0 border-transparent px-2">
-                    Join
-                  </a>
-                </div>
-              </li>
-              <li
-                role="presentation"
-                className={`text-center cursor-pointer transition-all py-1 uppercase hover:opacity-80 ${
-                  selectedTab === "About" ? "border-b-2" : ""
-                }`}
-                onClick={() => setSelectedTab("About")}
-              >
-                <div className="flex justify-center gap-1 items-center">
-                  <img className="w-5" src={InfoTabIcon} />
-                  <a className="block border-x-0 border-t-0 border-transparent px-2">
-                    About
-                  </a>
+                <img className="w-6" src={CreateLobbyIcon} />
               </div>
-              </li>
             </div>
-          </ul>
-          <div className="mb-6 bottom flex justify-center text-white">
-            {selectedTab === "Create" && (
-              <div className="opacity-100 w-full duration-150 ease-linear data-[twe-tab-active]:block">
-                <CreateTab
-                  allowCreate={allowCreate}
-                  onSubmit={HandleCreate}
-                ></CreateTab>
+          )}
+
+          {selectedTab === "Join" && (
+            <div className="flex gap-3 flex-col">
+              <div className="flex gap-3">
+                <input
+                  onChange={(e) => setLobbyCodeInput(e.target.value)}
+                  placeholder="Lobby Code"
+                  className="outline-none bg-accent bg-opacity-50 text-white placeholder:text-gray-300 p-2 placeholder:text-xl font-semibold text-xl"
+                />
               </div>
-            )}
-            {selectedTab === "Join" && (
-              <div className="opacity-100 w-full transition-opacity duration-150 ease-linear data-[twe-tab-active]:block">
-                <JoinTab onSubmit={HandleJoin} error={error}></JoinTab>
+              <div className="flex gap-3">
+                <input
+                  onChange={(e) => setLobbyPasswordInput(e.target.value)}
+                  placeholder="Password?"
+                  className="outline-none bg-accent bg-opacity-50 text-white placeholder:text-gray-300 p-2 placeholder:text-xl font-semibold text-xl"
+                />
+                <div
+                  onClick={() => HandleJoin(lobbyCodeInput, lobbyPasswordInput)}
+                  className="bg-accent hover:scale-105 cursor-pointer w-10 flex items-center justify-center"
+                >
+                  <img className="w-6" src={CreateLobbyIcon} />
+                </div>
               </div>
-            )}
-            {selectedTab === "About" && <AboutTab></AboutTab>}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

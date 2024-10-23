@@ -10,7 +10,6 @@ import { Trans } from "react-i18next";
 import i18next from "i18next";
 import "./i18n";
 import { Legal } from "./Components/Legal";
-import { Config } from "./Config";
 import { GameController } from "./Components/GameController";
 import { ConnectionProvider } from "./Components/ConnectionProvider/ConnectionProvider";
 import { Contact } from "./Components/Contact";

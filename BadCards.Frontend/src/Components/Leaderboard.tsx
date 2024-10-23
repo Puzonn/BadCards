@@ -11,7 +11,7 @@ export const Leaderboard = ({
   return (
     <>
       {IsLeaderboardOpen && (
-        <div className="flex flex-col w-full pt-1 h-screen bg-black shadow-lg shadow-slate-100">
+        <div className="flex flex-col w-full h-screen bg-background bg-opacity-80 shadow-lg shadow-slate-100">
           <div className="pl-2 mb-3 flex justify-between">
             <span className="text-white text-2xl font-medium">Players:</span>
             <button

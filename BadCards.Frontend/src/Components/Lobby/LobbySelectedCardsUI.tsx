@@ -1,7 +1,8 @@
 import { isStringLiteral } from "typescript";
 import { Card } from "../../Types/Card";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ConsoleLogger } from "@microsoft/signalr/dist/esm/Utils";
+import { Player } from "../../Types/Player";
 
 export const LobbySelectedCardsUI = ({
   cards,
@@ -11,14 +12,18 @@ export const LobbySelectedCardsUI = ({
   isJudge,
   onSelectedCardClicked,
   showUsernames,
+  players,
   selectedCards,
   selectedWinnerId,
+  AnswerCount,
   lobbySelectedCards,
 }: {
+  players: Player[];
   isJudge: boolean;
   isWaitingForJudge: boolean;
   selectedWinnerId: string;
   lobbySelectedCards: Card[];
+  AnswerCount: number;
   isWaitingForNextRound: boolean;
   cards: Card[];
   answerCount: number;
@@ -27,95 +32,79 @@ export const LobbySelectedCardsUI = ({
   selectedCards: Card[];
   showUsernames: boolean;
 }) => {
+  const [selectedChunk, setSelectedChunk] = useState<number>(-1);
+
   const SelectedCardClicked = (cards: Card[]) => {
+    if (!isJudge) {
+      return;
+    }
     onSelectedCardClicked(cards);
   };
+
+  const AnswerColors: string[] = ["blue-600", "orange-600", "purple-600"];
+  function GroupCardsByOwner(cards: Card[]): Record<string, Card[]> {
+    return cards.reduce((groupedCards, card) => {
+      const { OwnerId } = card;
+      if (!groupedCards[OwnerId]) {
+        groupedCards[OwnerId] = [];
+      }
+      groupedCards[OwnerId].push(card);
+      return groupedCards;
+    }, {} as Record<string, Card[]>);
+  }
 
   if (!cards) {
     return <></>;
   }
 
-  if (answerCount == 1) {
+  if (true) {
+    const cards = GroupCardsByOwner(lobbySelectedCards);
     return (
       <>
-        {cards.map((card, index) => {
-          const isSelected = card.CardId === selectedCards[0]?.CardId;
-          const isSelectedByJudge =
-            selectedWinnerId !== undefined
-              ? selectedWinnerId === card.OwnerId
-              : false;
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 px-2 w-full">
+          {players.map((player, index) => {
+            if (cards[player.UserId] === undefined) {
+              return <></>;
+            }
 
-          return (
-            <div key={`selected_card_${index}`}>
-              <div className="flex justify-center text-white text-3xl font-medium">
-                <div>{`${isWaitingForNextRound ? card.OwnerUsername : ""} ${
-                  isSelectedByJudge ? "🏆" : ""
-                }`}</div>
-              </div>
-              <div
-                onClick={() => SelectedCardClicked([card])}
-                className={`h-auto white-shadow cursor-pointer bg-white hover:bg-default text-2xl font-medium my-2 mx-4 p-3
-                shadow-white text-black rounded ${
-                  isSelected ? "border-2 border-y-amber-300" : ""
-                }`}
-              >
-                <div>{card.Content}</div>
-              </div>
-            </div>
-          );
-        })}
-      </>
-    );
-  }
-
-  if (answerCount === 2) {
-    const chunks: Card[][] = [];
-    for (let i = 0; i < cards.length; i += 2) {
-      chunks.push([cards[i], cards[i + 1]]);
-    }
-
-    return (
-      <>
-        {chunks.map((chunk, index) => {
-          const isSelected = chunk.find(
-            (x) => x.CardId === selectedCards[0]?.CardId
-          );
-          const isSelectedByJudge =
-            selectedWinnerId !== undefined
-              ? selectedWinnerId === chunk[0].OwnerId
-              : false;
-
-          return (
-            <div key={`selected_card_${index}`}>
-              <div className="flex justify-center text-white text-3xl font-medium">
-                <div> {isWaitingForNextRound ? chunk[0].OwnerUsername : ""} {isSelectedByJudge ? "🏆" : ""}</div>
-              </div>
-              <div
-                className={`h-auto white-shadow cursor-pointer bg-white hover:bg-default text-2xl font-medium my-2 mx-4 p-3
-                   shadow-white text-black rounded ${
-                     isSelected ? "border-2 border-y-amber-300" : ""
-                   }`}
-              >
+            return (
+              <>
                 <div
                   onClick={() => {
-                    SelectedCardClicked(chunk);
+                    SelectedCardClicked(cards[player.UserId]);
+                    if (!isJudge) {
+                      return;
+                    }
+                    setSelectedChunk(index);
                   }}
+                  key={`card-selected-${index}`}
+                  className={`bg-accent px-2 relative py-2 cursor-pointer text-white rounded flex flex-col gap-1 text-lg font-normal ${
+                    selectedChunk === index ? "border-2 border-white" : ""
+                  }`}
                 >
-                  <div className="border-b-2 inline-flex border-blue-600 w-auto">
-                    {chunk[0].Content}
+                  <div className="absolute -top-2 -right-2">
+                    <img
+                      className="w-8 rounded-full"
+                      src={`https://cdn.discordapp.com/avatars/${player.DiscordUserId}/${player.DiscordAvatarId}.webp?size=100`}
+                    ></img>
                   </div>
-                  <br></br>
-                  <div className="border-b-2 inline-flex border-orange-600">
-                    {chunk[1].Content}
-                  </div>
+                  {cards[player.UserId]?.map((card, propIndex) => {
+                    return (
+                      <div key={`card-prop-selected-${propIndex}`}>
+                        <span
+                          className={`border-b-${AnswerColors[propIndex]} border-b-2`}
+                        >
+                          {card.Content}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
-              </div>
-            </div>
-          );
-        })}
+              </>
+            );
+          })}
+        </div>
       </>
     );
   }
-
-  return <></>;
 };
