@@ -1,5 +1,6 @@
 using BadCards.Api.Database;
 using BadCards.Api.Hubs;
+using BadCards.Api.Repositories;
 using BadCards.Api.Services;
 using Microsoft.AspNetCore.HttpOverrides;
 
@@ -37,6 +38,7 @@ builder.Services.AddDbContext<BadCardsContext>();
 builder.Services.AddSingleton<CookieService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ICardService, CardService>();
+builder.Services.AddScoped<CardRepository>();
 
 var app = builder.Build();
 

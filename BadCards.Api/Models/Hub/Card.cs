@@ -21,7 +21,7 @@ public class Card
         Content = content;
         OwnerId = ownerId;  
     }
-
+    
     [JsonIgnore]
     public static readonly Card Empty = new Card(0, false, string.Empty, Guid.Empty)
     {
